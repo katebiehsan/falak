@@ -42,7 +42,7 @@ svg{flex:none}
 
 /* ---------- Layout ---------- */
 .view{max-width:520px;margin:0 auto;
-  padding:10px max(20px,env(safe-area-inset-right,0px)) calc(110px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
+  padding:10px max(20px,env(safe-area-inset-right,0px)) calc(96px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
   display:flex;flex-direction:column;gap:22px;animation:in 140ms ease}
 @keyframes in{from{opacity:0}to{opacity:1}}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
@@ -189,16 +189,16 @@ svg{flex:none}
 
 /* ---------- Tab bar: schwebende Glas-Kapsel ---------- */
 .tabbar{position:fixed;left:50%;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:8;transform:translateX(-50%);
-  display:flex;padding:4px;border-radius:999px}
-.tabbar button{position:relative;z-index:1;width:88px;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-  border-radius:999px;font-size:10.5px;font-weight:600;color:var(--fg-2);letter-spacing:.01em}
+  display:flex;padding:3px;border-radius:999px}
+.tabbar button{position:relative;z-index:1;width:70px;height:46px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  border-radius:999px;font-size:10px;font-weight:600;color:var(--fg-2);letter-spacing:.01em}
 .tabbar button:active{transform:scale(.96)}
-.tabbar svg{width:25px;height:25px}
+.tabbar svg{width:21px;height:21px}
 .tabbar .f{display:none}
 .tabbar button[aria-selected="true"]{color:var(--fg)}
 .tabbar button[aria-selected="true"] .o{display:none}
 .tabbar button[aria-selected="true"] .f{display:block}
-.tab-ind{position:absolute;top:4px;left:4px;width:88px;height:56px;border-radius:999px;background:rgba(255,255,255,.11);
+.tab-ind{position:absolute;top:3px;left:3px;width:70px;height:46px;border-radius:999px;background:rgba(255,255,255,.11);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.08);transition:transform 240ms var(--ease-out)}
 
 /* ---------- Sheets ---------- */
@@ -260,7 +260,7 @@ svg{flex:none}
 .swatches button.on{box-shadow:0 0 0 3px rgba(22,22,25,1),0 0 0 5px var(--fg)}
 
 /* ---------- Toast ---------- */
-.toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
+.toast{position:fixed;left:50%;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
   background:rgba(40,40,44,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:.5px solid var(--glass-edge);
   color:var(--fg);font-size:14px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;
   transition:opacity 150ms ease,transform 150ms var(--ease-out)}

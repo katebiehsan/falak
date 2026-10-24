@@ -25,7 +25,7 @@ function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show")
 
 /* ================= Tabs ================= */
 let view="times";const scrollMem={};const TABS=["times","qibla","quran"];
-function moveInd(){$("tabInd").style.transform=`translateX(${TABS.indexOf(view)*88}px)`}
+function moveInd(){$("tabInd").style.transform=`translateX(${TABS.indexOf(view)*70}px)`}
 function setView(v){
   if(v===view)return;
   scrollMem[view]=window.scrollY;
