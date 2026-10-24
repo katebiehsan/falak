@@ -10,6 +10,7 @@
   --glass-bg:rgba(32,32,36,.52); --glass-edge:rgba(255,255,255,.12); --glass-hi:rgba(255,255,255,.10);
   --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
   --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+  --font-ar:"Amiri","Geeza Pro",serif;
   --font-quran:"Amiri Quran","KFGQPC Uthmanic Script HAFS","Geeza Pro",serif;
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
   --ar-size:24px;
@@ -59,7 +60,7 @@ svg{flex:none}
 .row:not(:last-child)::after,.item:not(:last-child)::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;background:var(--line)}
 
 /* ---------- Zeiten ---------- */
-.hero{display:flex;flex-direction:column;gap:4px;padding-top:30px}
+.hero{display:flex;flex-direction:column;gap:4px;padding-top:36px}
 .eyebrow{margin:0;font-size:14px;font-weight:500;color:var(--fg-3)}
 .hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:700;letter-spacing:-.045em}
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
@@ -84,16 +85,14 @@ svg{flex:none}
 .upcoming .item{padding:12px 14px;text-align:left;width:100%}
 .upcoming .item:active{background:var(--raise-2);transform:none}
 .ev{display:flex;flex-direction:column;gap:1px;min-width:0}
-.ev b{font-size:16px;font-weight:500;display:flex;align-items:center;gap:8px}
-.ev b i{width:6px;height:6px;border-radius:50%;background:var(--fg-3);flex:none}
-.ev b i.fest{background:var(--gold)} .ev b i.sunnah{background:var(--accent)}
+.ev b{font-size:16px;font-weight:500}
 .ev span{font-size:13px;color:var(--fg-3)}
 .when{font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .when.soon{color:var(--gold)}
 
 .hadith{background:var(--raise);border-radius:18px;padding:16px 16px 12px}
 .hadith .block-h{padding:0}
-.hadith .har{font-family:var(--font-quran);font-size:17px;line-height:2;direction:rtl;text-align:right}
+.hadith .har{font-family:var(--font-ar);font-size:17px;line-height:2;direction:rtl;text-align:right}
 .hadith .hen{font-size:15px;line-height:1.6;color:var(--fg-2);margin:0}
 .hadith.clamp .har{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
@@ -106,7 +105,11 @@ svg{flex:none}
 .dial{width:100%;height:100%;display:block;overflow:visible}
 #rose{transform-origin:160px 160px}
 #pointer{fill:var(--fg-3);transition:fill 150ms ease}
-.dial .ring{fill:none;stroke:var(--raise-3);stroke-width:1.5}
+.dial .ring{fill:none;stroke:var(--raise-3);stroke-width:1.5;transition:stroke 200ms ease}
+.dial{transition:filter 200ms ease}
+.aligned .dial .ring{stroke:var(--accent)}
+.aligned .dial{filter:drop-shadow(0 0 18px rgba(74,222,128,.28))}
+.aligned .heading{color:var(--accent)}
 .dial .tick{stroke:var(--fg-4);stroke-width:1.2;stroke-linecap:round} .dial .tick.major{stroke:var(--fg-3);stroke-width:1.6}
 .dial .lbl{fill:var(--fg-2);font:600 13px var(--font)}
 .dial .q-line{stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;opacity:.35}

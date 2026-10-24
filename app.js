@@ -92,14 +92,14 @@ function renderTimes(){
   const now=new Date(),day=dayStart(dayOffset),t=times(day),live=dayOffset===0,{cur,next}=state(now);
   $("locName").textContent=loc.name;
   if(live){
-    $("heroLabel").textContent="Jetzt";
+    $("heroLabel").hidden=true;
     $("curName").textContent=LABEL[cur.k];
     $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
     $("progress").hidden=false;
     const f=(now-cur.t)/(next.t-cur.t);
     $("progressFill").style.transform=`scaleX(${Math.min(1,Math.max(.015,f)).toFixed(4)})`;
   }else{
-    $("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
+    $("heroLabel").hidden=false;$("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
     $("progress").hidden=true;
@@ -174,7 +174,7 @@ function fWhen(e){
 }
 function evRow(e){
   const w=fWhen(e);
-  return `<div class="item"><span class="ev"><b><i class="${e.kind}"></i>${e.title}</b><span>${fRange(e)} · ${e.note}</span></span><span class="when${w==="heute"||w==="morgen"?" soon":""}">${w}</span></div>`;
+  return `<div class="item"><span class="ev"><b>${e.title}</b><span>${fRange(e)} · ${e.note}</span></span><span class="when${w==="heute"||w==="morgen"?" soon":""}">${w}</span></div>`;
 }
 function renderDays(){
   const list=events(),today=dayStart(0);
@@ -346,7 +346,7 @@ $("compassBtn").addEventListener("click",async()=>{
 /* ================= Quran ================= */
 const API="https://api.alquran.cloud/v1";
 const EDS="quran-uthmani,de.bubenheim,en.sahih,en.transliteration";
-let qrInit=false,surahList=store.get("surahs",null),cache={},curSurah=null,activeKey=null,io=null;
+let qrInit=false,surahList=(store.get("surahs",null)||null),cache={},curSurah=null,activeKey=null,io=null;
 function applyPrefs(){
   const v=$("verses");["ar","tr","de","en"].forEach(k=>{v.classList.toggle("no-"+k,!prefs[k]);$("t-"+k).checked=prefs[k]});
   document.documentElement.style.setProperty("--ar-size",prefs.size+"px");
@@ -354,9 +354,10 @@ function applyPrefs(){
 function initQuran(){
   if(qrInit)return;qrInit=true;applyPrefs();updateMarksCount();
   if(surahList){renderIndex()}
-  fetch(API+"/surah").then(r=>r.json()).then(j=>{if(j&&j.data){surahList=j.data.map(s=>({n:s.number,ar:s.name,en:s.englishName,m:s.englishNameTranslation,c:s.numberOfAyahs,r:s.revelationType}));store.set("surahs",surahList);renderIndex()}})
+  fetch(API+"/surah").then(r=>r.json()).then(j=>{if(j&&j.data){surahList=j.data.map(s=>({n:s.number,ar:s.name,en:s.englishName,m:SURAH_DE[s.number-1]||s.englishNameTranslation,c:s.numberOfAyahs,r:s.revelationType}));store.set("surahs",surahList);renderIndex()}})
    .catch(()=>{if(!surahList)$("surahs").innerHTML=`<p class="empty">Keine Verbindung. Die Suren-Liste wird geladen, sobald du online bist.</p>`});
 }
+const SURAH_DE=["Die Eröffnende", "Die Kuh", "Die Sippe Imrans", "Die Frauen", "Der Tisch", "Das Vieh", "Die Höhen", "Die Beute", "Die Reue", "Yunus", "Hud", "Yusuf", "Der Donner", "Ibrahim", "Al-Hidschr", "Die Bienen", "Die Nachtreise", "Die Höhle", "Maryam", "Ta-Ha", "Die Propheten", "Die Pilgerfahrt", "Die Gläubigen", "Das Licht", "Die Unterscheidung", "Die Dichter", "Die Ameisen", "Die Geschichte", "Die Spinne", "Die Römer", "Luqman", "Die Niederwerfung", "Die Gruppierungen", "Saba", "Der Erschaffer", "Ya-Sin", "Die sich Reihenden", "Sad", "Die Scharen", "Der Vergebende", "Ausführlich dargelegt", "Die Beratung", "Der Goldschmuck", "Der Rauch", "Die Kniende", "Die Sanddünen", "Muhammad", "Der Sieg", "Die Gemächer", "Qaf", "Die Aufwirbelnden", "Der Berg", "Der Stern", "Der Mond", "Der Allerbarmer", "Das eintreffende Ereignis", "Das Eisen", "Der Streit", "Die Versammlung", "Die Geprüfte", "Die Reihe", "Der Freitag", "Die Heuchler", "Die Übervorteilung", "Die Scheidung", "Das Verbot", "Die Herrschaft", "Das Schreibrohr", "Die fällige Stunde", "Die Himmelswege", "Nuh", "Die Dschinn", "Der Eingehüllte", "Der Zugedeckte", "Die Auferstehung", "Der Mensch", "Die Entsandten", "Die Kunde", "Die Entreißenden", "Er runzelte die Stirn", "Das Umschlingen", "Das Zerbrechen", "Die das Maß Kürzenden", "Das Zerreißen", "Die Türme", "Der Pochende", "Der Höchste", "Die Überdeckende", "Die Morgendämmerung", "Die Stadt", "Die Sonne", "Die Nacht", "Der Vormittag", "Das Auftun", "Die Feige", "Das Anhängsel", "Die Bestimmung", "Der klare Beweis", "Das Beben", "Die Rennenden", "Das Verhängnis", "Die Vermehrung", "Die Zeit", "Der Stichler", "Der Elefant", "Quraisch", "Die Hilfeleistung", "Die Fülle", "Die Ungläubigen", "Die Hilfe", "Die Palmfasern", "Die Aufrichtigkeit", "Das Frühlicht", "Die Menschen"];
 const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]/g,"");
 const arName=s=>s.replace(/^سُورَةُ\s*/,"");
 const AR_DIGITS="٠١٢٣٤٥٦٧٨٩";const arNum=n=>String(n).replace(/\d/g,d=>AR_DIGITS[d]);
@@ -364,8 +365,8 @@ const place=r=>r==="Medinan"?"Medina":"Mekka";
 function renderIndex(){
   if(!surahList)return;
   const q=norm($("search").value||"");
-  const list=surahList.filter(s=>!q||String(s.n)===q||norm(s.en).includes(q)||norm(s.m).includes(q));
-  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${s.en}</b><span>${s.m}</span></span><span class="rt"><span class="ar">${arName(s.ar)}</span><small>${s.c} Verse</small></span></button>`).join("")
+  const list=surahList.filter(s=>!q||String(s.n)===q||norm(s.en).includes(q)||norm(SURAH_DE[s.n-1]).includes(q));
+  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${s.en}</b><span>${SURAH_DE[s.n-1]||s.m}</span></span><span class="rt"><span class="ar">${arName(s.ar)}</span><small>${s.c} Verse</small></span></button>`).join("")
     :`<p class="empty">Keine Sure gefunden.</p>`;
   const box=$("resume");let h="";
   const card=(lbl,p,kind)=>surahList[p.s-1]?`<button class="card resume" data-kind="${kind}"><small>${lbl}</small><b>${surahList[p.s-1].en}</b><span>Vers ${p.a}</span></button>`:"";
@@ -415,7 +416,7 @@ async function openSurah(n,ayah){
   try{s=await loadSurah(n)}catch(e){$("verses").innerHTML=`<p class="loading">Keine Verbindung. Einmal geöffnete Suren sind danach auch offline verfügbar.</p>`;return}
   curSurah=s;
   $("rName").textContent=s.name;$("rSub").textContent=`Sure ${n}`;
-  let h=`<header class="chapter"><div class="car" lang="ar">${arName(s.arName)}</div><b>${esc(s.name)}</b><span>${esc(s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span></header>`;
+  let h=`<header class="chapter"><div class="car" lang="ar">${arName(s.arName)}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span></header>`;
   if(n!==1&&n!==9)h+=`<div class="bismillah" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>`;
   h+=s.verses.map(v=>verseHTML(n,v)).join("");
   $("verses").innerHTML=h;applyPrefs();
