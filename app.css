@@ -141,7 +141,7 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 .verse .num{font-size:12px;font-weight:600;color:var(--fg-3);font-variant-numeric:tabular-nums;letter-spacing:.02em}
 .verse .flag{width:8px;height:8px;border-radius:50%}
 .verse .ar{font-family:var(--font-quran);font-size:var(--ar-size);line-height:2.05;direction:rtl;text-align:right;color:var(--fg)}
-.verse .end{font-size:.85em;color:var(--fg-2);white-space:nowrap}
+.verse .end{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;padding:0 .3em;margin-inline-start:.15em;vertical-align:middle;border:1px solid var(--line);border-radius:999px;font-family:var(--font);font-size:max(13px,calc(var(--ar-size) * .5));line-height:1;color:var(--fg-2)}
 .verse .tr{font-size:15px;color:var(--fg-2);font-style:italic;line-height:1.55}
 .verse .de,.verse .en{font-size:16px;line-height:1.6;color:var(--fg)}
 .verse .en{color:var(--fg-2)}

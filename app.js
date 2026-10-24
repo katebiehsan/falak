@@ -254,7 +254,7 @@ function verseHTML(n,v){
       <button data-act="hl" aria-label="Markieren" class="${m?"on":""}">${ICON.hl}</button>
       <button data-act="bm" aria-label="Lesezeichen" class="${isBm?"on":""}">${isBm?ICON.bmOn:ICON.bm}</button>
       <button data-act="cp" aria-label="Kopieren">${ICON.cp}</button></span></div>
-    <div class="ar" lang="ar">${esc(v.ar)} <span class="end">۝${arNum(v.a)}</span></div>
+    <div class="ar" lang="ar">${esc(v.ar)} <span class="end">${arNum(v.a)}</span></div>
     <div class="tr">${esc(v.tr)}</div>
     <div class="de" lang="de">${esc(v.de)}<span class="who">Bubenheim &amp; Elyas</span></div>
     <div class="en" lang="en">${esc(v.en)}<span class="who">Saheeh International</span></div></article>`;
