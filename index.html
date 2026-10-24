@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Miqat</title>
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Miqat">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-192.png">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri+Quran&display=swap">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<!-- ============ ZEITEN ============ -->
+<main class="view" id="v-times">
+  <header class="top">
+    <button class="pill" id="locBtn">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3 3 10.5l7.5 3L13.5 21z"/></svg>
+      <span id="locName">Bremen</span>
+    </button>
+    <span class="hijri" id="hijri"></span>
+  </header>
+
+  <section class="hero">
+    <p class="eyebrow" id="heroLabel">Jetzt</p>
+    <h1 id="curName">–</h1>
+    <p class="next" id="nextLine">&nbsp;</p>
+    <div class="progress" id="progress"><i id="progressFill"></i></div>
+  </section>
+
+  <section class="card times" id="times" aria-label="Gebetszeiten"></section>
+
+  <nav class="daynav">
+    <button class="icon-btn" id="prevDay" aria-label="Vorheriger Tag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <button class="daylabel" id="dayLabel">Heute</button>
+    <button class="icon-btn" id="nextDay" aria-label="Nächster Tag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+  </nav>
+  <section class="card hadith clamp" id="hadith" aria-label="Hadith des Tages">
+    <div class="hd"><span class="eyebrow">Hadith des Tages</span><small id="hSrc"></small></div>
+    <div class="har" id="hAr" lang="ar"></div>
+    <p class="hen" id="hEn">Wird geladen …</p>
+    <button class="more" id="hMore" hidden>Ganz lesen</button>
+  </section>
+  <p class="foot">Muslimische Weltliga · Asr Standard · Siebtel der Nacht</p>
+</main>
+
+<!-- ============ QIBLA ============ -->
+<main class="view" id="v-qibla" hidden>
+  <header class="top">
+    <h2 class="title">Qibla</h2>
+    <span class="muted small" id="qMeta"></span>
+  </header>
+
+  <div class="dialwrap">
+    <svg class="dial" id="dial" viewBox="0 0 320 320" aria-hidden="true">
+      <g id="rose"></g>
+      <path id="pointer" d="M160 6 l9 15 h-18 z"/>
+    </svg>
+    <div class="dialcenter">
+      <span class="heading" id="heading">131°</span>
+      <span class="hint" id="qHint">Qibla-Richtung</span>
+    </div>
+  </div>
+
+  <button class="primary" id="compassBtn">Kompass starten</button>
+  <p class="note" id="qNote">Halte das iPhone flach vor dir und weg von Metall oder Magneten.</p>
+</main>
+
+<!-- ============ QURAN ============ -->
+<main class="view" id="v-quran" hidden>
+  <div id="q-index">
+    <header class="top">
+      <h2 class="title">Quran</h2>
+      <button class="pill" id="marksBtn">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
+        <span id="marksCount">Markiert</span>
+      </button>
+    </header>
+    <div class="resumes" id="resume" hidden></div>
+    <label class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="search" type="search" placeholder="Sure suchen" autocomplete="off" enterkeyhint="search">
+    </label>
+    <div class="card surahs" id="surahs"><p class="empty">Suren werden geladen …</p></div>
+  </div>
+
+  <div id="q-reader" hidden>
+    <header class="readerbar">
+      <button class="icon-btn" id="backBtn" aria-label="Zurück"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="rtitle"><b id="rName"></b><span id="rSub"></span></div>
+      <button class="icon-btn" id="viewBtn" aria-label="Anzeige">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
+      </button>
+    </header>
+    <div id="verses"></div>
+  </div>
+
+  <div id="q-marks" hidden>
+    <header class="readerbar">
+      <button class="icon-btn" id="marksBack" aria-label="Zurück"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <div class="rtitle"><b>Markierungen</b><span id="marksSub"></span></div>
+      <span class="icon-btn"></span>
+    </header>
+    <div class="card" id="marksList"></div>
+  </div>
+</main>
+
+<!-- ============ TAB BAR ============ -->
+<nav class="tabbar" role="tablist">
+  <button role="tab" data-v="times" aria-selected="true">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Zeiten</button>
+  <button role="tab" data-v="qibla" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Qibla</button>
+  <button role="tab" data-v="quran" aria-selected="false">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 6c-2-1.6-5-2-8-1.6v14c3-.4 6 0 8 1.6 2-1.6 5-2 8-1.6v-14c-3-.4-6 0-8 1.6z"/><path d="M12 6v14"/></svg>Quran</button>
+</nav>
+
+<!-- ============ SHEETS ============ -->
+<div class="scrim" id="scrim"></div>
+
+<section class="sheet" id="locSheet" aria-label="Ort ändern">
+  <div class="grab"></div>
+  <h3>Ort</h3>
+  <button class="primary" id="gpsBtn">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3 3 10.5l7.5 3L13.5 21z"/></svg>
+    Aktuellen Standort verwenden</button>
+  <p class="status" id="gpsStatus">Der Standort wird nur jetzt einmal abgefragt und danach nicht mehr automatisch geändert.</p>
+  <div class="sheetlist" id="cities"></div>
+</section>
+
+<section class="sheet" id="viewSheet" aria-label="Anzeige">
+  <div class="grab"></div>
+  <h3>Anzeige</h3>
+  <div class="toggles">
+    <label class="toggle"><span>Arabisch</span><input type="checkbox" id="t-ar"><i></i></label>
+    <label class="toggle"><span>Transliteration</span><input type="checkbox" id="t-tr"><i></i></label>
+    <label class="toggle"><span>Deutsch · Bubenheim</span><input type="checkbox" id="t-de"><i></i></label>
+    <label class="toggle"><span>Englisch · Saheeh International</span><input type="checkbox" id="t-en"><i></i></label>
+  </div>
+  <div class="sizer">
+    <span>Schriftgröße</span>
+    <div class="seg">
+      <button data-size="-1" aria-label="Kleiner">A−</button>
+      <button data-size="1" aria-label="Größer">A+</button>
+    </div>
+  </div>
+</section>
+
+<section class="sheet" id="verseSheet" aria-label="Vers markieren">
+  <div class="grab"></div>
+  <h3 id="vsTitle">Markieren</h3>
+  <div class="swatches" id="swatches">
+    <button data-c="yellow" aria-label="Gelb"></button>
+    <button data-c="green" aria-label="Grün"></button>
+    <button data-c="blue" aria-label="Blau"></button>
+    <button data-c="pink" aria-label="Rosa"></button>
+    <button data-c="" aria-label="Markierung entfernen" class="none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+  </div>
+</section>
+
+<div class="toast" id="toast" role="status"></div>
+
+<script src="adhan.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
