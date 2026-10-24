@@ -12,7 +12,7 @@
   --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
   --font-quran:"Amiri Quran","KFGQPC Uthmanic Script HAFS","Geeza Pro",serif;
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
-  --ar-size:28px;
+  --ar-size:24px;
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -42,8 +42,8 @@ svg{flex:none}
 /* ---------- Layout ---------- */
 .view{max-width:520px;margin:0 auto;
   padding:10px max(20px,env(safe-area-inset-right,0px)) calc(110px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
-  display:flex;flex-direction:column;gap:22px;animation:in 220ms var(--ease-out)}
-@keyframes in{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  display:flex;flex-direction:column;gap:22px;animation:in 140ms ease}
+@keyframes in{from{opacity:0}to{opacity:1}}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
 .title{margin:0;font-family:var(--font-display);font-size:32px;font-weight:700;letter-spacing:-.03em}
 .meta-r{font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
@@ -65,7 +65,7 @@ svg{flex:none}
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:600}
 .progress{margin-top:16px;height:3px;border-radius:99px;background:var(--raise-3);overflow:hidden}
-.progress i{display:block;height:100%;background:var(--fg);border-radius:99px;transform-origin:left;transform:scaleX(0);transition:transform 600ms var(--ease-out)}
+.progress i{display:block;height:100%;background:var(--fg);border-radius:99px;transform-origin:left;transform:scaleX(0);transition:transform 300ms var(--ease-out)}
 .today{margin-top:16px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 13px 0 11px;border-radius:999px;
   background:rgba(233,196,106,.10);color:var(--gold);font-size:14px;font-weight:500;text-align:left}
 .today svg{width:13px;height:13px}
@@ -93,7 +93,7 @@ svg{flex:none}
 
 .hadith{background:var(--raise);border-radius:18px;padding:16px 16px 12px}
 .hadith .block-h{padding:0}
-.hadith .har{font-family:var(--font-quran);font-size:20px;line-height:1.95;direction:rtl;text-align:right}
+.hadith .har{font-family:var(--font-quran);font-size:17px;line-height:2;direction:rtl;text-align:right}
 .hadith .hen{font-size:15px;line-height:1.6;color:var(--fg-2);margin:0}
 .hadith.clamp .har{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
@@ -105,14 +105,12 @@ svg{flex:none}
 .dialwrap{position:relative;width:min(320px,86vw);aspect-ratio:1;margin:18px auto 4px;max-width:100%}
 .dial{width:100%;height:100%;display:block;overflow:visible}
 #rose{transform-origin:160px 160px}
-#pointer{fill:var(--fg);transition:fill 150ms ease}
-.dial .ring{fill:var(--raise);stroke:var(--line)}
-.dial .tick{stroke:var(--fg-4)} .dial .tick.major{stroke:var(--fg-3)}
-.dial .lbl{fill:var(--fg-3);font:600 14px var(--font)}
-.dial .lbl.n{fill:#ff6b5b}
-.dial .kaaba-line{stroke:var(--accent);stroke-width:1.6;stroke-linecap:round;opacity:.5}
-.dial .kaaba-bg{fill:var(--accent)}
-.dial .kaaba{fill:#000}
+#pointer{fill:var(--fg-3);transition:fill 150ms ease}
+.dial .ring{fill:none;stroke:var(--raise-3);stroke-width:1.5}
+.dial .tick{stroke:var(--fg-4);stroke-width:1.2;stroke-linecap:round} .dial .tick.major{stroke:var(--fg-3);stroke-width:1.6}
+.dial .lbl{fill:var(--fg-2);font:600 13px var(--font)}
+.dial .q-line{stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;opacity:.35}
+.dial .q-dot{fill:var(--accent)}
 .dialcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none}
 .heading{font-family:var(--font-display);font-size:52px;font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
 .hint{font-size:15px;color:var(--fg-2);font-weight:500}
@@ -140,8 +138,8 @@ svg{flex:none}
 .surah .nm{min-width:0}
 .surah .nm b{display:block;font-size:16px;font-weight:600}
 .surah .nm span{display:block;font-size:13px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.surah .rt{display:flex;flex-direction:column;align-items:flex-end}
-.surah .ar{font-family:var(--font-quran);font-size:21px;line-height:1.5}
+.surah .rt{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
+.surah .ar{font-family:var(--font-quran);font-size:17px;line-height:1.35;padding-top:4px}
 .surah .rt small{font-size:12px;color:var(--fg-3)}
 .empty{margin:0;padding:22px;text-align:center;color:var(--fg-3);font-size:14px}
 
@@ -151,7 +149,7 @@ svg{flex:none}
 .rtitle b{font-size:16px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .rtitle span{font-size:12px;color:var(--fg-3)}
 .chapter{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 0 8px;text-align:center}
-.chapter .car{font-family:var(--font-quran);font-size:42px;line-height:1.6}
+.chapter .car{font-family:var(--font-quran);font-size:30px;line-height:1.7}
 .chapter b{font-size:19px;font-weight:600;letter-spacing:-.015em}
 .chapter span{font-size:13px;color:var(--fg-3)}
 .bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * .95);text-align:center;color:var(--fg-2);padding:6px 0 2px;direction:rtl}
@@ -169,7 +167,7 @@ svg{flex:none}
 .verse .acts button:active{background:var(--raise-2)}
 .verse .acts svg{width:19px;height:19px}
 .verse .acts button.on{color:var(--fg)}
-.verse .ar{font-family:var(--font-quran);font-size:var(--ar-size);line-height:2.05;direction:rtl;text-align:right}
+.verse .ar{font-family:var(--font-quran);font-size:var(--ar-size);line-height:2.1;direction:rtl;text-align:right}
 .verse .end{display:inline-grid;place-items:center;min-width:1.9em;height:1.9em;padding:0 .3em;margin-inline-start:.15em;vertical-align:middle;
   border:1px solid var(--fg-4);border-radius:999px;font-family:var(--font);font-size:max(13px,calc(var(--ar-size) * .48));line-height:1;color:var(--fg-2)}
 .verse .tr{font-size:15px;color:var(--fg-2);font-style:italic;line-height:1.55}
@@ -191,24 +189,24 @@ svg{flex:none}
   display:flex;padding:4px;border-radius:999px}
 .tabbar button{position:relative;z-index:1;width:88px;height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
   border-radius:999px;font-size:10.5px;font-weight:600;color:var(--fg-2);letter-spacing:.01em}
-.tabbar button:active{transform:scale(.94)}
+.tabbar button:active{transform:scale(.96)}
 .tabbar svg{width:25px;height:25px}
 .tabbar .f{display:none}
 .tabbar button[aria-selected="true"]{color:var(--fg)}
 .tabbar button[aria-selected="true"] .o{display:none}
 .tabbar button[aria-selected="true"] .f{display:block}
 .tab-ind{position:absolute;top:4px;left:4px;width:88px;height:56px;border-radius:999px;background:rgba(255,255,255,.11);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);transition:transform 340ms var(--ease-drawer)}
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.08);transition:transform 240ms var(--ease-out)}
 
 /* ---------- Sheets ---------- */
-.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity 240ms ease}
+.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity 200ms ease}
 .scrim.open{opacity:1;pointer-events:auto}
 .sheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;max-height:82vh;
   display:flex;flex-direction:column;gap:14px;background:rgba(22,22,25,.88);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);
   border:.5px solid var(--glass-edge);border-radius:30px;box-shadow:inset 0 1px 0 var(--glass-hi),0 20px 60px rgba(0,0,0,.6);
   padding:8px 20px 20px;transform:translateY(calc(100% + 40px));visibility:hidden;
-  transition:transform 380ms var(--ease-drawer),visibility 0s linear 380ms}
-.sheet.open{transform:none;visibility:visible;transition:transform 380ms var(--ease-drawer),visibility 0s}
+  transition:transform 240ms var(--ease-out),visibility 0s linear 240ms}
+.sheet.open{transform:none;visibility:visible;transition:transform 340ms var(--ease-drawer),visibility 0s}
 .grab{width:36px;height:5px;border-radius:9px;background:rgba(255,255,255,.18);margin:0 auto}
 .sheet h3{margin:0;font-family:var(--font-display);font-size:21px;font-weight:700;letter-spacing:-.02em}
 .sheet .list{background:rgba(255,255,255,.04)}
@@ -225,7 +223,10 @@ svg{flex:none}
 .radios,.rows{display:flex;flex-direction:column;background:rgba(255,255,255,.05);border-radius:16px;padding:2px}
 .radio,.rowbtn{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;font-size:16px;text-align:left;border-radius:14px;cursor:pointer}
 .radio:not(:last-child)::after,.rowbtn:not(:last-child)::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;background:var(--line)}
-.radio:active,.rowbtn:active{transform:none;background:rgba(255,255,255,.05)}
+.radio:active,.rowbtn:active{transform:scale(.99);background:rgba(255,255,255,.06)}
+.rowbtn{transition:transform 160ms var(--ease-out),background-color 160ms ease}
+.toggle:active i{transform:scale(.96)}
+.toggle i{transition:background-color 200ms ease,transform 160ms var(--ease-out)}
 .radio small{display:block;font-size:12px;color:var(--fg-3)}
 .radio .chk{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--fg-4);flex:none;display:grid;place-items:center}
 .radio.on .chk{border-color:var(--accent);background:var(--accent)}
@@ -259,8 +260,8 @@ svg{flex:none}
 .toast{position:fixed;left:50%;bottom:calc(86px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
   background:rgba(40,40,44,.82);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:.5px solid var(--glass-edge);
   color:var(--fg);font-size:14px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;
-  transition:opacity 180ms ease,transform 240ms var(--ease-out)}
-.toast.show{opacity:1;transform:translate(-50%,0) scale(1)}
+  transition:opacity 150ms ease,transform 150ms var(--ease-out)}
+.toast.show{opacity:1;transform:translate(-50%,0) scale(1);transition:opacity 200ms ease,transform 240ms var(--ease-out)}
 
 @media (prefers-reduced-motion:reduce){
   .view{animation:none}

@@ -9,7 +9,8 @@ const store={
   set(k,v){try{localStorage.setItem("miqat."+k,JSON.stringify(v))}catch(e){}}
 };
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
-let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:28},store.get("prefs",{}));
+let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:24},store.get("prefs",{}));
+if(!prefs.v2){prefs.size=24;prefs.v2=1;store.set("prefs",prefs)}
 let settings=Object.assign({method:"MuslimWorldLeague",asr:"standard",hijri:0},store.get("settings",{}));
 let marks=store.get("marks",{});          // "2:255" -> {c:"yellow", t:"Snippet"}
 let resume=store.get("resume",null);       // zuletzt gelesen {s,a}
@@ -279,22 +280,21 @@ let qInit=false,qTarget=0,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAli
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
 function distKm(){const a=loc.lat*R,b=MECCA.lat*R,dl=(MECCA.lon-loc.lon)*R;return 6371*Math.acos(Math.min(1,Math.sin(a)*Math.sin(b)+Math.cos(a)*Math.cos(b)*Math.cos(dl)))}
 function buildRose(){
-  const c=160;let s=`<circle class="ring" cx="${c}" cy="${c}" r="150"/>`;
-  for(let d=0;d<360;d+=5){const major=d%30===0,a=(d-90)*R,r1=major?132:139,r2=146;
-    s+=`<line class="tick${major?" major":""}" stroke-width="${major?1.6:1}" stroke-linecap="round" x1="${(c+Math.cos(a)*r1).toFixed(1)}" y1="${(c+Math.sin(a)*r1).toFixed(1)}" x2="${(c+Math.cos(a)*r2).toFixed(1)}" y2="${(c+Math.sin(a)*r2).toFixed(1)}"/>`}
-  [["N",0],["O",90],["S",180],["W",270]].forEach(([t,d])=>{const a=(d-90)*R;
-    s+=`<text class="lbl${t==="N"?" n":""}" text-anchor="middle" dominant-baseline="central" x="${(c+Math.cos(a)*116).toFixed(1)}" y="${(c+Math.sin(a)*116).toFixed(1)}" transform="rotate(${d} ${(c+Math.cos(a)*116).toFixed(1)} ${(c+Math.sin(a)*116).toFixed(1)})">${t}</text>`});
-  const a=(qTarget-90)*R,kx=c+Math.cos(a)*120,ky=c+Math.sin(a)*120;
-  s+=`<line class="kaaba-line" x1="${(c+Math.cos(a)*76).toFixed(1)}" y1="${(c+Math.sin(a)*76).toFixed(1)}" x2="${(c+Math.cos(a)*104).toFixed(1)}" y2="${(c+Math.sin(a)*104).toFixed(1)}"/>
-   <g transform="translate(${kx.toFixed(1)} ${ky.toFixed(1)}) rotate(${qTarget})"><circle class="kaaba-bg" r="15"/>
-   <path class="kaaba" d="M-7 -4.5 0 -7.5 7 -4.5 7 5 0 8 -7 5Z"/><path d="M-7 -1 0 2 7 -1" fill="none" stroke="var(--accent)" stroke-width="1.4"/></g>`;
+  // minimal: dünner Ring, wenige Striche, nur N, grüner Punkt für die Qibla
+  const c=160,r=148,pt=(deg,rad)=>{const a=(deg-90)*R;return[(c+Math.cos(a)*rad).toFixed(1),(c+Math.sin(a)*rad).toFixed(1)]};
+  let s=`<circle class="ring" cx="${c}" cy="${c}" r="${r}"/>`;
+  for(let d=0;d<360;d+=10){if(d===0)continue;const major=d%90===0,[x1,y1]=pt(d,r-(major?12:7)),[x2,y2]=pt(d,r-2);
+    s+=`<line class="tick${major?" major":""}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`}
+  const [nx,ny]=pt(0,r-16);s+=`<text class="lbl n" text-anchor="middle" dominant-baseline="central" x="${nx}" y="${ny}">N</text>`;
+  const [l1x,l1y]=pt(qTarget,62),[l2x,l2y]=pt(qTarget,r-22),[dx,dy]=pt(qTarget,r);
+  s+=`<line class="q-line" x1="${l1x}" y1="${l1y}" x2="${l2x}" y2="${l2y}"/><circle class="q-dot" cx="${dx}" cy="${dy}" r="7"/>`;
   $("rose").innerHTML=s;
 }
 function updateQiblaTarget(){
   qTarget=adhan.Qibla(new adhan.Coordinates(loc.lat,loc.lon));
-  $("qMeta").textContent=`${Math.round(qTarget)}° ${compassName(qTarget)} · ${Math.round(distKm()).toLocaleString("de-DE")} km`;
+  $("qMeta").textContent=`${compassName(qTarget)} · ${Math.round(distKm()).toLocaleString("de-DE")} km`;
   buildRose();
-  if(!listening){$("heading").textContent=Math.round(qTarget)+"°";$("qHint").textContent="Qibla-Richtung";$("rose").style.transform="rotate(0deg)";}
+  if(!listening){$("heading").textContent=Math.round(qTarget)+"°";$("qHint").textContent="";$("rose").style.transform="rotate(0deg)";}
 }
 function initQibla(){if(!qInit){qInit=true;updateQiblaTarget()}}
 function onOrient(e){
@@ -339,7 +339,7 @@ $("compassBtn").addEventListener("click",async()=>{
     window.addEventListener("deviceorientation",onOrient);
   }
   btn.hidden=true;$("qHint").textContent="Kompass wird gestartet …";
-  setTimeout(()=>{if(!lastEvt){btn.hidden=false;$("qHint").textContent="Qibla-Richtung";
+  setTimeout(()=>{if(!lastEvt){btn.hidden=false;$("qHint").textContent="";
     $("qNote").textContent="Kein Kompass gefunden. Auf dem iPhone funktioniert er in Safari oder als App auf dem Homescreen.";}},2500);
 });
 
@@ -496,7 +496,7 @@ $("viewBtn").addEventListener("click",()=>openSheet("viewSheet"));
 ["ar","tr","de","en"].forEach(k=>$("t-"+k).addEventListener("change",e=>{prefs[k]=e.target.checked;
   if(!prefs.ar&&!prefs.tr&&!prefs.de&&!prefs.en){prefs.ar=true}store.set("prefs",prefs);applyPrefs()}));
 document.querySelectorAll("[data-size]").forEach(b=>b.addEventListener("click",()=>{
-  prefs.size=Math.max(20,Math.min(44,prefs.size+4*(+b.dataset.size)));store.set("prefs",prefs);applyPrefs()}));
+  prefs.size=Math.max(18,Math.min(36,prefs.size+2*(+b.dataset.size)));store.set("prefs",prefs);applyPrefs()}));
 
 // Markierungen
 function updateMarksCount(){const n=Object.keys(marks).length;$("marksCount").textContent=n?`${n} markiert`:"Markiert"}
