@@ -10,22 +10,28 @@ const store={
 };
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
 let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:28},store.get("prefs",{}));
+let settings=Object.assign({method:"MuslimWorldLeague",asr:"standard",hijri:0},store.get("settings",{}));
 let marks=store.get("marks",{});          // "2:255" -> {c:"yellow", t:"Snippet"}
 let resume=store.get("resume",null);       // zuletzt gelesen {s,a}
 let bookmark=store.get("bookmark",null);   // Lesezeichen {s,a}
+const standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+// Dauerhaften Speicher anfragen (Safari gewährt ihn vor allem der Homescreen-App)
+try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
 
 /* ================= Toast ================= */
 let toastT;
-function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1600)}
+function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1700)}
 
 /* ================= Tabs ================= */
-let view="times";const scrollMem={};
+let view="times";const scrollMem={};const TABS=["times","qibla","quran"];
+function moveInd(){$("tabInd").style.transform=`translateX(${TABS.indexOf(view)*88}px)`}
 function setView(v){
   if(v===view)return;
   scrollMem[view]=window.scrollY;
   view=v;
-  ["times","qibla","quran"].forEach(n=>{$("v-"+n).hidden=n!==v});
+  TABS.forEach(n=>{$("v-"+n).hidden=n!==v});
   document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
+  moveInd();
   window.scrollTo(0,scrollMem[v]||0);
   if(v==="qibla")initQibla();
   if(v==="quran")initQuran();
@@ -36,7 +42,7 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.addEventListener("click
 /* ================= Sheets ================= */
 let openSheetEl=null;
 function openSheet(id){closeSheet(true);openSheetEl=$(id);$("scrim").classList.add("open");openSheetEl.classList.add("open")}
-function closeSheet(instant){if(!openSheetEl)return;openSheetEl.classList.remove("open");if(!instant)$("scrim").classList.remove("open");openSheetEl=null;if(instant)$("scrim").classList.remove("open")}
+function closeSheet(instant){if(!openSheetEl)return;openSheetEl.classList.remove("open");$("scrim").classList.remove("open");openSheetEl=null}
 $("scrim").addEventListener("click",()=>closeSheet());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 document.querySelectorAll(".sheet").forEach(s=>{
@@ -49,16 +55,31 @@ document.querySelectorAll(".sheet").forEach(s=>{
     if(dy>100||dy/(Date.now()-t0)>0.5)closeSheet();y0=null});
 });
 
+/* ================= Hijri ================= */
+const HMONTH=["Muharram","Safar","Rabi al-Awwal","Rabi al-Thani","Jumada al-Ula","Jumada al-Akhira","Rajab","Shaban","Ramadan","Shawwal","Dhul-Qada","Dhul-Hijja"];
+const HF=(()=>{try{return new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn",{day:"numeric",month:"numeric",year:"numeric"})}catch(e){return null}})();
+function hParts(date){
+  if(!HF)return null;
+  const d=new Date(date.getFullYear(),date.getMonth(),date.getDate()+settings.hijri,12);
+  const p={};HF.formatToParts(d).forEach(x=>{if(x.type==="day"||x.type==="month"||x.type==="year")p[x.type]=parseInt(x.value,10)});
+  return p.day?{d:p.day,m:p.month,y:p.year}:null;
+}
+function hijriText(date){const h=hParts(date);return h?`${h.d}. ${HMONTH[h.m-1]} ${h.y}`:""}
+
 /* ================= Gebetszeiten ================= */
 const PRAYERS=[["fajr","Fajr"],["sunrise","Shuruq"],["dhuhr","Dhuhr"],["asr","Asr"],["maghrib","Maghrib"],["isha","Isha"]];
 const LABEL=Object.fromEntries(PRAYERS);
+const METHODS=[["MuslimWorldLeague","Muslimische Weltliga","Standard, wie Athan Utility"],["Turkey","Diyanet","Türkische Religionsbehörde"],["MoonsightingCommittee","Moonsighting Committee","Verbreitet in Europa"],["UmmAlQura","Umm al-Qura","Mekka"],["Egyptian","Ägypten","Egyptian General Authority"]];
 let dayOffset=0;
-function params(){const p=adhan.CalculationMethod.MuslimWorldLeague();p.madhab=adhan.Madhab.Shafi;p.highLatitudeRule=adhan.HighLatitudeRule.SeventhOfTheNight;return p}
+function params(){
+  const fn=adhan.CalculationMethod[settings.method]||adhan.CalculationMethod.MuslimWorldLeague;const p=fn();
+  p.madhab=settings.asr==="hanafi"?adhan.Madhab.Hanafi:adhan.Madhab.Shafi;
+  p.highLatitudeRule=adhan.HighLatitudeRule.SeventhOfTheNight;return p;
+}
 function dayStart(o){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+o);return d}
 function times(day){return new adhan.PrayerTimes(new adhan.Coordinates(loc.lat,loc.lon),day,params())}
 const fT=d=>d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
 function fLeft(ms){const m=Math.max(0,Math.ceil(ms/6e4)),h=Math.floor(m/60),r=m%60;return h?`${h} Std. ${r} Min.`:`${r} Min.`}
-function hijri(d){try{return new Intl.DateTimeFormat("de-DE-u-ca-islamic-umalqura",{day:"numeric",month:"long",year:"numeric"}).format(d)}catch(e){return""}}
 function state(now){
   const t=times(dayStart(0));let cur=null,next=null;
   for(let i=PRAYERS.length-1;i>=0;i--){const k=PRAYERS[i][0];if(now>=t[k]){cur={k,t:t[k],today:true};
@@ -69,7 +90,6 @@ function state(now){
 function renderTimes(){
   const now=new Date(),day=dayStart(dayOffset),t=times(day),live=dayOffset===0,{cur,next}=state(now);
   $("locName").textContent=loc.name;
-  $("hijri").textContent=hijri(live?now:day);
   if(live){
     $("heroLabel").textContent="Jetzt";
     $("curName").textContent=LABEL[cur.k];
@@ -92,10 +112,137 @@ function renderTimes(){
   const dl=$("dayLabel");
   dl.textContent=live?"Heute":day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
   dl.classList.toggle("off",!live);
+  $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  $("hijriDate").textContent=hijriText(day);
+  renderDays();
 }
 $("prevDay").addEventListener("click",()=>{dayOffset--;renderTimes()});
 $("nextDay").addEventListener("click",()=>{dayOffset++;renderTimes()});
 $("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
+
+/* ================= Islamische Tage ================= */
+// kind: fest = Festtag, sunnah = empfohlenes Fasten/Ibada, zeit = besondere Zeit
+function dayRules(h){
+  const out=[];const {d,m}=h;
+  if(m!==9&&(d===13||d===14||d===15)&&!(m===12&&d===13))out.push({k:"bid",title:"Weiße Tage",note:"Sunnah-Fasten am 13., 14. und 15.",kind:"sunnah"});
+  if(m===1&&d===1)out.push({k:"newyear",title:"Islamisches Neujahr",note:`1. Muharram ${h.y}`,kind:"zeit"});
+  if(m===1&&(d===9||d===10))out.push({k:"ashura",title:"Tasu'a & Ashura",note:"Fasten am 9. und 10. Muharram",kind:"sunnah"});
+  if(m===9&&d===1)out.push({k:"ramadan",title:"Ramadan beginnt",note:"Erstes Tarawih am Vorabend",kind:"fest"});
+  if(m===9&&d===21)out.push({k:"last10",title:"Letzte zehn Nächte",note:"Laylat al-Qadr in den ungeraden Nächten suchen",kind:"zeit"});
+  if(m===10&&d===1)out.push({k:"fitr",title:"Eid al-Fitr",note:"Zakat al-Fitr vor dem Festgebet",kind:"fest"});
+  if(m===10&&d===2)out.push({k:"shawwal",title:"Sechs Tage Shawwal",note:"Sechs Fastentage im Shawwal",kind:"sunnah"});
+  if(m===12&&d===1)out.push({k:"dhul10",title:"Erste zehn Tage Dhul-Hijja",note:"Die besten Tage des Jahres",kind:"zeit"});
+  if(m===12&&d===9)out.push({k:"arafah",title:"Tag von Arafah",note:"Fasten für Nicht-Pilger empfohlen",kind:"sunnah"});
+  if(m===12&&d===10)out.push({k:"adha",title:"Eid al-Adha",note:"Opferfest",kind:"fest"});
+  if(m===12&&d>=11&&d<=13)out.push({k:"tashriq",title:"Tage von Tashriq",note:"An diesen Tagen wird nicht gefastet",kind:"zeit"});
+  return out;
+}
+let evCache=null;
+function events(){
+  const key=`${dayStart(0).toDateString()}|${settings.hijri}`;
+  if(evCache&&evCache.key===key)return evCache.list;
+  const list=[];const open={};
+  for(let i=-3;i<=385;i++){
+    const d=dayStart(i),h=hParts(d);if(!h)break;
+    const found=dayRules(h);const ks=new Set(found.map(f=>f.k));
+    found.forEach(f=>{
+      if(open[f.k]){open[f.k].end=d}
+      else{const e=Object.assign({start:d,end:d,h},f);open[f.k]=e;list.push(e)}
+    });
+    Object.keys(open).forEach(k=>{if(!ks.has(k))delete open[k]});
+  }
+  const today=dayStart(0);
+  const lim=dayStart(366);
+  const res=list.filter(e=>e.end>=today&&e.start<=lim);
+  evCache={key,list:res};return res;
+}
+const fD=d=>d.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
+function fRange(e){
+  if(+e.start===+e.end)return fD(e.start);
+  const same=e.start.getMonth()===e.end.getMonth();
+  return same?`${e.start.getDate()}.–${e.end.toLocaleDateString("de-DE",{day:"numeric",month:"short"})}`:`${e.start.toLocaleDateString("de-DE",{day:"numeric",month:"short"})} – ${e.end.toLocaleDateString("de-DE",{day:"numeric",month:"short"})}`;
+}
+function fWhen(e){
+  const today=dayStart(0);
+  if(e.start<=today&&e.end>=today)return"heute";
+  const n=Math.round((e.start-today)/864e5);
+  if(n===1)return"morgen";
+  if(n<7)return`in ${n} Tagen`;
+  if(n<60)return`in ${Math.round(n/7)} Wo.`;
+  return`in ${Math.round(n/30.4)} Mon.`;
+}
+function evRow(e){
+  const w=fWhen(e);
+  return `<div class="item"><span class="ev"><b><i class="${e.kind}"></i>${e.title}</b><span>${fRange(e)} · ${e.note}</span></span><span class="when${w==="heute"||w==="morgen"?" soon":""}">${w}</span></div>`;
+}
+function renderDays(){
+  const list=events(),today=dayStart(0);
+  // Hinweis „heute/morgen“ unter dem Countdown
+  const now=list.find(e=>e.start<=today&&e.end>=today);
+  const tom=list.find(e=>Math.round((e.start-today)/864e5)===1);
+  const chip=$("todayChip");
+  if(dayOffset===0&&(now||tom)){
+    const e=now||tom,h=hParts(today);
+    let txt=now?(e.k==="bid"?`Heute weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:`Heute: ${e.title}`):`Morgen: ${e.title}`;
+    chip.innerHTML=`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`;chip.hidden=false;
+  }else chip.hidden=true;
+  const fut=list.filter(e=>e.start>today);
+  const bid=fut.find(e=>e.k==="bid"),big=fut.filter(e=>e.k!=="bid").slice(0,bid?2:3);
+  const up=(bid?[bid,...big]:big).sort((x,y)=>x.start-y.start);
+  $("upcoming").innerHTML=up.length?up.map(evRow).join(""):`<p class="empty">Keine Termine gefunden.</p>`;
+}
+function openDays(){
+  $("daysList").innerHTML=events().map(evRow).join("");openSheet("daysSheet");
+}
+$("allDays").addEventListener("click",openDays);
+$("upcoming").addEventListener("click",openDays);
+$("todayChip").addEventListener("click",openDays);
+$("icsBtn").addEventListener("click",()=>{
+  const pad=n=>String(n).padStart(2,"0"),ymd=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Miqat//Islamische Tage//DE","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Islamische Tage"];
+  events().forEach(e=>{const end=new Date(e.end);end.setDate(end.getDate()+1);
+    lines.push("BEGIN:VEVENT",`UID:${e.k}-${e.h.y}-${e.h.m}@miqat`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${ymd(e.start)}`,`DTEND;VALUE=DATE:${ymd(end)}`,
+      `SUMMARY:${e.title}`,`DESCRIPTION:${e.note}`,"TRANSP:TRANSPARENT",
+      "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${e.title}`,"TRIGGER:-PT6H","END:VALARM","END:VEVENT")});
+  lines.push("END:VCALENDAR");
+  const blob=new Blob([lines.join("\r\n")],{type:"text/calendar"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="islamische-tage.ics";document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  toast("Kalenderdatei erstellt");
+});
+
+/* ================= Einstellungen ================= */
+function renderSettings(){
+  $("methods").innerHTML=METHODS.map(([k,n,s])=>`<button class="radio${settings.method===k?" on":""}" data-m="${k}"><span>${n}<small>${s}</small></span><span class="chk"></span></button>`).join("");
+  document.querySelectorAll("#asrSeg button").forEach(b=>b.classList.toggle("on",b.dataset.asr===settings.asr));
+  const o=settings.hijri;$("hijriVal").textContent=o===0?"Umm al-Qura":`${o>0?"+":"−"}${Math.abs(o)} Tag`;
+  $("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
+}
+function saveSettings(){store.set("settings",settings);evCache=null;renderSettings();renderTimes();if(qInit)updateQiblaTarget()}
+$("setBtn").addEventListener("click",()=>{renderSettings();openSheet("setSheet")});
+$("methods").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;settings.method=b.dataset.m;saveSettings()});
+$("asrSeg").addEventListener("click",e=>{const b=e.target.closest("[data-asr]");if(!b)return;settings.asr=b.dataset.asr;saveSettings()});
+$("hijriMinus").addEventListener("click",()=>{settings.hijri=Math.max(-2,settings.hijri-1);saveSettings()});
+$("hijriPlus").addEventListener("click",()=>{settings.hijri=Math.min(2,settings.hijri+1);saveSettings()});
+$("backupBtn").addEventListener("click",async()=>{
+  const data=JSON.stringify({app:"miqat",v:1,date:new Date().toISOString(),marks,bookmark,resume,prefs,settings,loc},null,1);
+  const name=`miqat-sicherung-${new Date().toISOString().slice(0,10)}.json`;
+  const file=new File([data],name,{type:"application/json"});
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Miqat-Sicherung"});return}}catch(e){if(e&&e.name==="AbortError")return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast("Sicherung gespeichert");
+});
+$("restoreIn").addEventListener("change",async e=>{
+  const f=e.target.files&&e.target.files[0];if(!f)return;
+  try{const j=JSON.parse(await f.text());if(j.app!=="miqat")throw 0;
+    marks=Object.assign({},marks,j.marks||{});store.set("marks",marks);
+    if(j.bookmark){bookmark=j.bookmark;store.set("bookmark",bookmark)}
+    if(j.resume){resume=j.resume;store.set("resume",resume)}
+    updateMarksCount();toast(`${Object.keys(j.marks||{}).length} Markierungen geladen`);
+  }catch(err){toast("Diese Datei ist keine Miqat-Sicherung")}
+  e.target.value="";
+});
 
 /* ================= Ort ================= */
 const CITIES=[["Bremen",53.07,8.85],["Bremerhaven",53.5396,8.5809],["Oldenburg",53.1435,8.2146],["Hamburg",53.5511,9.9937],
@@ -241,17 +388,17 @@ async function loadSurah(n){
   return cache[n]={n,name:ar.englishName,meaning:ar.englishNameTranslation,arName:ar.name,rev:ar.revelationType,verses};
 }
 const ICON={
-  hl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11-5 5v3h3l5-5"/><path d="m14 6 4 4"/><path d="M9 11 16 4l4 4-7 7z"/></svg>',
-  bm:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',
-  bmOn:'<svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg>',
-  cp:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>'
+  hl:'<svg><use href="#i-hl"/></svg>',
+  bm:'<svg><use href="#i-bm"/></svg>',
+  bmOn:'<svg><use href="#i-bm-f"/></svg>',
+  cp:'<svg><use href="#i-copy"/></svg>'
 };
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function verseHTML(n,v){
   const k=`${n}:${v.a}`,m=marks[k],isBm=bookmark&&bookmark.s===n&&bookmark.a===v.a;
   return `<article class="verse${m?" hl-"+m.c:""}" id="v${v.a}" data-a="${v.a}">
     <div class="meta"><span class="num">${k}</span><span class="acts">
-      <button data-act="hl" aria-label="Markieren" class="${m?"on":""}">${ICON.hl}</button>
+      <button data-act="hl" aria-label="Markieren" class="${m?"on":""}"${m?` style="color:var(--sw-${m.c})"`:""}>${ICON.hl}</button>
       <button data-act="bm" aria-label="Lesezeichen" class="${isBm?"on":""}">${isBm?ICON.bmOn:ICON.bm}</button>
       <button data-act="cp" aria-label="Kopieren">${ICON.cp}</button></span></div>
     <div class="ar" lang="ar">${esc(v.ar)} <span class="end">${arNum(v.a)}</span></div>
@@ -365,6 +512,7 @@ $("marksList").addEventListener("click",e=>{const b=e.target.closest(".mark");if
 $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo(0,0)});
 
 /* ================= Start ================= */
+moveInd();
 renderTimes();
 loadHadith();
 setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);

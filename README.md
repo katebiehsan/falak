@@ -6,3 +6,6 @@ Gebetszeiten (Muslimische Weltliga, Asr Standard, Siebtel der Nacht), Qibla-Komp
 - Quran-Texte: [alquran.cloud](https://alquran.cloud) API
 - Hadith des Tages: [hadith-api](https://github.com/fawazahmed0/hadith-api) (Sahih al-Bukhari, Sahih Muslim, 40 Hadith an-Nawawi)
 - Markierungen und Einstellungen bleiben lokal auf dem Gerät.
+
+- Islamische Tage (Weiße Tage, Ramadan, Arafah, Eid …) nach Umm al-Qura mit einstellbarer Hijri-Anpassung, Export als Kalenderdatei
+- App-Icon: Mim in Aref Ruqaa (SIL Open Font License)

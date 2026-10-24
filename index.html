@@ -20,14 +20,36 @@
 </head>
 <body>
 
+<!-- Icon-Bibliothek: je Symbol eine Kontur- und eine gefüllte Variante -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <mask id="mk-clock"><rect width="24" height="24" fill="#fff"/><path d="M12 7.2V12l3.1 2" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></mask>
+    <mask id="mk-kaaba"><rect width="24" height="24" fill="#fff"/><path d="M3.8 7.2 12 11l8.2-3.8M12 11v10.2M3.8 10.4 12 14.2l8.2-3.8" fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></mask>
+  </defs>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.2V12l3.1 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-clock-f" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4" fill="currentColor" mask="url(#mk-clock)"/></symbol>
+  <symbol id="i-kaaba" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3.2 20.2 7v10L12 20.8 3.8 17V7z"/><path d="M3.8 7 12 10.8 20.2 7M12 10.8v10M3.8 10.3 12 14.1l8.2-3.8"/></g></symbol>
+  <symbol id="i-kaaba-f" viewBox="0 0 24 24"><path d="M12 2.4 21 6.6v10.8L12 21.6 3 17.4V6.6z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" mask="url(#mk-kaaba)"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 6.6C10 5.1 7 4.6 3.4 5.1v13.4c3.6-.5 6.6 0 8.6 1.5 2-1.5 5-2 8.6-1.5V5.1C17 4.6 14 5.1 12 6.6z"/><path d="M12 6.6V20"/></g></symbol>
+  <symbol id="i-book-f" viewBox="0 0 24 24"><g fill="currentColor"><path d="M11.1 6.1C9.1 4.7 6.2 4.2 2.7 4.6v14.6c3.5-.5 6.3 0 8.4 1.4z"/><path d="M12.9 6.1c2-1.4 4.9-1.9 8.4-1.5v14.6c-3.5-.5-6.3 0-8.4 1.4z"/></g></symbol>
+  <symbol id="i-loc" viewBox="0 0 24 24"><path d="M20.3 3.7c.4-.2.8.2.6.6l-7 16c-.3.6-1.1.5-1.3-.1l-1.7-6.4a.8.8 0 0 0-.6-.6L3.9 11.5c-.6-.2-.7-1-.1-1.3z" fill="currentColor"/></symbol>
+  <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></g></symbol>
+  <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></g></symbol>
+  <symbol id="i-bm" viewBox="0 0 24 24"><path d="M7.2 3.8h9.6c.6 0 1 .4 1 1v15.4L12 16.4l-5.8 3.8V4.8c0-.6.4-1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-bm-f" viewBox="0 0 24 24"><path d="M7.2 3.8h9.6c.6 0 1 .4 1 1v15.4L12 16.4l-5.8 3.8V4.8c0-.6.4-1 1-1z" fill="currentColor" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
+  <symbol id="i-hl" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14.8 4.6 4.6 4.6-8.6 8.6H6.2v-4.6z"/><path d="m12.4 7 4.6 4.6"/><path d="M4 21h8"/></g></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.6"/><path d="M15.5 8.5V6.6A2.6 2.6 0 0 0 12.9 4H6.6A2.6 2.6 0 0 0 4 6.6v6.3a2.6 2.6 0 0 0 2.6 2.6h1.9"/></g></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.8" y="5" width="16.4" height="15.2" rx="3"/><path d="M3.8 9.8h16.4M8.2 3v3.6M15.8 3v3.6"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M15.6 3.6a8.6 8.6 0 1 0 4.8 13.5A7 7 0 0 1 15.6 3.6z" fill="currentColor"/></symbol>
+</svg>
+
 <!-- ============ ZEITEN ============ -->
 <main class="view" id="v-times">
   <header class="top">
-    <button class="pill" id="locBtn">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3 3 10.5l7.5 3L13.5 21z"/></svg>
-      <span id="locName">Bremen</span>
-    </button>
-    <span class="hijri" id="hijri"></span>
+    <button class="glass pill" id="locBtn"><svg class="ic12"><use href="#i-loc"/></svg><span id="locName">Bremen</span></button>
+    <button class="glass round" id="setBtn" aria-label="Einstellungen"><svg class="ic18"><use href="#i-sliders"/></svg></button>
   </header>
 
   <section class="hero">
@@ -35,42 +57,51 @@
     <h1 id="curName">–</h1>
     <p class="next" id="nextLine">&nbsp;</p>
     <div class="progress" id="progress"><i id="progressFill"></i></div>
+    <button class="today" id="todayChip" hidden></button>
   </section>
 
-  <section class="card times" id="times" aria-label="Gebetszeiten"></section>
+  <section class="list times" id="times" aria-label="Gebetszeiten"></section>
 
   <nav class="daynav">
-    <button class="icon-btn" id="prevDay" aria-label="Vorheriger Tag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+    <button class="icon-btn" id="prevDay" aria-label="Vorheriger Tag"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
     <button class="daylabel" id="dayLabel">Heute</button>
-    <button class="icon-btn" id="nextDay" aria-label="Nächster Tag"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg></button>
+    <button class="icon-btn" id="nextDay" aria-label="Nächster Tag"><svg class="ic18"><use href="#i-chev-r"/></svg></button>
   </nav>
-  <section class="card hadith clamp" id="hadith" aria-label="Hadith des Tages">
-    <div class="hd"><span class="eyebrow">Hadith des Tages</span><small id="hSrc"></small></div>
+
+  <section class="block" aria-label="Demnächst">
+    <div class="block-h"><span class="label">Demnächst</span><button class="link" id="allDays">Alle</button></div>
+    <div class="list upcoming" id="upcoming"></div>
+  </section>
+
+  <section class="block hadith clamp" id="hadith" aria-label="Hadith des Tages">
+    <div class="block-h"><span class="label">Hadith des Tages</span><small id="hSrc"></small></div>
     <div class="har" id="hAr" lang="ar"></div>
     <p class="hen" id="hEn">Wird geladen …</p>
-    <button class="more" id="hMore" hidden>Ganz lesen</button>
+    <button class="link more" id="hMore" hidden>Ganz lesen</button>
   </section>
-  <p class="foot">Muslimische Weltliga · Asr Standard · Siebtel der Nacht</p>
+
+  <footer class="dates">
+    <span id="gregDate"></span>
+    <span id="hijriDate"></span>
+  </footer>
 </main>
 
 <!-- ============ QIBLA ============ -->
 <main class="view" id="v-qibla" hidden>
   <header class="top">
     <h2 class="title">Qibla</h2>
-    <span class="muted small" id="qMeta"></span>
+    <span class="meta-r" id="qMeta"></span>
   </header>
-
   <div class="dialwrap">
     <svg class="dial" id="dial" viewBox="0 0 320 320" aria-hidden="true">
       <g id="rose"></g>
-      <path id="pointer" d="M160 6 l9 15 h-18 z"/>
+      <path id="pointer" d="M160 4 l8 13 h-16 z"/>
     </svg>
     <div class="dialcenter">
       <span class="heading" id="heading">131°</span>
       <span class="hint" id="qHint">Qibla-Richtung</span>
     </div>
   </div>
-
   <button class="primary" id="compassBtn">Kompass starten</button>
   <p class="note" id="qNote">Halte das iPhone flach vor dir und weg von Metall oder Magneten.</p>
 </main>
@@ -80,48 +111,41 @@
   <div id="q-index">
     <header class="top">
       <h2 class="title">Quran</h2>
-      <button class="pill" id="marksBtn">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4z"/></svg>
-        <span id="marksCount">Markiert</span>
-      </button>
+      <button class="glass pill" id="marksBtn"><svg class="ic12"><use href="#i-bm-f"/></svg><span id="marksCount">Markiert</span></button>
     </header>
     <div class="resumes" id="resume" hidden></div>
     <label class="search">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <svg class="ic16"><use href="#i-search"/></svg>
       <input id="search" type="search" placeholder="Sure suchen" autocomplete="off" enterkeyhint="search">
     </label>
-    <div class="card surahs" id="surahs"><p class="empty">Suren werden geladen …</p></div>
+    <div class="list surahs" id="surahs"><p class="empty">Suren werden geladen …</p></div>
   </div>
 
   <div id="q-reader" hidden>
     <header class="readerbar">
-      <button class="icon-btn" id="backBtn" aria-label="Zurück"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="glass round" id="backBtn" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
       <div class="rtitle"><b id="rName"></b><span id="rSub"></span></div>
-      <button class="icon-btn" id="viewBtn" aria-label="Anzeige">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>
-      </button>
+      <button class="glass round" id="viewBtn" aria-label="Anzeige"><svg class="ic18"><use href="#i-sliders"/></svg></button>
     </header>
     <div id="verses"></div>
   </div>
 
   <div id="q-marks" hidden>
     <header class="readerbar">
-      <button class="icon-btn" id="marksBack" aria-label="Zurück"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg></button>
+      <button class="glass round" id="marksBack" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
       <div class="rtitle"><b>Markierungen</b><span id="marksSub"></span></div>
-      <span class="icon-btn"></span>
+      <span class="round-spacer"></span>
     </header>
-    <div class="card" id="marksList"></div>
+    <div class="list" id="marksList"></div>
   </div>
 </main>
 
-<!-- ============ TAB BAR ============ -->
-<nav class="tabbar" role="tablist">
-  <button role="tab" data-v="times" aria-selected="true">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Zeiten</button>
-  <button role="tab" data-v="qibla" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Qibla</button>
-  <button role="tab" data-v="quran" aria-selected="false">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M12 6c-2-1.6-5-2-8-1.6v14c3-.4 6 0 8 1.6 2-1.6 5-2 8-1.6v-14c-3-.4-6 0-8 1.6z"/><path d="M12 6v14"/></svg>Quran</button>
+<!-- ============ TAB BAR (Liquid Glass) ============ -->
+<nav class="tabbar glass" role="tablist">
+  <span class="tab-ind" id="tabInd" aria-hidden="true"></span>
+  <button role="tab" data-v="times" aria-selected="true"><svg class="o"><use href="#i-clock"/></svg><svg class="f"><use href="#i-clock-f"/></svg><span>Zeiten</span></button>
+  <button role="tab" data-v="qibla" aria-selected="false"><svg class="o"><use href="#i-kaaba"/></svg><svg class="f"><use href="#i-kaaba-f"/></svg><span>Qibla</span></button>
+  <button role="tab" data-v="quran" aria-selected="false"><svg class="o"><use href="#i-book"/></svg><svg class="f"><use href="#i-book-f"/></svg><span>Quran</span></button>
 </nav>
 
 <!-- ============ SHEETS ============ -->
@@ -130,11 +154,46 @@
 <section class="sheet" id="locSheet" aria-label="Ort ändern">
   <div class="grab"></div>
   <h3>Ort</h3>
-  <button class="primary" id="gpsBtn">
-    <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21 3 3 10.5l7.5 3L13.5 21z"/></svg>
-    Aktuellen Standort verwenden</button>
-  <p class="status" id="gpsStatus">Der Standort wird nur jetzt einmal abgefragt und danach nicht mehr automatisch geändert.</p>
+  <button class="primary" id="gpsBtn"><svg class="ic16"><use href="#i-loc"/></svg>Aktuellen Standort verwenden</button>
+  <p class="status" id="gpsStatus"></p>
   <div class="sheetlist" id="cities"></div>
+</section>
+
+<section class="sheet" id="setSheet" aria-label="Einstellungen">
+  <div class="grab"></div>
+  <h3>Einstellungen</h3>
+  <div class="sheetlist">
+    <p class="group-l">Berechnung</p>
+    <div class="radios" id="methods"></div>
+    <p class="group-l">Asr</p>
+    <div class="seg wide" id="asrSeg">
+      <button data-asr="standard">Standard</button>
+      <button data-asr="hanafi">Hanafi</button>
+    </div>
+    <p class="hint-s">Standard gilt für Maliki, Schafii und Hanbali.</p>
+    <p class="group-l">Hijri-Datum</p>
+    <div class="stepper">
+      <button id="hijriMinus" aria-label="Einen Tag früher">−</button>
+      <span id="hijriVal">Umm al-Qura</span>
+      <button id="hijriPlus" aria-label="Einen Tag später">+</button>
+    </div>
+    <p class="hint-s">Beginnt der Monat bei deiner Moschee einen Tag früher oder später, passe es hier an. Die islamischen Tage verschieben sich mit.</p>
+    <p class="group-l">Sicherung</p>
+    <div class="rows">
+      <button class="rowbtn" id="backupBtn">Markierungen sichern</button>
+      <label class="rowbtn" for="restoreIn">Sicherung laden</label>
+      <input type="file" id="restoreIn" accept="application/json,.json" hidden>
+    </div>
+    <p class="hint-s" id="storeHint"></p>
+  </div>
+</section>
+
+<section class="sheet" id="daysSheet" aria-label="Islamische Tage">
+  <div class="grab"></div>
+  <h3>Islamische Tage</h3>
+  <div class="sheetlist"><div class="list" id="daysList"></div></div>
+  <button class="primary" id="icsBtn"><svg class="ic16"><use href="#i-cal"/></svg>In Kalender übernehmen</button>
+  <p class="hint-s">Mit Erinnerung am Vorabend. Daten nach Umm al-Qura und deiner Hijri-Anpassung; der tatsächliche Beginn hängt von der Mondsichtung ab.</p>
 </section>
 
 <section class="sheet" id="viewSheet" aria-label="Anzeige">
@@ -143,11 +202,11 @@
   <div class="toggles">
     <label class="toggle"><span>Arabisch</span><input type="checkbox" id="t-ar"><i></i></label>
     <label class="toggle"><span>Transliteration</span><input type="checkbox" id="t-tr"><i></i></label>
-    <label class="toggle"><span>Deutsch · Bubenheim</span><input type="checkbox" id="t-de"><i></i></label>
+    <label class="toggle"><span>Deutsch · Bubenheim &amp; Elyas</span><input type="checkbox" id="t-de"><i></i></label>
     <label class="toggle"><span>Englisch · Saheeh International</span><input type="checkbox" id="t-en"><i></i></label>
   </div>
   <div class="sizer">
-    <span>Schriftgröße</span>
+    <span>Schriftgröße Arabisch</span>
     <div class="seg">
       <button data-size="-1" aria-label="Kleiner">A−</button>
       <button data-size="1" aria-label="Größer">A+</button>
@@ -163,7 +222,7 @@
     <button data-c="green" aria-label="Grün"></button>
     <button data-c="blue" aria-label="Blau"></button>
     <button data-c="pink" aria-label="Rosa"></button>
-    <button data-c="" aria-label="Markierung entfernen" class="none"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <button data-c="" aria-label="Markierung entfernen" class="none"><svg class="ic16" viewBox="0 0 24 24"><path d="M7 7l10 10M17 7 7 17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
   </div>
 </section>
 
