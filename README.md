@@ -8,4 +8,4 @@ Gebetszeiten (Muslimische Weltliga, Asr Standard, Siebtel der Nacht), Qibla-Komp
 - Markierungen und Einstellungen bleiben lokal auf dem Gerät.
 
 - Islamische Tage (Weiße Tage, Ramadan, Arafah, Eid …) nach Umm al-Qura mit einstellbarer Hijri-Anpassung, Export als Kalenderdatei
-- App-Icon: Mim in Aref Ruqaa (SIL Open Font License)
+- App-Icon: Mim in Amiri (SIL Open Font License)
