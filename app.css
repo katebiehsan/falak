@@ -1,15 +1,18 @@
-/* Miqat – OLED-Schwarz, Systemschrift, ruhige Grautöne. Ein Akzent: Grün für „jetzt“. Glas nur für schwebende Bedienelemente. */
+/* Miqat – OLED-Schwarz, Geist (wie Karteikarten und Kalorientracker), ruhige Grautöne. Ein Akzent: Grün für „jetzt“. Glas nur für schwebende Bedienelemente. */
+@font-face{font-family:"Geist";src:url("fonts/Geist-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
+@font-face{font-family:"Geist Mono";src:url("fonts/GeistMono-Variable.woff2") format("woff2");font-weight:100 900;font-style:normal;font-display:swap}
 :root{
   --bg:#000; --raise:#0b0b0d; --raise-2:#151518; --raise-3:#1e1e22;
   --fg:#f5f5f7; --fg-2:#a1a1a8; --fg-3:#636369; --fg-4:#3a3a3f;
   --line:rgba(255,255,255,.07);
-  --accent:#4ade80; --accent-soft:rgba(74,222,128,.10);
+  --accent:#4CC38A; --accent-soft:rgba(76,195,138,.10);
   --gold:#e9c46a;
   --hl-yellow:rgba(250,204,21,.16); --hl-green:rgba(74,222,128,.13); --hl-blue:rgba(96,165,250,.15); --hl-pink:rgba(244,114,182,.14);
   --sw-yellow:#facc15; --sw-green:#4ade80; --sw-blue:#60a5fa; --sw-pink:#f472b6;
   --glass-bg:rgba(32,32,36,.52); --glass-edge:rgba(255,255,255,.12); --glass-hi:rgba(255,255,255,.10);
-  --font:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,"Helvetica Neue",sans-serif;
-  --font-display:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,sans-serif;
+  --font:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",sans-serif;
+  --font-display:"Geist",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --mono:"Geist Mono",ui-monospace,"SF Mono",Menlo,monospace;
   --font-ar:"Amiri","Geeza Pro",serif;
   --font-quran:"Amiri Quran","KFGQPC Uthmanic Script HAFS","Geeza Pro",serif;
   --ease-out:cubic-bezier(.23,1,.32,1); --ease-drawer:cubic-bezier(.32,.72,0,1);
@@ -46,13 +49,13 @@ svg{flex:none}
   display:flex;flex-direction:column;gap:22px;animation:in 140ms ease}
 @keyframes in{from{opacity:0}to{opacity:1}}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
-.title{margin:0;font-family:var(--font-display);font-size:32px;font-weight:700;letter-spacing:-.03em}
+.title{margin:0;font-family:var(--font-display);font-size:32px;font-weight:600;letter-spacing:-.035em}
 .meta-r{font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .label{font-size:13px;font-weight:500;color:var(--fg-3);letter-spacing:.01em}
 .link{font-size:14px;font-weight:500;color:var(--fg-2);padding:6px 0}
 .list{display:flex;flex-direction:column;background:var(--raise);border-radius:18px;padding:4px}
 .block{display:flex;flex-direction:column;gap:10px}
-.block-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0 4px}
+.block-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:0}
 .block-h small{font-size:12px;color:var(--fg-3);text-align:right}
 
 /* Zeilen mit eingerückter Trennlinie */
@@ -62,7 +65,22 @@ svg{flex:none}
 /* ---------- Zeiten ---------- */
 .hero{display:flex;flex-direction:column;gap:4px;padding-top:36px}
 .eyebrow{margin:0;font-size:14px;font-weight:500;color:var(--fg-3)}
-.hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:700;letter-spacing:-.045em}
+.hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.055em;min-width:0}
+.hero-row{display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+
+/* Qibla-Symbol: Ruhe grau, Kompass aktiv weiß mit Spitze Richtung Kaaba, ausgerichtet grün */
+.qmini{flex:none;width:44px;height:44px;margin:0 -6px 4px 0;display:grid;place-items:center;border-radius:50%}
+.qmini svg{width:32px;height:32px;overflow:visible}
+.qrot{transform-origin:20px 20px;transition:transform 120ms linear}
+.qring{fill:none;stroke:var(--fg-4);stroke-width:1.6;transition:stroke 200ms ease}
+.qnotch{fill:var(--fg);opacity:0;transition:opacity 200ms ease,fill 200ms ease}
+.qkaaba{color:var(--fg-2);transition:color 200ms ease}
+.qmini.on .qring{stroke:var(--fg-3)}
+.qmini.on .qnotch{opacity:1}
+.qmini.on .qkaaba{color:var(--fg)}
+.qmini.ok .qring{stroke:var(--accent)}
+.qmini.ok .qnotch{fill:var(--accent)}
+.qmini.ok .qkaaba{color:var(--accent)}
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:600}
 .progress{margin-top:16px;height:3px;border-radius:99px;background:var(--raise-3);overflow:hidden}
@@ -72,10 +90,15 @@ svg{flex:none}
 .today svg{width:13px;height:13px}
 
 .times .n{font-size:17px;font-weight:500}
-.times .t{font-size:17px;font-weight:500;font-variant-numeric:tabular-nums}
+.times .t{font-family:var(--mono);font-size:16px;font-weight:500;font-variant-numeric:tabular-nums}
 .times .row.past .n,.times .row.past .t{color:var(--fg-3)}
 .times .row.cur{background:var(--accent-soft)}
 .times .row.cur .n,.times .row.cur .t{color:var(--accent);font-weight:600}
+
+/* Startseite ohne graue Kästen: Zeiten und „Demnächst“ nur mit Linien, wie in der Kartei */
+.times.list,.upcoming.list{background:none;padding:0;margin:0 -12px;border-radius:0}
+.times.list .row,.upcoming.list .item{padding-left:12px;padding-right:12px}
+.times .row::after,.upcoming .item::after{left:12px!important;right:12px!important}
 .times .row.cur::after,.times .row:has(+ .cur)::after{display:none}
 
 .daynav{display:flex;align-items:center;justify-content:center;gap:2px;margin-top:-10px}
@@ -90,7 +113,7 @@ svg{flex:none}
 .when{font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums;white-space:nowrap}
 .when.soon{color:var(--gold)}
 
-.hadith{background:var(--raise);border-radius:18px;padding:16px 16px 12px}
+.hadith{background:none;border-radius:0;padding:0}
 .hadith .block-h{padding:0}
 .hadith .har{font-family:var(--font-ar);font-size:17px;line-height:2;direction:rtl;text-align:right}
 .hadith .hen{font-size:15px;line-height:1.6;color:var(--fg-2);margin:0}
@@ -100,25 +123,6 @@ svg{flex:none}
 
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 
-/* ---------- Qibla ---------- */
-.dialwrap{position:relative;width:min(320px,86vw);aspect-ratio:1;margin:18px auto 4px;max-width:100%}
-.dial{width:100%;height:100%;display:block;overflow:visible}
-#rose{transform-origin:160px 160px}
-#pointer{fill:var(--fg-3);transition:fill 150ms ease}
-.dial .ring{fill:none;stroke:var(--raise-3);stroke-width:1.5;transition:stroke 200ms ease}
-.dial{transition:filter 200ms ease}
-.aligned .dial .ring{stroke:var(--accent)}
-.aligned .dial{filter:drop-shadow(0 0 18px rgba(74,222,128,.28))}
-.aligned .heading{color:var(--accent)}
-.dial .tick{stroke:var(--fg-4);stroke-width:1.2;stroke-linecap:round} .dial .tick.major{stroke:var(--fg-3);stroke-width:1.6}
-.dial .lbl{fill:var(--fg-2);font:600 13px var(--font)}
-.dial .q-line{stroke:var(--accent);stroke-width:1.5;stroke-linecap:round;opacity:.35}
-.dial .q-dot{fill:var(--accent)}
-.dialcenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;pointer-events:none}
-.heading{font-family:var(--font-display);font-size:52px;font-weight:700;letter-spacing:-.04em;font-variant-numeric:tabular-nums;line-height:1}
-.hint{font-size:15px;color:var(--fg-2);font-weight:500}
-.aligned #pointer{fill:var(--accent)}
-.aligned .hint{color:var(--accent)}
 .primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:999px;
   background:var(--fg);color:#000;font-weight:600;font-size:16px;width:100%}
 .note{margin:-8px 0 0;text-align:center;font-size:13px;color:var(--fg-3);line-height:1.45}
@@ -211,7 +215,7 @@ svg{flex:none}
   transition:transform 240ms var(--ease-out),visibility 0s linear 240ms}
 .sheet.open{transform:none;visibility:visible;transition:transform 340ms var(--ease-drawer),visibility 0s}
 .grab{width:36px;height:5px;border-radius:9px;background:rgba(255,255,255,.18);margin:0 auto}
-.sheet h3{margin:0;font-family:var(--font-display);font-size:21px;font-weight:700;letter-spacing:-.02em}
+.sheet h3{margin:0;font-family:var(--font-display);font-size:21px;font-weight:600;letter-spacing:-.02em}
 .sheet .list{background:rgba(255,255,255,.04)}
 .status{margin:-4px 0 0;font-size:13px;color:var(--fg-3);line-height:1.45}
 .status.err{color:#ff6b5b}

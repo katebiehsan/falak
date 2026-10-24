@@ -24,7 +24,7 @@ let toastT;
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1700)}
 
 /* ================= Tabs ================= */
-let view="times";const scrollMem={};const TABS=["times","qibla","quran"];
+let view="times";const scrollMem={};const TABS=["times","quran"];
 function moveInd(){$("tabInd").style.transform=`translateX(${TABS.indexOf(view)*70}px)`}
 function setView(v){
   if(v===view)return;
@@ -34,7 +34,7 @@ function setView(v){
   document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
   moveInd();
   window.scrollTo(0,scrollMem[v]||0);
-  if(v==="qibla")initQibla();
+  if(v!=="times")stopQibla();
   if(v==="quran")initQuran();
   if(v==="times")renderTimes();
 }
@@ -94,11 +94,12 @@ function renderTimes(){
   if(live){
     $("heroLabel").hidden=true;
     $("curName").textContent=LABEL[cur.k];
-    $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
+    if(!qActive)$("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
     $("progress").hidden=false;
     const f=(now-cur.t)/(next.t-cur.t);
     $("progressFill").style.transform=`scaleX(${Math.min(1,Math.max(.015,f)).toFixed(4)})`;
   }else{
+    if(qActive)stopQibla();
     $("heroLabel").hidden=false;$("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
@@ -221,7 +222,7 @@ function renderSettings(){
   const o=settings.hijri;$("hijriVal").textContent=o===0?"Umm al-Qura":`${o>0?"+":"−"}${Math.abs(o)} Tag`;
   $("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
 }
-function saveSettings(){store.set("settings",settings);evCache=null;renderSettings();renderTimes();if(qInit)updateQiblaTarget()}
+function saveSettings(){store.set("settings",settings);evCache=null;renderSettings();renderTimes();updateQiblaTarget()}
 $("setBtn").addEventListener("click",()=>{renderSettings();openSheet("setSheet")});
 $("methods").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;settings.method=b.dataset.m;saveSettings()});
 $("asrSeg").addEventListener("click",e=>{const b=e.target.closest("[data-asr]");if(!b)return;settings.asr=b.dataset.asr;saveSettings()});
@@ -257,7 +258,7 @@ function buildCities(){
     return `<button class="city${sel?" sel":""}" data-i="${i}"><span>${c[0]}</span><small>${c[1].toFixed(2)}, ${c[2].toFixed(2)}</small></button>`}).join("");
 }
 $("cities").addEventListener("click",e=>{const b=e.target.closest(".city");if(!b)return;const c=CITIES[+b.dataset.i];setLoc({name:c[0],lat:c[1],lon:c[2]})});
-function setLoc(l){loc=l;store.set("loc",l);closeSheet();renderTimes();if(qInit)updateQiblaTarget();toast(`Ort: ${l.name}`)}
+function setLoc(l){loc=l;store.set("loc",l);closeSheet();renderTimes();updateQiblaTarget();toast(`Ort: ${l.name}`)}
 $("locBtn").addEventListener("click",()=>{buildCities();const s=$("gpsStatus");s.classList.remove("err");
   s.textContent="Der Standort wird nur jetzt einmal abgefragt und danach nicht automatisch geändert.";openSheet("locSheet")});
 $("gpsBtn").addEventListener("click",()=>{
@@ -276,29 +277,14 @@ $("gpsBtn").addEventListener("click",()=>{
 });
 
 /* ================= Qibla ================= */
+// Kleines Symbol neben dem aktuellen Gebet (wie Athan Utility): Antippen startet den Kompass,
+// die Spitze am Ring zeigt Richtung Kaaba, ausgerichtet wird alles grün. Nochmal tippen beendet.
 const MECCA={lat:21.4225,lon:39.8262};
-let qInit=false,qTarget=0,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false;
+let qTarget=0,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null,warnedAcc=false;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
-function distKm(){const a=loc.lat*R,b=MECCA.lat*R,dl=(MECCA.lon-loc.lon)*R;return 6371*Math.acos(Math.min(1,Math.sin(a)*Math.sin(b)+Math.cos(a)*Math.cos(b)*Math.cos(dl)))}
-function buildRose(){
-  // minimal: dünner Ring, wenige Striche, nur N, grüner Punkt für die Qibla
-  const c=160,r=148,pt=(deg,rad)=>{const a=(deg-90)*R;return[(c+Math.cos(a)*rad).toFixed(1),(c+Math.sin(a)*rad).toFixed(1)]};
-  let s=`<circle class="ring" cx="${c}" cy="${c}" r="${r}"/>`;
-  for(let d=0;d<360;d+=10){if(d===0)continue;const major=d%90===0,[x1,y1]=pt(d,r-(major?12:7)),[x2,y2]=pt(d,r-2);
-    s+=`<line class="tick${major?" major":""}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"/>`}
-  const [nx,ny]=pt(0,r-16);s+=`<text class="lbl n" text-anchor="middle" dominant-baseline="central" x="${nx}" y="${ny}">N</text>`;
-  const [l1x,l1y]=pt(qTarget,62),[l2x,l2y]=pt(qTarget,r-22),[dx,dy]=pt(qTarget,r);
-  s+=`<line class="q-line" x1="${l1x}" y1="${l1y}" x2="${l2x}" y2="${l2y}"/><circle class="q-dot" cx="${dx}" cy="${dy}" r="7"/>`;
-  $("rose").innerHTML=s;
-}
-function updateQiblaTarget(){
-  qTarget=adhan.Qibla(new adhan.Coordinates(loc.lat,loc.lon));
-  $("qMeta").textContent=`${compassName(qTarget)} · ${Math.round(distKm()).toLocaleString("de-DE")} km`;
-  buildRose();
-  if(!listening){$("heading").textContent=Math.round(qTarget)+"°";$("qHint").textContent="";$("rose").style.transform="rotate(0deg)";}
-}
-function initQibla(){if(!qInit){qInit=true;updateQiblaTarget()}}
+function updateQiblaTarget(){qTarget=adhan.Qibla(new adhan.Coordinates(loc.lat,loc.lon))}
 function onOrient(e){
+  if(!qActive)return;
   let h=null;
   if(typeof e.webkitCompassHeading==="number"&&!isNaN(e.webkitCompassHeading))h=e.webkitCompassHeading;
   else if(e.absolute&&e.alpha!=null)h=360-e.alpha;
@@ -307,42 +293,51 @@ function onOrient(e){
   lastEvt=Date.now();
   const x=Math.cos(h*R),y=Math.sin(h*R);
   if(sx==null){sx=x;sy=y}else{sx=sx*.82+x*.18;sy=sy*.82+y*.18}
-  if(typeof e.webkitCompassAccuracy==="number"){
-    const bad=e.webkitCompassAccuracy<0||e.webkitCompassAccuracy>25;
-    $("qNote").textContent=bad?"Kompass ungenau: Beweg das iPhone ein paar Mal in Form einer Acht.":"Halte das iPhone flach vor dir und weg von Metall oder Magneten.";
+  if(typeof e.webkitCompassAccuracy==="number"&&!warnedAcc&&(e.webkitCompassAccuracy<0||e.webkitCompassAccuracy>25)){
+    warnedAcc=true;toast("Kompass ungenau: iPhone ein paar Mal in Form einer Acht bewegen");
   }
   if(!raf)raf=requestAnimationFrame(drawHeading);
 }
-let shown=null;
 function drawHeading(){
-  raf=0;const h=(Math.atan2(sy,sx)/R+360)%360;
-  // kürzester Weg für die Drehung
+  raf=0;if(!qActive)return;
+  const h=(Math.atan2(sy,sx)/R+360)%360;
   if(shown==null)shown=h;else{let d=((h-shown+540)%360)-180;shown+=d}
-  $("rose").style.transform=`rotate(${-shown}deg)`;
+  $("qRot").style.transform=`rotate(${(qTarget-shown).toFixed(1)}deg)`;
   const diff=((qTarget-h+540)%360)-180,ad=Math.abs(diff),ok=ad<=3;
-  $("heading").textContent=Math.round(h)+"°";
-  $("qHint").textContent=ok?"Richtung stimmt":`${Math.round(ad)}° nach ${diff>0?"rechts":"links"}`;
-  $("v-qibla").classList.toggle("aligned",ok);
+  $("qBtn").classList.toggle("ok",ok);
+  $("nextLine").textContent=ok?`Qibla ${Math.round(qTarget)}° · Richtung stimmt`:`Qibla ${Math.round(qTarget)}° · ${Math.round(ad)}° nach ${diff>0?"rechts":"links"}`;
   if(ok&&!wasAligned&&navigator.vibrate)navigator.vibrate(18);
   wasAligned=ok;
 }
-$("compassBtn").addEventListener("click",async()=>{
-  const btn=$("compassBtn");
+function stopQibla(){
+  if(!qActive)return;
+  qActive=false;shown=null;sx=sy=null;wasAligned=false;
+  const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");b.setAttribute("aria-label","Qibla-Kompass starten");
+  $("qRot").style.transform="";
+  renderTimes();
+}
+async function startQibla(){
   try{
     if(typeof DeviceOrientationEvent!=="undefined"&&typeof DeviceOrientationEvent.requestPermission==="function"){
       const r=await DeviceOrientationEvent.requestPermission();
-      if(r!=="granted"){$("qNote").textContent="Kompasszugriff abgelehnt. Schließ die App ganz und öffne sie erneut, dann noch einmal auf „Kompass starten“ tippen.";return}
+      if(r!=="granted"){toast("Kompasszugriff abgelehnt. App ganz schließen und neu öffnen");return}
     }
-  }catch(e){$("qNote").textContent="Der Kompass konnte nicht gestartet werden.";return}
+  }catch(e){toast("Der Kompass konnte nicht gestartet werden");return}
   if(!listening){
     listening=true;
     if("ondeviceorientationabsolute" in window)window.addEventListener("deviceorientationabsolute",onOrient);
     window.addEventListener("deviceorientation",onOrient);
   }
-  btn.hidden=true;$("qHint").textContent="Kompass wird gestartet …";
-  setTimeout(()=>{if(!lastEvt){btn.hidden=false;$("qHint").textContent="";
-    $("qNote").textContent="Kein Kompass gefunden. Auf dem iPhone funktioniert er in Safari oder als App auf dem Homescreen.";}},2500);
-});
+  if(dayOffset!==0){dayOffset=0}
+  updateQiblaTarget();
+  qActive=true;lastEvt=0;warnedAcc=false;
+  const b=$("qBtn");b.classList.add("on");b.setAttribute("aria-pressed","true");b.setAttribute("aria-label","Qibla-Kompass beenden");
+  renderTimes();
+  $("nextLine").textContent=`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`;
+  setTimeout(()=>{if(qActive&&!lastEvt){stopQibla();toast(`Kein Kompass gefunden. Qibla: ${Math.round(qTarget)}° (${compassName(qTarget)})`)}},2500);
+}
+$("qBtn").addEventListener("click",()=>{qActive?stopQibla():startQibla()});
+document.addEventListener("visibilitychange",()=>{if(document.hidden)stopQibla()});
 
 /* ================= Quran ================= */
 const API="https://api.alquran.cloud/v1";
