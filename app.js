@@ -198,14 +198,15 @@ function openDays(){
 $("allDays").addEventListener("click",openDays);
 $("upcoming").addEventListener("click",openDays);
 $("todayChip").addEventListener("click",openDays);
+const icsEsc=t=>String(t).replace(/\\/g,"\\\\").replace(/([,;])/g,"\\$1");
 $("icsBtn").addEventListener("click",()=>{
   const pad=n=>String(n).padStart(2,"0"),ymd=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
   const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Miqat//Islamische Tage//DE","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Islamische Tage"];
   events().forEach(e=>{const end=new Date(e.end);end.setDate(end.getDate()+1);
     lines.push("BEGIN:VEVENT",`UID:${e.k}-${e.h.y}-${e.h.m}@miqat`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${ymd(e.start)}`,`DTEND;VALUE=DATE:${ymd(end)}`,
-      `SUMMARY:${e.title}`,`DESCRIPTION:${e.note}`,"TRANSP:TRANSPARENT",
-      "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${e.title}`,"TRIGGER:-PT6H","END:VALARM","END:VEVENT")});
+      `SUMMARY:${icsEsc(e.title)}`,`DESCRIPTION:${icsEsc(e.note)}`,"TRANSP:TRANSPARENT",
+      "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsEsc(e.title)}`,"TRIGGER:-PT6H","END:VALARM","END:VEVENT")});
   lines.push("END:VCALENDAR");
   const blob=new Blob([lines.join("\r\n")],{type:"text/calendar"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="islamische-tage.ics";document.body.appendChild(a);a.click();
