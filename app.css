@@ -75,15 +75,13 @@ svg{flex:none}
 .qmini{flex:none;width:56px;height:56px;margin:0 -4px 0 0;display:grid;place-items:center;border-radius:50%}
 .qmini svg{width:48px;height:48px;overflow:visible}
 .qrot{transform-origin:20px 20px;transition:transform 120ms linear}
-.qring{fill:none;stroke:var(--fg-4);stroke-width:1.2;transition:stroke 200ms ease}
-.qnotch{fill:var(--fg);opacity:0;transition:opacity 200ms ease,fill 200ms ease}
-.qkaaba{color:var(--fg-2);transition:color 200ms ease}
+.qring{fill:none;stroke:var(--fg-3);stroke-width:1.2;transition:stroke 200ms ease}
+.qnotch{fill:var(--fg-2);opacity:1;transition:opacity 200ms ease,fill 200ms ease}
 .qmini.on .qring{stroke:var(--fg-3)}
-.qmini.on .qnotch{opacity:1}
-.qmini.on .qkaaba{color:var(--fg)}
+.qmini.on .qnotch{fill:var(--fg)}
 .qmini.ok .qring{stroke:var(--accent)}
 .qmini.ok .qnotch{fill:var(--accent)}
-.qmini.ok .qkaaba{color:var(--accent)}
+
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:600}
 .progress{margin-top:16px;height:3px;border-radius:99px;background:var(--raise-3);overflow:hidden}
@@ -93,6 +91,9 @@ svg{flex:none}
 .today svg{width:13px;height:13px}
 
 .times .n{font-size:17px;font-weight:500}
+.times .row{width:100%;text-align:left;color:inherit}
+.times .row:active{background:var(--raise-2);transform:none}
+.times .t small{font-size:12px;color:var(--fg-3);margin-right:8px;font-weight:500}
 .times .t{font-family:var(--mono);font-size:16px;font-weight:500;font-variant-numeric:tabular-nums}
 .times .row.past .n,.times .row.past .t{color:var(--fg-3)}
 .times .row.cur{background:var(--accent-soft)}

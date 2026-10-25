@@ -50,7 +50,6 @@
 <main class="view" id="v-times">
   <header class="top">
     <button class="glass pill" id="locBtn"><svg class="ic12"><use href="#i-loc"/></svg><span id="locName">Bremen</span></button>
-    <button class="glass round" id="setBtn" aria-label="Einstellungen"><svg class="ic18"><use href="#i-sliders"/></svg></button>
   </header>
 
   <section class="hero">
@@ -60,7 +59,6 @@
       <button class="qmini" id="qBtn" aria-label="Qibla-Kompass starten" aria-pressed="false">
         <svg viewBox="0 0 40 40" aria-hidden="true">
           <g class="qrot" id="qRot"><circle class="qring" cx="20" cy="20" r="15"/><path class="qnotch" d="M20 1.6 l3.4 4.6 h-6.8 z"/></g>
-          <use class="qkaaba" href="#i-kaaba-f" x="11" y="11" width="18" height="18"/>
         </svg>
       </button>
     </div>
@@ -126,6 +124,15 @@
       <span class="round-spacer"></span>
     </header>
     <div class="list" id="marksList"></div>
+    <section class="block" aria-label="Sicherung">
+      <div class="block-h"><span class="label">Sicherung</span></div>
+      <div class="rows">
+        <button class="rowbtn" id="backupBtn">Markierungen sichern</button>
+        <label class="rowbtn" for="restoreIn">Sicherung laden</label>
+        <input type="file" id="restoreIn" accept="application/json,.json" hidden>
+      </div>
+      <p class="hint-s" id="storeHint"></p>
+    </section>
   </div>
 </main>
 
@@ -147,32 +154,17 @@
   <div class="sheetlist" id="cities"></div>
 </section>
 
-<section class="sheet" id="setSheet" aria-label="Einstellungen">
+<section class="sheet" id="adjSheet" aria-label="Gebetszeit anpassen">
   <div class="grab"></div>
-  <h3>Einstellungen</h3>
+  <h3 id="adjTitle">Gebetszeit</h3>
   <div class="sheetlist">
-    <p class="group-l">Berechnung</p>
-    <div class="radios" id="methods"></div>
-    <p class="group-l">Asr</p>
-    <div class="seg wide" id="asrSeg">
-      <button data-asr="standard">Standard</button>
-      <button data-asr="hanafi">Hanafi</button>
-    </div>
-    <p class="hint-s">Standard gilt für Maliki, Schafii und Hanbali.</p>
-    <p class="group-l">Hijri-Datum</p>
     <div class="stepper">
-      <button id="hijriMinus" aria-label="Einen Tag früher">−</button>
-      <span id="hijriVal">Umm al-Qura</span>
-      <button id="hijriPlus" aria-label="Einen Tag später">+</button>
+      <button id="adjMinus" aria-label="Eine Minute früher">−</button>
+      <span id="adjVal">0 Min.</span>
+      <button id="adjPlus" aria-label="Eine Minute später">+</button>
     </div>
-    <p class="hint-s">Beginnt der Monat bei deiner Moschee einen Tag früher oder später, passe es hier an. Die islamischen Tage verschieben sich mit.</p>
-    <p class="group-l">Sicherung</p>
-    <div class="rows">
-      <button class="rowbtn" id="backupBtn">Markierungen sichern</button>
-      <label class="rowbtn" for="restoreIn">Sicherung laden</label>
-      <input type="file" id="restoreIn" accept="application/json,.json" hidden>
-    </div>
-    <p class="hint-s" id="storeHint"></p>
+    <p class="hint-s" id="adjHint"></p>
+    <div class="rows"><button class="rowbtn" id="adjReset">Auf berechnete Zeit zurücksetzen</button></div>
   </div>
 </section>
 

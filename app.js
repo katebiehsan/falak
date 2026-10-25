@@ -11,7 +11,9 @@ const store={
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
 let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:24},store.get("prefs",{}));
 if(!prefs.v2){prefs.size=24;prefs.v2=1;store.set("prefs",prefs)}
-let settings=Object.assign({method:"MuslimWorldLeague",asr:"standard",hijri:0},store.get("settings",{}));
+// Feste Berechnung wie Athan Utility; früher gespeicherte Abweichungen werden ignoriert
+const settings={method:"MuslimWorldLeague",asr:"standard",hijri:0};
+let adj=store.get("adj",{})||{};
 let marks=store.get("marks",{});          // "2:255" -> {c:"yellow", t:"Snippet"}
 let resume=store.get("resume",null);       // zuletzt gelesen {s,a}
 let bookmark=store.get("bookmark",null);   // Lesezeichen {s,a}
@@ -70,15 +72,17 @@ function hijriText(date){const h=hParts(date);return h?`${h.d}. ${HMONTH[h.m-1]}
 /* ================= Gebetszeiten ================= */
 const PRAYERS=[["fajr","Fajr"],["sunrise","Shuruq"],["dhuhr","Dhuhr"],["asr","Asr"],["maghrib","Maghrib"],["isha","Isha"]];
 const LABEL=Object.fromEntries(PRAYERS);
-const METHODS=[["MuslimWorldLeague","Muslimische Weltliga","Standard, wie Athan Utility"],["Turkey","Diyanet","Türkische Religionsbehörde"],["MoonsightingCommittee","Moonsighting Committee","Verbreitet in Europa"],["UmmAlQura","Umm al-Qura","Mekka"],["Egyptian","Ägypten","Egyptian General Authority"]];
 let dayOffset=0;
 function params(){
-  const fn=adhan.CalculationMethod[settings.method]||adhan.CalculationMethod.MuslimWorldLeague;const p=fn();
-  p.madhab=settings.asr==="hanafi"?adhan.Madhab.Hanafi:adhan.Madhab.Shafi;
+  const p=adhan.CalculationMethod.MuslimWorldLeague();
+  p.madhab=adhan.Madhab.Shafi;
   p.highLatitudeRule=adhan.HighLatitudeRule.SeventhOfTheNight;return p;
 }
 function dayStart(o){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+o);return d}
-function times(day){return new adhan.PrayerTimes(new adhan.Coordinates(loc.lat,loc.lon),day,params())}
+function times(day){
+  const pt=new adhan.PrayerTimes(new adhan.Coordinates(loc.lat,loc.lon),day,params()),o={};
+  PRAYERS.forEach(([k])=>{o[k]=new Date(pt[k].getTime()+(adj[k]||0)*6e4)});return o;
+}
 const fT=d=>d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
 function fLeft(ms){const m=Math.max(0,Math.ceil(ms/6e4)),h=Math.floor(m/60),r=m%60;return h?`${h} Std. ${r} Min.`:`${r} Min.`}
 function state(now){
@@ -109,7 +113,8 @@ function renderTimes(){
   $("times").innerHTML=PRAYERS.map(([k,n])=>{
     let c="row";
     if(live){if(cur.today&&k===cur.k)c+=" cur";else if(t[k]<now&&cur.today)c+=" past"}
-    return `<div class="${c}"><span class="n">${k==="dhuhr"&&fri?"Jumu'a":n}</span><span class="t">${fT(t[k])}</span></div>`;
+    const m=adj[k]||0;
+    return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}, antippen zum Anpassen"><span class="n">${k==="dhuhr"&&fri?"Jumu'a":n}</span><span class="t">${m?`<small>${m>0?"+":"−"}${Math.abs(m)}</small>`:""}${fT(t[k])}</span></button>`;
   }).join("");
   const dl=$("dayLabel");
   dl.textContent=live?"Heute":day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
@@ -215,19 +220,22 @@ $("icsBtn").addEventListener("click",()=>{
   toast("Kalenderdatei erstellt");
 });
 
-/* ================= Einstellungen ================= */
-function renderSettings(){
-  $("methods").innerHTML=METHODS.map(([k,n,s])=>`<button class="radio${settings.method===k?" on":""}" data-m="${k}"><span>${n}<small>${s}</small></span><span class="chk"></span></button>`).join("");
-  document.querySelectorAll("#asrSeg button").forEach(b=>b.classList.toggle("on",b.dataset.asr===settings.asr));
-  const o=settings.hijri;$("hijriVal").textContent=o===0?"Umm al-Qura":`${o>0?"+":"−"}${Math.abs(o)} Tag`;
-  $("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
+/* ================= Minuten-Anpassung ================= */
+// Berechnung ist fest (Weltliga, Asr Standard, Siebtel der Nacht). Jede Zeit lässt sich per Antippen um Minuten verschieben.
+let adjKey=null;
+function renderAdj(){
+  const k=adjKey,m=adj[k]||0,t=times(dayStart(dayOffset));
+  $("adjTitle").textContent=LABEL[k];
+  $("adjVal").textContent=m===0?"Berechnet":`${m>0?"+":"−"}${Math.abs(m)} Min.`;
+  $("adjHint").textContent=`${dayOffset===0?"Heute":"An diesem Tag"} ${fT(t[k])}. Gilt jeden Tag, bis zu 30 Minuten früher oder später.`;
+  $("adjReset").disabled=m===0;
 }
-function saveSettings(){store.set("settings",settings);evCache=null;renderSettings();renderTimes();updateQiblaTarget()}
-$("setBtn").addEventListener("click",()=>{renderSettings();openSheet("setSheet")});
-$("methods").addEventListener("click",e=>{const b=e.target.closest("[data-m]");if(!b)return;settings.method=b.dataset.m;saveSettings()});
-$("asrSeg").addEventListener("click",e=>{const b=e.target.closest("[data-asr]");if(!b)return;settings.asr=b.dataset.asr;saveSettings()});
-$("hijriMinus").addEventListener("click",()=>{settings.hijri=Math.max(-2,settings.hijri-1);saveSettings()});
-$("hijriPlus").addEventListener("click",()=>{settings.hijri=Math.min(2,settings.hijri+1);saveSettings()});
+function setAdj(k,m){m=Math.max(-30,Math.min(30,m));if(m)adj[k]=m;else delete adj[k];store.set("adj",adj);renderAdj();renderTimes()}
+$("times").addEventListener("click",e=>{const r=e.target.closest("[data-k]");if(!r)return;adjKey=r.dataset.k;renderAdj();openSheet("adjSheet")});
+$("adjMinus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)-1));
+$("adjPlus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)+1));
+$("adjReset").addEventListener("click",()=>setAdj(adjKey,0));
+$("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
 $("backupBtn").addEventListener("click",async()=>{
   const data=JSON.stringify({app:"miqat",v:1,date:new Date().toISOString(),marks,bookmark,resume,prefs,settings,loc},null,1);
   const name=`miqat-sicherung-${new Date().toISOString().slice(0,10)}.json`;
