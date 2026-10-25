@@ -145,17 +145,16 @@ function renderArc(day,t,now,live){
   const fri=day.getDay()===5;
   $("pts").innerHTML=ARC.map(k=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
-    let c="prow",extra="",bar="";
+    let c="prow",bar="";
     if(live){
       if(k===cur){c+=" cur";
-        const mins=Math.floor((now-t[k])/6e4),f=Math.min(1,Math.max(.02,(now-t[k])/(nxt.t-t[k])));
-        extra=`<small>seit ${mins<60?mins+" Min.":fLeft(now-t[k]+6e4).replace(/ \d+ Min\.$/,"")}</small>`;
+        const f=Math.min(1,Math.max(.02,(now-t[k])/(nxt.t-t[k])));
         bar=`<i class="pbar" style="transform:scaleX(${f.toFixed(4)})"></i>`}
       else if(nxt&&k===nxt.k)c+=" upnext";
       else if(now>=t[k])c+=" past";
     }
     if(adjKey===k)c+=" sel";
-    return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}${extra}</span><span class="pt-t">${m?`<em aria-hidden="true">•</em>`:""}${fT(t[k])}</span>${bar}</button>`;
+    return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${m?`<em aria-hidden="true">•</em>`:""}${fT(t[k])}</span>${bar}</button>`;
   }).join("");
 }
 $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});
