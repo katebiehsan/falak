@@ -110,10 +110,19 @@ svg{flex:none}
 .sun{fill:#EDB98A;stroke:#000;stroke-width:2.5;transition:opacity 200ms ease}
 .sky.night .arc-past{opacity:.5}
 
-/* Sternenhimmel: ganze Startseite, sehr dezent, ohne Bewegung */
-.nightsky{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1200ms ease}
+/* Himmel im oberen Drittel: weich verwischtes Licht je nach Tageszeit, nachts Sterne. Läuft mit der Seite mit. */
+.atmo{position:absolute;top:0;left:0;right:0;height:46vh;z-index:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 600ms ease;
+  -webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent)}
+body.on-times .atmo{opacity:1}
+.glow{position:absolute;inset:-20% -20% 0;opacity:0;filter:blur(36px);transition:opacity 1200ms ease}
+.g-day{background:radial-gradient(60% 55% at 78% 8%,rgba(237,185,138,.42),transparent 70%),radial-gradient(70% 50% at 20% 0%,rgba(255,236,214,.10),transparent 70%)}
+.g-dusk{background:radial-gradient(65% 55% at 72% 10%,rgba(214,128,110,.36),transparent 70%),radial-gradient(70% 55% at 22% 4%,rgba(120,100,180,.34),transparent 70%)}
+.g-night{background:radial-gradient(75% 60% at 30% 0%,rgba(66,90,170,.38),transparent 70%)}
+body.ph-day .g-day,body.ph-dusk .g-dusk,body.ph-night .g-night{opacity:1}
+.nightsky{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 .nightsky i{position:absolute;border-radius:50%;background:#fff}
-body.stars-on.on-times .nightsky{opacity:1}
+body.ph-dusk .nightsky{opacity:.45}
+body.ph-night .nightsky{opacity:1}
 .view{position:relative;z-index:1}
 
 /* Fünf Spalten: jede Spalte reicht bis zum Bogen hoch, damit der ganze Bereich antippbar ist */
@@ -325,5 +334,5 @@ body.stars-on.on-times .nightsky{opacity:1}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active,.tabbar button:active{transform:none}
-  .progress i,.toggle i::after,.tab-ind,.sun{transition:none}
+  .progress i,.toggle i::after,.tab-ind,.sun,.glow,.nightsky,.atmo{transition:none}
 }

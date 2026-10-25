@@ -130,10 +130,10 @@ const ARC=["fajr","dhuhr","asr","maghrib","isha"];
 const POS={fajr:36,dhuhr:108,asr:180,maghrib:252,isha:324};
 const CX=180,CR=(144*144+52*52)/104,CY=80-52+CR;
 const arcPt=x=>[x,CY-Math.sqrt(CR*CR-(x-CX)*(x-CX))];
-// Sternenhimmel über die ganze Startseite, ab Maghrib bis Fajr; fest verteilt, damit nichts springt
+// Sterne nur im oberen Drittel, kräftiger, nach unten ausgeblendet; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
-  for(let i=0;i<46;i++){const big=rnd()<.18;
-    o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*100).toFixed(2)}%;width:${big?1.5:1}px;height:${big?1.5:1}px;opacity:${(.10+rnd()*.22).toFixed(2)}"></i>`}
+  for(let i=0;i<42;i++){const r=rnd(),sz=r<.12?2:r<.45?1.5:1;
+    o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*92).toFixed(2)}%;width:${sz}px;height:${sz}px;opacity:${(.35+rnd()*.5).toFixed(2)}"></i>`}
   $("nightSky").innerHTML=o})();
 function sunAngle(t,now){
   if(now<t.fajr||now>=t.isha)return null;
@@ -145,7 +145,9 @@ function renderArc(day,t,now,live,next){
   const night=live&&(now>=t.isha||now<t.fajr);
   $("sky").classList.toggle("night",night);
   const tod=times(dayStart(0));
-  document.body.classList.toggle("stars-on",now>=tod.maghrib||now<tod.fajr);
+  // Himmel oben: Tag (Fajr–Maghrib), Abend (Maghrib–Isha), Nacht (Isha–Fajr)
+  const ph=now>=tod.isha||now<tod.fajr?"night":now>=tod.maghrib?"dusk":"day";
+  ["day","dusk","night"].forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
   const sa=live?sunAngle(t,now):null;
   const endA=sa!=null?sa:(live&&now>=t.isha?324:null);
   if(endA!=null&&endA>36){const[x,y]=arcPt(endA);$("arcPast").setAttribute("d",`M36 80A${CR.toFixed(2)} ${CR.toFixed(2)} 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)}`)}
