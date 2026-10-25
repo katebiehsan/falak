@@ -123,10 +123,10 @@ $("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
 
 
 /* ================= Sonnenbogen ================= */
-// Fajr links, Isha rechts auf der Horizontlinie, Dhuhr oben. Die Punkte stehen fest, damit sich
-// Maghrib und Isha im Winter nicht überlagern; die Sonne läuft zwischen zwei Gebeten nach der Uhrzeit.
+// Fajr links, Isha rechts auf der Horizontlinie, alle fünf Gebete gleichmäßig verteilt (je 45°),
+// damit keine Uhrzeit mit der nächsten kollidiert; die Sonne läuft zwischen zwei Gebeten nach der Uhrzeit.
 const ARC=["fajr","dhuhr","asr","maghrib","isha"];
-const ANG={fajr:180,dhuhr:90,asr:58,maghrib:30,isha:0};
+const ANG={fajr:180,dhuhr:135,asr:90,maghrib:45,isha:0};
 const AX=180,AY=150,RX=144,RY=110;
 const arcPt=a=>[AX+RX*Math.cos(a*R),AY-RY*Math.sin(a*R)];
 // Sternenhimmel über die ganze Startseite, ab Maghrib bis Fajr; fest verteilt, damit nichts springt
@@ -161,6 +161,7 @@ function renderArc(day,t,now,live,next){
     else if(live&&now>=t[k])c+=" past";
     if(adjKey===k)c+=" sel";
     if(ANG[k]===180||ANG[k]===0)c+=" low";
+    if(k==="dhuhr")c+=" lbl-r";
     if(k==="maghrib")c+=" lbl-l";
     const n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
     return `<button class="${c}" data-k="${k}" style="left:${(x/3.6).toFixed(3)}%;top:${(y/2).toFixed(3)}%" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><i></i><span class="lb"><span class="pn">${n}</span><span class="pt-t">${fT(t[k])}${m?`<em aria-hidden="true">•</em>`:""}</span></span></button>`;
