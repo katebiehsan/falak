@@ -16,7 +16,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Amiri+Quran&display=swap">
-<link rel="preload" href="fonts/Geist-Variable.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -90,13 +89,17 @@
   <div id="q-index">
     <header class="top">
       <h2 class="title">Quran</h2>
+      <span class="top-r">
+      <button class="icon-btn" id="searchBtn" aria-label="Sure suchen" aria-expanded="false"><svg class="ic18"><use href="#i-search"/></svg></button>
       <button class="glass pill" id="marksBtn"><svg class="ic12"><use href="#i-bm-f"/></svg><span id="marksCount">Markiert</span></button>
+      </span>
     </header>
-    <div class="resumes" id="resume" hidden></div>
-    <label class="search">
+    <label class="search" id="searchWrap" hidden>
       <svg class="ic16"><use href="#i-search"/></svg>
       <input id="search" type="search" placeholder="Sure suchen" autocomplete="off" enterkeyhint="search">
+      <button class="search-x" id="searchClose" type="button" aria-label="Suche schließen">Fertig</button>
     </label>
+    <div class="resumes" id="resume" hidden></div>
     <div class="list surahs" id="surahs"><p class="empty">Suren werden geladen …</p></div>
   </div>
 

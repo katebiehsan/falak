@@ -9,5 +9,5 @@ Gebetszeiten (Muslimische Weltliga, Asr Standard, Siebtel der Nacht), Qibla-Komp
 
 - Islamische Tage (Weiße Tage, Ramadan, Arafah, Eid …) nach Umm al-Qura mit einstellbarer Hijri-Anpassung, Export als Kalenderdatei
 - App-Icon: Mim in Amiri (SIL Open Font License)
-- Schrift: [Geist](https://github.com/vercel/geist-font) (SIL Open Font License), lokal eingebunden für den Offline-Betrieb
+- Schrift: SF Pro (Apple-Systemschrift); Zahlen mit gleich breiten Ziffern
 - Qibla: kleines Kompass-Symbol neben dem aktuellen Gebet, antippen zum Starten

@@ -380,6 +380,13 @@ function renderIndex(){
   box.innerHTML=h;box.hidden=!h;
 }
 $("search").addEventListener("input",renderIndex);
+function setSearch(open){
+  $("searchWrap").hidden=!open;$("searchBtn").setAttribute("aria-expanded",String(open));
+  if(open){$("search").focus()}else{$("search").value="";$("search").blur();renderIndex()}
+}
+$("searchBtn").addEventListener("click",()=>setSearch($("searchWrap").hidden));
+$("searchClose").addEventListener("click",()=>setSearch(false));
+$("search").addEventListener("blur",()=>{setTimeout(()=>{if(!$("search").value&&document.activeElement!==$("search"))setSearch(false)},150)});
 $("surahs").addEventListener("click",e=>{const b=e.target.closest(".surah");if(b)openSurah(+b.dataset.n)});
 $("resume").addEventListener("click",e=>{const b=e.target.closest(".resume");if(!b)return;const p=b.dataset.kind==="bookmark"?bookmark:resume;if(p)openSurah(p.s,p.a)});
 
