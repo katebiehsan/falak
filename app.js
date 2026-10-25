@@ -155,8 +155,6 @@ function renderArc(day,t,now,live,next){
   else sun.style.opacity=0;
   const fri=day.getDay()===5;
   const st=k=>{const s=[];if(live&&next&&next.k===k)s.push("next");else if(live&&now>=t[k])s.push("past");if(adjKey===k)s.push("sel");return s.join(" ")};
-  $("dots").innerHTML=ARC.map(k=>{const[x,y]=arcPt(POS[k]),c=st(k);
-    return `<g class="dot ${c}" transform="translate(${x.toFixed(2)} ${y.toFixed(2)})"><circle class="ring" r="9"/><circle class="core" r="4"/></g>`}).join("");
   $("pts").innerHTML=ARC.map(k=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
     return `<button class="col ${st(k)}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${fT(t[k])}${m?`<em aria-hidden="true">•</em>`:""}</span></button>`;

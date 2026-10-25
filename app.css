@@ -105,16 +105,10 @@ svg{flex:none}
 .sky{position:relative;width:100%;margin:10px 0 0;padding-bottom:46px}
 .sky-svg{display:block;width:100%;height:auto;overflow:visible;pointer-events:none}
 .horizon{stroke:rgba(255,255,255,.08);stroke-width:1}
-.arc-bg{fill:none;stroke:rgba(255,255,255,.16);stroke-width:1.25;stroke-dasharray:1.5 4;stroke-linecap:round}
-.arc-past{fill:none;stroke:rgba(255,255,255,.38);stroke-width:1.5;stroke-linecap:round;transition:opacity 400ms ease}
+.arc-bg{fill:none;stroke:rgba(255,255,255,.12);stroke-width:1.25}
+.arc-past{fill:none;stroke:rgba(255,255,255,.4);stroke-width:1.5;stroke-linecap:round;transition:opacity 400ms ease}
 .sun{fill:#EDB98A;stroke:#000;stroke-width:2.5;transition:opacity 200ms ease}
-.dot .core{fill:#000;stroke:var(--fg-4);stroke-width:1.5;transition:fill 200ms ease,stroke 200ms ease}
-.dot .ring{fill:none;stroke:transparent;stroke-width:1}
-.dot.past .core{fill:var(--fg-3);stroke:var(--fg-3)}
-.dot.next .core{stroke:var(--fg);stroke-width:1.75}
-.dot.sel .core{fill:var(--fg);stroke:var(--fg)}
-.dot.sel .ring{stroke:rgba(255,255,255,.22)}
-.sky.night .arc-past,.sky.night .dot.past .core{opacity:.5}
+.sky.night .arc-past{opacity:.5}
 
 /* Sternenhimmel: ganze Startseite, sehr dezent, ohne Bewegung */
 .nightsky{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0;transition:opacity 1200ms ease}
@@ -331,5 +325,5 @@ body.stars-on.on-times .nightsky{opacity:1}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active,.tabbar button:active{transform:none}
-  .progress i,.toggle i::after,.tab-ind,.sun,.dot .core{transition:none}
+  .progress i,.toggle i::after,.tab-ind,.sun{transition:none}
 }
