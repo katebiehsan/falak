@@ -69,18 +69,12 @@ svg{flex:none}
 .hero{display:flex;flex-direction:column;gap:4px;padding-top:36px}
 .eyebrow{margin:0;font-size:14px;font-weight:500;color:var(--fg-3)}
 .hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.055em;min-width:0}
-.hero-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
-
-/* Qibla-Symbol: Ruhe grau, Kompass aktiv weiß mit Spitze Richtung Kaaba, ausgerichtet grün */
-.qmini{flex:none;width:56px;height:56px;margin:0 -4px 0 0;display:grid;place-items:center;border-radius:50%}
-.qmini svg{width:48px;height:48px;overflow:visible}
-.qrot{transform-origin:20px 20px;transition:transform 120ms linear}
-.qring{fill:none;stroke:var(--fg-3);stroke-width:1.2;transition:stroke 200ms ease}
-.qnotch{fill:var(--fg-2);opacity:1;transition:opacity 200ms ease,fill 200ms ease}
-.qmini.on .qring{stroke:var(--fg-3)}
-.qmini.on .qnotch{fill:var(--fg)}
-.qmini.ok .qring{stroke:var(--accent)}
-.qmini.ok .qnotch{fill:var(--accent)}
+/* Qibla nur als Text: Pfeil dreht sich zur Kaaba, der Text führt; ausgerichtet grün */
+.qtext{align-self:flex-start;margin:12px 0 0 -2px;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 2px;
+  font-size:15px;font-weight:500;color:var(--fg-2);font-variant-numeric:tabular-nums}
+.qarrow{width:16px;height:16px;transition:transform 120ms linear}
+.qtext.on{color:var(--fg)}
+.qtext.ok{color:var(--accent)}
 
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:600}

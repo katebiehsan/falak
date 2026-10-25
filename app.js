@@ -98,12 +98,14 @@ function renderTimes(){
   if(live){
     $("heroLabel").hidden=true;
     $("curName").textContent=LABEL[cur.k];
-    if(!qActive)$("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
+    $("qBtn").hidden=false;
+    $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
     $("progress").hidden=false;
     const f=(now-cur.t)/(next.t-cur.t);
     $("progressFill").style.transform=`scaleX(${Math.min(1,Math.max(.015,f)).toFixed(4)})`;
   }else{
     if(qActive)stopQibla();
+    $("qBtn").hidden=true;
     $("heroLabel").hidden=false;$("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
@@ -313,16 +315,15 @@ function drawHeading(){
   $("qRot").style.transform=`rotate(${(qTarget-shown).toFixed(1)}deg)`;
   const diff=((qTarget-h+540)%360)-180,ad=Math.abs(diff),ok=ad<=3;
   $("qBtn").classList.toggle("ok",ok);
-  $("nextLine").textContent=ok?`Qibla ${Math.round(qTarget)}° · Richtung stimmt`:`Qibla ${Math.round(qTarget)}° · ${Math.round(ad)}° nach ${diff>0?"rechts":"links"}`;
+  $("qLbl").textContent=ok?"Richtung stimmt":`${Math.round(ad)}° nach ${diff>0?"rechts":"links"} drehen`;
   if(ok&&!wasAligned&&navigator.vibrate)navigator.vibrate(18);
   wasAligned=ok;
 }
 function stopQibla(){
   if(!qActive)return;
   qActive=false;shown=null;sx=sy=null;wasAligned=false;
-  const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");b.setAttribute("aria-label","Qibla-Kompass starten");
-  $("qRot").style.transform="";
-  renderTimes();
+  const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");
+  $("qRot").style.transform="";$("qLbl").textContent="Qibla finden";
 }
 async function startQibla(){
   try{
@@ -339,9 +340,9 @@ async function startQibla(){
   if(dayOffset!==0){dayOffset=0}
   updateQiblaTarget();
   qActive=true;lastEvt=0;warnedAcc=false;
-  const b=$("qBtn");b.classList.add("on");b.setAttribute("aria-pressed","true");b.setAttribute("aria-label","Qibla-Kompass beenden");
+  const b=$("qBtn");b.classList.add("on");b.setAttribute("aria-pressed","true");
   renderTimes();
-  $("nextLine").textContent=`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`;
+  $("qLbl").textContent=`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`;
   setTimeout(()=>{if(qActive&&!lastEvt){stopQibla();toast(`Kein Kompass gefunden. Qibla: ${Math.round(qTarget)}° (${compassName(qTarget)})`)}},2500);
 }
 $("qBtn").addEventListener("click",()=>{qActive?stopQibla():startQibla()});
