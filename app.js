@@ -45,7 +45,8 @@ document.querySelectorAll(".tabbar button").forEach(b=>b.addEventListener("click
 /* ================= Sheets ================= */
 let openSheetEl=null;
 function openSheet(id){closeSheet(true);openSheetEl=$(id);$("scrim").classList.add("open");openSheetEl.classList.add("open")}
-function closeSheet(instant){if(!openSheetEl)return;openSheetEl.classList.remove("open");$("scrim").classList.remove("open");openSheetEl=null}
+function closeSheet(instant){if(!openSheetEl)return;const was=openSheetEl;openSheetEl.classList.remove("open");$("scrim").classList.remove("open");openSheetEl=null;
+  if(was.id==="adjSheet"){adjKey=null;renderTimes()}}
 $("scrim").addEventListener("click",()=>closeSheet());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 document.querySelectorAll(".sheet").forEach(s=>{
@@ -100,24 +101,14 @@ function renderTimes(){
     $("curName").textContent=LABEL[cur.k];
     $("qBtn").hidden=false;
     $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
-    $("progress").hidden=false;
-    const f=(now-cur.t)/(next.t-cur.t);
-    $("progressFill").style.transform=`scaleX(${Math.min(1,Math.max(.015,f)).toFixed(4)})`;
   }else{
     if(qActive)stopQibla();
     $("qBtn").hidden=true;
     $("heroLabel").hidden=false;$("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
-    $("progress").hidden=true;
   }
-  const fri=day.getDay()===5;
-  $("times").innerHTML=PRAYERS.map(([k,n])=>{
-    let c="row";
-    if(live){if(cur.today&&k===cur.k)c+=" cur";else if(t[k]<now&&cur.today)c+=" past"}
-    const m=adj[k]||0;
-    return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}, antippen zum Anpassen"><span class="n">${k==="dhuhr"&&fri?"Jumu'a":n}</span><span class="t">${m?`<small>${m>0?"+":"−"}${Math.abs(m)}</small>`:""}${fT(t[k])}</span></button>`;
-  }).join("");
+  renderArc(day,t,now,live,next);
   const dl=$("dayLabel");
   dl.textContent=live?"Heute":day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
   dl.classList.toggle("off",!live);
@@ -128,6 +119,52 @@ function renderTimes(){
 $("prevDay").addEventListener("click",()=>{dayOffset--;renderTimes()});
 $("nextDay").addEventListener("click",()=>{dayOffset++;renderTimes()});
 $("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
+
+
+/* ================= Sonnenbogen ================= */
+// Fajr links, Isha rechts auf der Horizontlinie, Dhuhr oben. Die Punkte stehen fest, damit sich
+// Maghrib und Isha im Winter nicht überlagern; die Sonne läuft zwischen zwei Gebeten nach der Uhrzeit.
+const ARC=["fajr","dhuhr","asr","maghrib","isha"];
+const ANG={fajr:180,dhuhr:90,asr:58,maghrib:30,isha:0};
+const AX=180,AY=150,RX=144,RY=110;
+const arcPt=a=>[AX+RX*Math.cos(a*R),AY-RY*Math.sin(a*R)];
+const STARS=(()=>{let x=7,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
+  // nur außerhalb des Bogens, damit keine Beschriftung überdeckt wird
+  for(let n=0;n<26;){const x0=6+rnd()*348,y0=4+rnd()*140,r=(.5+rnd()*.8).toFixed(2),op=(.25+rnd()*.55).toFixed(2);
+    if(((x0-AX)/RX)**2+((AY-y0)/RY)**2<1.18)continue;n++;
+    o+=`<circle cx="${x0.toFixed(1)}" cy="${y0.toFixed(1)}" r="${r}" opacity="${op}"/>`}return o})();
+$("stars").innerHTML=STARS;
+function sunAngle(t,now){
+  if(now<t.fajr||now>=t.isha)return null;
+  for(let i=0;i<ARC.length-1;i++){const a=ARC[i],b=ARC[i+1];
+    if(now<t[b]){const f=(now-t[a])/(t[b]-t[a]);return ANG[a]+(ANG[b]-ANG[a])*f}}
+  return null;
+}
+function renderArc(day,t,now,live,next){
+  const night=live&&(now>=t.isha||now<t.fajr);
+  const sky=$("sky");sky.classList.toggle("night",night);
+  const sa=live?sunAngle(t,now):null;
+  // Bogenabschnitt bis jetzt
+  const endA=sa!=null?sa:(live&&now>=t.isha?0:null);
+  if(endA!=null&&endA<180){const[x,y]=arcPt(endA);$("arcPast").setAttribute("d",`M36 150A${RX} ${RY} 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)}`)}
+  else $("arcPast").setAttribute("d","");
+  const sun=$("sun");
+  if(sa!=null){const[x,y]=arcPt(sa);sun.style.transform=`translate(${x.toFixed(2)}px,${y.toFixed(2)}px)`;sun.style.opacity=1}
+  else sun.style.opacity=0;
+  const fri=day.getDay()===5;
+  $("pts").innerHTML=ARC.map(k=>{
+    const[x,y]=arcPt(ANG[k]),m=adj[k]||0;
+    let c="pt";
+    if(live&&next&&next.k===k)c+=" next";
+    else if(live&&now>=t[k])c+=" past";
+    if(adjKey===k)c+=" sel";
+    if(ANG[k]===180||ANG[k]===0)c+=" low";
+    if(k==="maghrib")c+=" lbl-l";
+    const n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
+    return `<button class="${c}" data-k="${k}" style="left:${(x/3.6).toFixed(3)}%;top:${(y/2).toFixed(3)}%" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><i></i><span class="lb"><span class="pn">${n}</span><span class="pt-t">${fT(t[k])}${m?`<em aria-hidden="true">•</em>`:""}</span></span></button>`;
+  }).join("");
+}
+$("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});
 
 /* ================= Islamische Tage ================= */
 // kind: fest = Festtag, sunnah = empfohlenes Fasten/Ibada, zeit = besondere Zeit
@@ -225,18 +262,47 @@ $("icsBtn").addEventListener("click",()=>{
 /* ================= Minuten-Anpassung ================= */
 // Berechnung ist fest (Weltliga, Asr Standard, Siebtel der Nacht). Jede Zeit lässt sich per Antippen um Minuten verschieben.
 let adjKey=null;
+let remind=store.get("remind",{})||{};
 function renderAdj(){
-  const k=adjKey,m=adj[k]||0,t=times(dayStart(dayOffset));
-  $("adjTitle").textContent=LABEL[k];
-  $("adjVal").textContent=m===0?"Berechnet":`${m>0?"+":"−"}${Math.abs(m)} Min.`;
-  $("adjHint").textContent=`${dayOffset===0?"Heute":"An diesem Tag"} ${fT(t[k])}. Gilt jeden Tag, bis zu 30 Minuten früher oder später.`;
-  $("adjReset").disabled=m===0;
+  const k=adjKey;if(!k)return;
+  const m=adj[k]||0,t=times(dayStart(dayOffset)),fri=dayStart(dayOffset).getDay()===5;
+  $("adjTitle").textContent=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
+  $("adjTime").textContent=fT(t[k]);
+  $("adjCalc").textContent=`Berechnet: ${fT(new Date(t[k]-m*6e4))}`;
+  $("adjVal").textContent=m===0?"0 Min.":`${m>0?"+":"−"}${Math.abs(m)} Min.`;
+  $("adjMinus").disabled=m<=-30;$("adjPlus").disabled=m>=30;
+  $("adjRemind").checked=!!remind[k];
 }
 function setAdj(k,m){m=Math.max(-30,Math.min(30,m));if(m)adj[k]=m;else delete adj[k];store.set("adj",adj);renderAdj();renderTimes()}
-$("times").addEventListener("click",e=>{const r=e.target.closest("[data-k]");if(!r)return;adjKey=r.dataset.k;renderAdj();openSheet("adjSheet")});
 $("adjMinus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)-1));
 $("adjPlus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)+1));
-$("adjReset").addEventListener("click",()=>setAdj(adjKey,0));
+$("adjRemind").addEventListener("change",async e=>{
+  const k=adjKey,on=e.target.checked;if(!k)return;
+  if(on){
+    if(!("Notification" in window)){e.target.checked=false;toast(standalone?"Mitteilungen werden nicht unterstützt":"Erinnerungen gehen nur in der Homescreen-App");return}
+    let p=Notification.permission;
+    if(p==="default"){try{p=await Notification.requestPermission()}catch(err){p="denied"}}
+    if(p!=="granted"){e.target.checked=false;toast("Mitteilungen sind für Miqat ausgeschaltet");return}
+    remind[k]=true;
+  }else delete remind[k];
+  store.set("remind",remind);
+});
+// Erinnerung, solange die App geöffnet ist oder im Hintergrund noch läuft
+let lastFired=store.get("fired","");
+function checkRemind(){
+  if(!("Notification" in window)||Notification.permission!=="granted")return;
+  const now=new Date(),t=times(dayStart(0));
+  ARC.forEach(k=>{
+    if(!remind[k])return;
+    const key=`${dayStart(0).toDateString()}|${k}`;
+    if(now>=t[k]&&now-t[k]<10*6e4&&lastFired.indexOf(key)<0){
+      lastFired=(lastFired+";"+key).slice(-400);store.set("fired",lastFired);
+      const title=`Zeit für ${LABEL[k]}`,opt={body:`${fT(t[k])} · ${loc.name}`,tag:"miqat-"+k,icon:"icon-192.png"};
+      if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(title,opt)).catch(()=>{});
+      else try{new Notification(title,opt)}catch(err){}
+    }
+  });
+}
 $("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
 $("backupBtn").addEventListener("click",async()=>{
   const data=JSON.stringify({app:"miqat",v:1,date:new Date().toISOString(),marks,bookmark,resume,prefs,settings,loc},null,1);
@@ -528,7 +594,7 @@ $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo
 moveInd();
 renderTimes();
 loadHadith();
-setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);
+setInterval(()=>{checkRemind();if(view==="times"&&!document.hidden)renderTimes()},15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="times")renderTimes()});
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();

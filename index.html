@@ -52,12 +52,20 @@
     <p class="eyebrow" id="heroLabel" hidden></p>
     <h1 id="curName">–</h1>
     <p class="next" id="nextLine">&nbsp;</p>
-    <div class="progress" id="progress"><i id="progressFill"></i></div>
     <button class="qtext" id="qBtn" aria-pressed="false"><svg class="qarrow" id="qRot" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="qLbl">Qibla finden</span></button>
     <button class="today" id="todayChip" hidden></button>
   </section>
 
-  <section class="list times" id="times" aria-label="Gebetszeiten"></section>
+  <section class="sky" id="sky" aria-label="Gebetszeiten">
+    <svg class="sky-svg" viewBox="0 0 360 200" aria-hidden="true">
+      <g class="stars" id="stars"></g>
+      <path class="arc-bg" d="M36 150A144 110 0 0 1 324 150"/>
+      <path class="arc-past" id="arcPast" d=""/>
+      <line class="horizon" x1="4" y1="150" x2="356" y2="150"/>
+      <g class="sun" id="sun"><circle class="sun-glow" r="15"/><circle class="sun-core" r="7"/></g>
+    </svg>
+    <div class="pts" id="pts"></div>
+  </section>
 
   <nav class="daynav">
     <button class="icon-btn" id="prevDay" aria-label="Vorheriger Tag"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
@@ -151,15 +159,21 @@
 
 <section class="sheet" id="adjSheet" aria-label="Gebetszeit anpassen">
   <div class="grab"></div>
-  <h3 id="adjTitle">Gebetszeit</h3>
-  <div class="sheetlist">
-    <div class="stepper">
-      <button id="adjMinus" aria-label="Eine Minute früher">−</button>
-      <span id="adjVal">0 Min.</span>
-      <button id="adjPlus" aria-label="Eine Minute später">+</button>
+  <div class="adj-head">
+    <h3 id="adjTitle">Gebetszeit</h3>
+    <p class="adj-time" id="adjTime">–</p>
+    <p class="adj-calc" id="adjCalc"></p>
+  </div>
+  <div class="rows">
+    <div class="rowline">
+      <span>Anpassung</span>
+      <div class="mini-step">
+        <button id="adjMinus" aria-label="Eine Minute früher">−</button>
+        <span id="adjVal">0 Min.</span>
+        <button id="adjPlus" aria-label="Eine Minute später">+</button>
+      </div>
     </div>
-    <p class="hint-s" id="adjHint"></p>
-    <div class="rows"><button class="rowbtn" id="adjReset">Auf berechnete Zeit zurücksetzen</button></div>
+    <label class="toggle rowline"><span>Erinnerung</span><input type="checkbox" id="adjRemind"><i></i></label>
   </div>
 </section>
 

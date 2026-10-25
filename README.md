@@ -11,3 +11,4 @@ Gebetszeiten (Muslimische Weltliga, Asr Standard, Siebtel der Nacht), Qibla-Komp
 - App-Icon: Mim in Amiri (SIL Open Font License)
 - Schrift: SF Pro (Apple-Systemschrift); Zahlen mit gleich breiten Ziffern
 - Qibla: kleines Kompass-Symbol neben dem aktuellen Gebet, antippen zum Starten
+- Startseite: Sonnenbogen von Fajr bis Isha statt Liste; Gebet antippen zum Anpassen (±30 Min.) und für eine Erinnerung; nachts Sternenhimmel mit Countdown bis Fajr
