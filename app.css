@@ -127,15 +127,16 @@ body.ph-night .prow .pbar{background:#8EA2DA}
 .prow.sel::before,.prow:has(+ .sel)::before{opacity:0}
 
 /* Himmel im oberen Drittel: weich verwischtes Licht je nach Tageszeit, nachts Sterne. Läuft mit der Seite mit. */
-.atmo{position:absolute;top:0;left:0;right:0;height:46vh;z-index:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 600ms ease;
+.atmo{position:absolute;top:0;left:0;right:0;height:calc(48vh + env(safe-area-inset-top,0px));z-index:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 600ms ease;
   -webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent)}
 body.on-times .atmo{opacity:1}
 /* Lichtfläche bleibt komplett im sichtbaren Bereich (kein Weichzeichner, keine Ränder über den Bildschirm hinaus),
    damit sie auch in der Homescreen-App ab oben sichtbar ist */
 .glow{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
-.g-day{background:radial-gradient(85% 75% at 80% 0%,rgba(237,185,138,.42),rgba(237,185,138,.12) 45%,transparent 75%),radial-gradient(80% 60% at 15% 0%,rgba(255,236,214,.10),transparent 70%)}
-.g-dusk{background:radial-gradient(80% 70% at 78% 0%,rgba(214,128,110,.38),rgba(214,128,110,.10) 45%,transparent 75%),radial-gradient(85% 70% at 20% 0%,rgba(120,100,180,.38),rgba(120,100,180,.10) 45%,transparent 75%)}
-.g-night{background:radial-gradient(100% 80% at 30% 0%,rgba(70,96,185,.42),rgba(70,96,185,.12) 45%,transparent 75%)}
+/* Zentrum unterhalb der Statusleiste, damit der hellste Teil in der Homescreen-App sichtbar ist */
+.g-day{background:radial-gradient(90% 80% at 78% calc(env(safe-area-inset-top,0px) + 40px),rgba(237,185,138,.50),rgba(237,185,138,.15) 45%,transparent 78%),radial-gradient(80% 60% at 15% calc(env(safe-area-inset-top,0px) + 20px),rgba(255,236,214,.12),transparent 70%)}
+.g-dusk{background:radial-gradient(85% 75% at 78% calc(env(safe-area-inset-top,0px) + 40px),rgba(214,128,110,.46),rgba(214,128,110,.13) 45%,transparent 78%),radial-gradient(90% 75% at 20% calc(env(safe-area-inset-top,0px) + 30px),rgba(120,100,180,.46),rgba(120,100,180,.13) 45%,transparent 78%)}
+.g-night{background:radial-gradient(110% 85% at 30% calc(env(safe-area-inset-top,0px) + 40px),rgba(70,96,185,.52),rgba(70,96,185,.15) 45%,transparent 78%)}
 body.ph-day .g-day,body.ph-dusk .g-dusk,body.ph-night .g-night{opacity:1}
 .nightsky{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 .nightsky i{position:absolute;border-radius:50%;background:#fff}
