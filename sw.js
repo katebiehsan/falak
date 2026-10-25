@@ -1,5 +1,5 @@
 // Gebet – Offline-Unterstützung
-const V="miqat-v14";
+const V="miqat-v15";
 const SHELL=["./","index.html","app.css","app.js","adhan.min.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k!=="miqat-data").map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});

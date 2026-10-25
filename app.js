@@ -37,6 +37,7 @@ function setView(v){
   moveInd();
   window.scrollTo(0,scrollMem[v]||0);
   if(v!=="times")stopQibla();
+  document.body.classList.toggle("on-times",v==="times");
   if(v==="quran")initQuran();
   if(v==="times")renderTimes();
 }
@@ -128,12 +129,11 @@ const ARC=["fajr","dhuhr","asr","maghrib","isha"];
 const ANG={fajr:180,dhuhr:90,asr:58,maghrib:30,isha:0};
 const AX=180,AY=150,RX=144,RY=110;
 const arcPt=a=>[AX+RX*Math.cos(a*R),AY-RY*Math.sin(a*R)];
-const STARS=(()=>{let x=7,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
-  // nur außerhalb des Bogens, damit keine Beschriftung überdeckt wird
-  for(let n=0;n<26;){const x0=6+rnd()*348,y0=4+rnd()*140,r=(.5+rnd()*.8).toFixed(2),op=(.25+rnd()*.55).toFixed(2);
-    if(((x0-AX)/RX)**2+((AY-y0)/RY)**2<1.18)continue;n++;
-    o+=`<circle cx="${x0.toFixed(1)}" cy="${y0.toFixed(1)}" r="${r}" opacity="${op}"/>`}return o})();
-$("stars").innerHTML=STARS;
+// Sternenhimmel über die ganze Startseite, ab Maghrib bis Fajr; fest verteilt, damit nichts springt
+(()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
+  for(let i=0;i<46;i++){const big=rnd()<.18;
+    o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*100).toFixed(2)}%;width:${big?1.5:1}px;height:${big?1.5:1}px;opacity:${(.10+rnd()*.22).toFixed(2)}"></i>`}
+  $("nightSky").innerHTML=o})();
 function sunAngle(t,now){
   if(now<t.fajr||now>=t.isha)return null;
   for(let i=0;i<ARC.length-1;i++){const a=ARC[i],b=ARC[i+1];
@@ -143,6 +143,8 @@ function sunAngle(t,now){
 function renderArc(day,t,now,live,next){
   const night=live&&(now>=t.isha||now<t.fajr);
   const sky=$("sky");sky.classList.toggle("night",night);
+  const tod=times(dayStart(0));
+  document.body.classList.toggle("stars-on",now>=tod.maghrib||now<tod.fajr);
   const sa=live?sunAngle(t,now):null;
   // Bogenabschnitt bis jetzt
   const endA=sa!=null?sa:(live&&now>=t.isha?0:null);
@@ -591,6 +593,7 @@ $("marksList").addEventListener("click",e=>{const b=e.target.closest(".mark");if
 $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo(0,0)});
 
 /* ================= Start ================= */
+document.body.classList.add("on-times");
 moveInd();
 renderTimes();
 loadHadith();

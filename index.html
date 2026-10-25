@@ -45,6 +45,8 @@
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M15.6 3.6a8.6 8.6 0 1 0 4.8 13.5A7 7 0 0 1 15.6 3.6z" fill="currentColor"/></symbol>
 </svg>
 
+<div class="nightsky" id="nightSky" aria-hidden="true"></div>
+
 <!-- ============ ZEITEN ============ -->
 <main class="view" id="v-times">
 
@@ -58,7 +60,6 @@
 
   <section class="sky" id="sky" aria-label="Gebetszeiten">
     <svg class="sky-svg" viewBox="0 0 360 200" aria-hidden="true">
-      <g class="stars" id="stars"></g>
       <path class="arc-bg" d="M36 150A144 110 0 0 1 324 150"/>
       <path class="arc-past" id="arcPast" d=""/>
       <line class="horizon" x1="4" y1="150" x2="356" y2="150"/>
