@@ -109,7 +109,7 @@ function renderTimes(){
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
   }
-  renderArc(day,t,now,live,next);
+  renderArc(day,t,now,live);
   const dl=$("dayLabel");
   dl.textContent=live?"Heute":day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
   dl.classList.toggle("off",!live);
@@ -122,44 +122,40 @@ $("nextDay").addEventListener("click",()=>{dayOffset++;renderTimes()});
 $("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
 
 
-/* ================= Sonnenbogen ================= */
-// Flacher Bogen über die volle Breite; jedes Gebet steht über seiner Spalte, die Uhrzeiten
-// liegen in einer Zeile unter dem Horizont. Die Sonne läuft zwischen zwei Gebeten nach der Uhrzeit.
+/* ================= Gebetsliste ================= */
+// Ruhige Liste ohne Shuruq. Unter dem aktuellen Gebet wächst eine feine Linie bis zum nächsten.
 const ARC=["fajr","dhuhr","asr","maghrib","isha"];
-// Kreisbogen (kein Halbellipse): Sehne 36→324 auf dem Horizont, Scheitel 52 darüber
-const POS={fajr:36,dhuhr:108,asr:180,maghrib:252,isha:324};
-const CX=180,CR=(144*144+52*52)/104,CY=80-52+CR;
-const arcPt=x=>[x,CY-Math.sqrt(CR*CR-(x-CX)*(x-CX))];
 // Sterne nur im oberen Drittel, kräftiger, nach unten ausgeblendet; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
   for(let i=0;i<42;i++){const r=rnd(),sz=r<.12?2:r<.45?1.5:1;
     o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*92).toFixed(2)}%;width:${sz}px;height:${sz}px;opacity:${(.35+rnd()*.5).toFixed(2)}"></i>`}
   $("nightSky").innerHTML=o})();
-function sunAngle(t,now){
-  if(now<t.fajr||now>=t.isha)return null;
-  for(let i=0;i<ARC.length-1;i++){const a=ARC[i],b=ARC[i+1];
-    if(now<t[b]){const f=(now-t[a])/(t[b]-t[a]);return POS[a]+(POS[b]-POS[a])*f}}
-  return null;
-}
-function renderArc(day,t,now,live,next){
-  const night=live&&(now>=t.isha||now<t.fajr);
-  $("sky").classList.toggle("night",night);
+function renderArc(day,t,now,live){
   const tod=times(dayStart(0));
   // Himmel oben: Tag (Fajr–Maghrib), Abend (Maghrib–Isha), Nacht (Isha–Fajr)
   const ph=now>=tod.isha||now<tod.fajr?"night":now>=tod.maghrib?"dusk":"day";
   ["day","dusk","night"].forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
-  const sa=live?sunAngle(t,now):null;
-  const endA=sa!=null?sa:(live&&now>=t.isha?324:null);
-  if(endA!=null&&endA>36){const[x,y]=arcPt(endA);$("arcPast").setAttribute("d",`M36 80A${CR.toFixed(2)} ${CR.toFixed(2)} 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)}`)}
-  else $("arcPast").setAttribute("d","");
-  const sun=$("sun");
-  if(sa!=null){const[x,y]=arcPt(sa);sun.setAttribute("cx",x.toFixed(2));sun.setAttribute("cy",y.toFixed(2));sun.style.opacity=1}
-  else sun.style.opacity=0;
+  // aktuelles und nächstes Gebet ohne Shuruq
+  let cur=null,nxt=null;
+  if(live){
+    for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){cur=ARC[i];break}}
+    if(cur){const i=ARC.indexOf(cur);nxt=i<ARC.length-1?{k:ARC[i+1],t:t[ARC[i+1]]}:{k:null,t:times(dayStart(1)).fajr}}
+    else nxt={k:"fajr",t:t.fajr};
+  }
   const fri=day.getDay()===5;
-  const st=k=>{const s=[];if(live&&next&&next.k===k)s.push("next");else if(live&&now>=t[k])s.push("past");if(adjKey===k)s.push("sel");return s.join(" ")};
   $("pts").innerHTML=ARC.map(k=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
-    return `<button class="col ${st(k)}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${fT(t[k])}${m?`<em aria-hidden="true">•</em>`:""}</span></button>`;
+    let c="prow",extra="",bar="";
+    if(live){
+      if(k===cur){c+=" cur";
+        const mins=Math.floor((now-t[k])/6e4),f=Math.min(1,Math.max(.02,(now-t[k])/(nxt.t-t[k])));
+        extra=`<small>seit ${mins<60?mins+" Min.":fLeft(now-t[k]+6e4).replace(/ \d+ Min\.$/,"")}</small>`;
+        bar=`<i class="pbar" style="transform:scaleX(${f.toFixed(4)})"></i>`}
+      else if(nxt&&k===nxt.k)c+=" upnext";
+      else if(now>=t[k])c+=" past";
+    }
+    if(adjKey===k)c+=" sel";
+    return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}${extra}</span><span class="pt-t">${m?`<em aria-hidden="true">•</em>`:""}${fT(t[k])}</span>${bar}</button>`;
   }).join("");
 }
 $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});
@@ -589,6 +585,8 @@ $("marksList").addEventListener("click",e=>{const b=e.target.closest(".mark");if
 $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo(0,0)});
 
 /* ================= Start ================= */
+const onScroll=()=>document.body.classList.toggle("scrolled",window.scrollY>4);
+window.addEventListener("scroll",onScroll,{passive:true});onScroll();
 document.body.classList.add("on-times");
 moveInd();
 renderTimes();
