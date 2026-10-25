@@ -123,12 +123,13 @@ $("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
 
 
 /* ================= Sonnenbogen ================= */
-// Fajr links, Isha rechts auf der Horizontlinie, alle fünf Gebete gleichmäßig verteilt (je 45°),
-// damit keine Uhrzeit mit der nächsten kollidiert; die Sonne läuft zwischen zwei Gebeten nach der Uhrzeit.
+// Flacher Bogen über die volle Breite; jedes Gebet steht über seiner Spalte, die Uhrzeiten
+// liegen in einer Zeile unter dem Horizont. Die Sonne läuft zwischen zwei Gebeten nach der Uhrzeit.
 const ARC=["fajr","dhuhr","asr","maghrib","isha"];
-const ANG={fajr:180,dhuhr:135,asr:90,maghrib:45,isha:0};
-const AX=180,AY=150,RX=144,RY=110;
-const arcPt=a=>[AX+RX*Math.cos(a*R),AY-RY*Math.sin(a*R)];
+// Kreisbogen (kein Halbellipse): Sehne 36→324 auf dem Horizont, Scheitel 52 darüber
+const POS={fajr:36,dhuhr:108,asr:180,maghrib:252,isha:324};
+const CX=180,CR=(144*144+52*52)/104,CY=80-52+CR;
+const arcPt=x=>[x,CY-Math.sqrt(CR*CR-(x-CX)*(x-CX))];
 // Sternenhimmel über die ganze Startseite, ab Maghrib bis Fajr; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
   for(let i=0;i<46;i++){const big=rnd()<.18;
@@ -137,34 +138,28 @@ const arcPt=a=>[AX+RX*Math.cos(a*R),AY-RY*Math.sin(a*R)];
 function sunAngle(t,now){
   if(now<t.fajr||now>=t.isha)return null;
   for(let i=0;i<ARC.length-1;i++){const a=ARC[i],b=ARC[i+1];
-    if(now<t[b]){const f=(now-t[a])/(t[b]-t[a]);return ANG[a]+(ANG[b]-ANG[a])*f}}
+    if(now<t[b]){const f=(now-t[a])/(t[b]-t[a]);return POS[a]+(POS[b]-POS[a])*f}}
   return null;
 }
 function renderArc(day,t,now,live,next){
   const night=live&&(now>=t.isha||now<t.fajr);
-  const sky=$("sky");sky.classList.toggle("night",night);
+  $("sky").classList.toggle("night",night);
   const tod=times(dayStart(0));
   document.body.classList.toggle("stars-on",now>=tod.maghrib||now<tod.fajr);
   const sa=live?sunAngle(t,now):null;
-  // Bogenabschnitt bis jetzt
-  const endA=sa!=null?sa:(live&&now>=t.isha?0:null);
-  if(endA!=null&&endA<180){const[x,y]=arcPt(endA);$("arcPast").setAttribute("d",`M36 150A${RX} ${RY} 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)}`)}
+  const endA=sa!=null?sa:(live&&now>=t.isha?324:null);
+  if(endA!=null&&endA>36){const[x,y]=arcPt(endA);$("arcPast").setAttribute("d",`M36 80A${CR.toFixed(2)} ${CR.toFixed(2)} 0 0 1 ${x.toFixed(2)} ${y.toFixed(2)}`)}
   else $("arcPast").setAttribute("d","");
   const sun=$("sun");
-  if(sa!=null){const[x,y]=arcPt(sa);sun.style.transform=`translate(${x.toFixed(2)}px,${y.toFixed(2)}px)`;sun.style.opacity=1}
+  if(sa!=null){const[x,y]=arcPt(sa);sun.setAttribute("cx",x.toFixed(2));sun.setAttribute("cy",y.toFixed(2));sun.style.opacity=1}
   else sun.style.opacity=0;
   const fri=day.getDay()===5;
+  const st=k=>{const s=[];if(live&&next&&next.k===k)s.push("next");else if(live&&now>=t[k])s.push("past");if(adjKey===k)s.push("sel");return s.join(" ")};
+  $("dots").innerHTML=ARC.map(k=>{const[x,y]=arcPt(POS[k]),c=st(k);
+    return `<g class="dot ${c}" transform="translate(${x.toFixed(2)} ${y.toFixed(2)})"><circle class="ring" r="9"/><circle class="core" r="4"/></g>`}).join("");
   $("pts").innerHTML=ARC.map(k=>{
-    const[x,y]=arcPt(ANG[k]),m=adj[k]||0;
-    let c="pt";
-    if(live&&next&&next.k===k)c+=" next";
-    else if(live&&now>=t[k])c+=" past";
-    if(adjKey===k)c+=" sel";
-    if(ANG[k]===180||ANG[k]===0)c+=" low";
-    if(k==="dhuhr")c+=" lbl-r";
-    if(k==="maghrib")c+=" lbl-l";
-    const n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
-    return `<button class="${c}" data-k="${k}" style="left:${(x/3.6).toFixed(3)}%;top:${(y/2).toFixed(3)}%" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><i></i><span class="lb"><span class="pn">${n}</span><span class="pt-t">${fT(t[k])}${m?`<em aria-hidden="true">•</em>`:""}</span></span></button>`;
+    const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
+    return `<button class="col ${st(k)}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${fT(t[k])}${m?`<em aria-hidden="true">•</em>`:""}</span></button>`;
   }).join("");
 }
 $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});

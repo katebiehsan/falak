@@ -59,13 +59,14 @@
   </section>
 
   <section class="sky" id="sky" aria-label="Gebetszeiten">
-    <svg class="sky-svg" viewBox="0 0 360 200" aria-hidden="true">
-      <path class="arc-bg" d="M36 150A144 110 0 0 1 324 150"/>
+    <svg class="sky-svg" viewBox="0 0 360 92" aria-hidden="true">
+      <line class="horizon" x1="0" y1="80" x2="360" y2="80"/>
+      <path class="arc-bg" d="M36 80A225.38 225.38 0 0 1 324 80"/>
       <path class="arc-past" id="arcPast" d=""/>
-      <line class="horizon" x1="4" y1="150" x2="356" y2="150"/>
-      <g class="sun" id="sun"><circle class="sun-glow" r="15"/><circle class="sun-core" r="7"/></g>
+      <g id="dots"></g>
+      <circle class="sun" id="sun" r="5.5" cx="0" cy="0"/>
     </svg>
-    <div class="pts" id="pts"></div>
+    <div class="cols" id="pts"></div>
   </section>
 
   <nav class="daynav">
