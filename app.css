@@ -83,8 +83,8 @@ svg{flex:none}
 .progress{margin-top:16px;height:3px;border-radius:99px;background:var(--raise-3);overflow:hidden}
 .progress i{display:block;height:100%;background:var(--fg);border-radius:99px;transform-origin:left;transform:scaleX(0);transition:transform 300ms var(--ease-out)}
 .today{margin-top:16px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 13px 0 11px;border-radius:999px;
-  background:rgba(163,157,201,.07);color:var(--gold);font-size:14px;font-weight:500;text-align:left}
-.today svg{width:13px;height:13px}
+  background:rgba(255,255,255,.06);color:var(--fg-2);font-size:14px;font-weight:500;text-align:left}
+.today svg{width:13px;height:13px;color:var(--fg-3)}
 
 .times .n{font-size:17px;font-weight:500}
 .times .row{width:100%;text-align:left;color:inherit}
@@ -117,12 +117,6 @@ svg{flex:none}
 .prow.past{color:var(--fg-3)}
 .prow.cur{color:var(--fg)}
 .prow.cur .pt-t{font-weight:600}
-.prow .pbar{position:absolute;left:12px;right:12px;bottom:0;height:1.5px;border-radius:2px;background:var(--sun);transform-origin:left;transition:transform 600ms var(--ease-out);z-index:1}
-/* Linie in der Farbe des Himmels oben */
-body.ph-day .prow .pbar{background:#6E6152}
-body.ph-dusk .prow .pbar{background:#665A65}
-body.ph-night .prow .pbar{background:#535B73}
-.prow .pbar{transition:transform 600ms var(--ease-out),background-color 1200ms ease}
 .prow.sel{background:rgba(255,255,255,.05)}
 .prow.sel::before,.prow:has(+ .sel)::before{opacity:0}
 
@@ -167,7 +161,7 @@ body.ph-night .nightsky{opacity:1}
 .ev b{font-size:16px;font-weight:500}
 .ev span{font-size:13px;color:var(--fg-3)}
 .when{font-size:14px;color:var(--fg-2);font-variant-numeric:tabular-nums;white-space:nowrap}
-.when.soon{color:var(--gold)}
+.when.soon{color:var(--fg)}
 
 .hadith{background:none;border-radius:0;padding:0}
 .hadith .block-h{padding:0}
@@ -340,5 +334,5 @@ body.ph-night .nightsky{opacity:1}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active,.tabbar button:active{transform:none}
-  .progress i,.toggle i::after,.tab-ind,.pbar,.glow,.nightsky,.atmo{transition:none}
+  .progress i,.toggle i::after,.tab-ind,.glow,.nightsky,.atmo{transition:none}
 }
