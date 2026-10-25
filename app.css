@@ -130,10 +130,12 @@ body.ph-night .prow .pbar{background:#8EA2DA}
 .atmo{position:absolute;top:0;left:0;right:0;height:46vh;z-index:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 600ms ease;
   -webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent)}
 body.on-times .atmo{opacity:1}
-.glow{position:absolute;inset:-20% -20% 0;opacity:0;filter:blur(36px);transition:opacity 1200ms ease}
-.g-day{background:radial-gradient(60% 55% at 78% 8%,rgba(237,185,138,.42),transparent 70%),radial-gradient(70% 50% at 20% 0%,rgba(255,236,214,.10),transparent 70%)}
-.g-dusk{background:radial-gradient(65% 55% at 72% 10%,rgba(214,128,110,.36),transparent 70%),radial-gradient(70% 55% at 22% 4%,rgba(120,100,180,.34),transparent 70%)}
-.g-night{background:radial-gradient(75% 60% at 30% 0%,rgba(66,90,170,.38),transparent 70%)}
+/* Lichtfläche bleibt komplett im sichtbaren Bereich (kein Weichzeichner, keine Ränder über den Bildschirm hinaus),
+   damit sie auch in der Homescreen-App ab oben sichtbar ist */
+.glow{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
+.g-day{background:radial-gradient(85% 75% at 80% 0%,rgba(237,185,138,.42),rgba(237,185,138,.12) 45%,transparent 75%),radial-gradient(80% 60% at 15% 0%,rgba(255,236,214,.10),transparent 70%)}
+.g-dusk{background:radial-gradient(80% 70% at 78% 0%,rgba(214,128,110,.38),rgba(214,128,110,.10) 45%,transparent 75%),radial-gradient(85% 70% at 20% 0%,rgba(120,100,180,.38),rgba(120,100,180,.10) 45%,transparent 75%)}
+.g-night{background:radial-gradient(100% 80% at 30% 0%,rgba(70,96,185,.42),rgba(70,96,185,.12) 45%,transparent 75%)}
 body.ph-day .g-day,body.ph-dusk .g-dusk,body.ph-night .g-night{opacity:1}
 .nightsky{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 .nightsky i{position:absolute;border-radius:50%;background:#fff}
