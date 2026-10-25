@@ -119,9 +119,9 @@ svg{flex:none}
 .prow.cur .pt-t{font-weight:600}
 .prow .pbar{position:absolute;left:12px;right:12px;bottom:0;height:1.5px;border-radius:2px;background:var(--sun);transform-origin:left;transition:transform 600ms var(--ease-out);z-index:1}
 /* Linie in der Farbe des Himmels oben */
-body.ph-day .prow .pbar{background:#E3B48E}
-body.ph-dusk .prow .pbar{background:#C9A0B8}
-body.ph-night .prow .pbar{background:#8EA2DA}
+body.ph-day .prow .pbar{background:#6E6152}
+body.ph-dusk .prow .pbar{background:#665A65}
+body.ph-night .prow .pbar{background:#535B73}
 .prow .pbar{transition:transform 600ms var(--ease-out),background-color 1200ms ease}
 .prow.sel{background:rgba(255,255,255,.05)}
 .prow.sel::before,.prow:has(+ .sel)::before{opacity:0}
