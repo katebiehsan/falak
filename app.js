@@ -35,12 +35,20 @@ function setView(v){
   TABS.forEach(n=>{$("v-"+n).hidden=n!==v});
   window.scrollTo(0,scrollMem[v]||0);
   if(v!=="times")stopQibla();
+  $("atmo").style.transition="";
+  if(v==="times")requestAnimationFrame(()=>window.dispatchEvent(new Event("scroll")));
   document.body.classList.toggle("on-times",v==="times");
   if(v==="quran")initQuran();
   if(v==="times")renderTimes();
 }
 $("quranBtn").addEventListener("click",()=>{history.pushState({v:"quran"},"");setView("quran")});
 $("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="quran")history.back();else setView("times")});
+// Beim Scrollen tritt der Himmel zurück: Licht und Sterne verblassen, leichte Parallaxe
+(()=>{const a=$("atmo");let tick=false;
+  const upd=()=>{tick=false;if(view!=="times")return;const y=Math.max(0,window.scrollY);
+    a.style.transition="none";a.style.setProperty("--sf",Math.max(0,1-y/220).toFixed(3));a.style.transform=y?`translateY(${(-y*.25).toFixed(1)}px)`:""};
+  window.addEventListener("scroll",()=>{if(!tick){tick=true;requestAnimationFrame(upd)}},{passive:true});
+})();
 window.addEventListener("popstate",e=>setView(e.state&&e.state.v==="quran"?"quran":"times"));
 
 /* ================= Sheets ================= */
