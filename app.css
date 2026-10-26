@@ -225,12 +225,15 @@ body.ph-night .nightsky{opacity:1}
 .chapter .car{font-family:var(--font-quran);font-size:30px;line-height:1.7}
 .chapter b{font-size:19px;font-weight:600;letter-spacing:-.015em}
 .chapter span{font-size:13px;color:var(--fg-3)}
-.bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * .95);text-align:center;color:var(--fg-2);padding:6px 0 2px;direction:rtl}
+.bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * .95);line-height:2.1;text-align:center;color:var(--fg-2);padding:6px 0 14px;direction:rtl}
 #verses{display:flex;flex-direction:column}
 #verses.no-ar .ar,#verses.no-tr .tr,#verses.no-de .de,#verses.no-en .en{display:none}
 .verse{position:relative;display:flex;flex-direction:column;gap:12px;padding:14px 12px 22px;margin:0 -12px;border-radius:18px;transition:background-color 220ms ease;scroll-margin-top:84px}
 .verse:not(:last-child)::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:1px;background:var(--line)}
 .verse[class*="hl-"]::after{display:none}
+/* Markierte Verse: Abstand, damit Flächen sich nicht berühren */
+.verse[class*="hl-"]{margin-block:4px}
+.verse[class*="hl-"]+.verse[class*="hl-"]{margin-top:8px}
 .verse.hl-yellow{background:var(--hl-yellow)} .verse.hl-green{background:var(--hl-green)}
 .verse.hl-blue{background:var(--hl-blue)} .verse.hl-pink{background:var(--hl-pink)}
 .verse .meta{display:flex;align-items:center;justify-content:space-between;margin-bottom:-4px}
