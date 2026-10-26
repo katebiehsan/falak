@@ -1,5 +1,5 @@
 // Gebet – Offline-Unterstützung
-const V="miqat-v31";
+const V="miqat-v32";
 const SHELL=["./","index.html","app.css","app.js","adhan.min.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k!=="miqat-data").map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
@@ -15,8 +15,8 @@ self.addEventListener("fetch",e=>{
     }));
     return;
   }
-  // App selbst: erst Netz (damit Updates sofort ankommen), offline aus dem Cache
+  // App selbst: erst Netz, am HTTP-Cache vorbei (GitHub Pages cacht 10 Min.), damit Updates sofort ankommen, offline aus dem Cache
   if(u.origin===location.origin){
-    e.respondWith(fetch(e.request).then(r=>{const cl=r.clone();caches.open(V).then(c=>c.put(e.request,cl));return r}).catch(()=>caches.match(e.request,{ignoreSearch:true})));
+    e.respondWith(fetch(e.request,{cache:"no-cache"}).then(r=>{const cl=r.clone();caches.open(V).then(c=>c.put(e.request,cl));return r}).catch(()=>caches.match(e.request,{ignoreSearch:true})));
   }
 });
