@@ -72,9 +72,12 @@ svg{flex:none}
 .eyebrow{margin:0;font-size:14px;font-weight:500;color:var(--fg-3)}
 .hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
 /* Qibla nur als Text: Pfeil dreht sich zur Kaaba, der Text führt; ausgerichtet grün */
-.qtext{align-self:flex-start;margin:12px 0 0 -2px;display:inline-flex;align-items:center;gap:8px;height:36px;padding:0 2px;
+.qtext{align-self:flex-start;margin:12px 0 0 -2px;display:inline-flex;align-items:center;gap:0;height:36px;padding:0 2px;
   font-size:15px;font-weight:500;color:var(--fg-2);font-variant-numeric:tabular-nums}
-.qarrow{width:16px;height:16px;transition:transform 120ms linear}
+/* Pfeil erst sichtbar, wenn Qibla aktiv ist; in Ruhe stehen „Qibla finden“ und „Quran“ als reiner Text nebeneinander */
+.qarrow{flex:none;width:0;height:16px;margin-right:0;opacity:0;scale:.6;
+  transition:transform 120ms linear,width 220ms cubic-bezier(.23,1,.32,1),margin 220ms cubic-bezier(.23,1,.32,1),scale 220ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}
+.qtext.on .qarrow{width:16px;margin-right:8px;opacity:1;scale:1}
 .qtext.on{color:var(--fg)}
 .qtext.ok{color:var(--accent)}
 .tools{display:flex;align-items:center;gap:22px;margin:12px 0 0 -2px}
@@ -131,9 +134,9 @@ body.on-times .atmo{opacity:1}
    damit sie auch in der Homescreen-App ab oben sichtbar ist */
 .glow{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 /* Zentrum unterhalb der Statusleiste, damit der hellste Teil in der Homescreen-App sichtbar ist */
-.g-day{background:radial-gradient(90% 80% at 78% calc(env(safe-area-inset-top,0px) + 40px),rgba(237,185,138,.50),rgba(237,185,138,.15) 45%,transparent 78%),radial-gradient(80% 60% at 15% calc(env(safe-area-inset-top,0px) + 20px),rgba(255,236,214,.12),transparent 70%)}
-.g-dusk{background:radial-gradient(85% 75% at 78% calc(env(safe-area-inset-top,0px) + 40px),rgba(214,128,110,.46),rgba(214,128,110,.13) 45%,transparent 78%),radial-gradient(90% 75% at 20% calc(env(safe-area-inset-top,0px) + 30px),rgba(120,100,180,.46),rgba(120,100,180,.13) 45%,transparent 78%)}
-.g-night{background:radial-gradient(110% 85% at 30% calc(env(safe-area-inset-top,0px) + 40px),rgba(70,96,185,.52),rgba(70,96,185,.15) 45%,transparent 78%)}
+.g-day{background:radial-gradient(120% 85% at 60% calc(env(safe-area-inset-top,0px) + 0px),rgba(130,175,230,.38),rgba(130,175,230,.11) 45%,transparent 78%)}
+.g-dusk{background:radial-gradient(85% 75% at 75% calc(env(safe-area-inset-top,0px) + 40px),rgba(240,140,80,.42),rgba(240,140,80,.13) 45%,transparent 78%),radial-gradient(90% 75% at 20% calc(env(safe-area-inset-top,0px) + 30px),rgba(70,90,165,.42),rgba(70,90,165,.13) 45%,transparent 78%)}
+.g-night{background:radial-gradient(120% 85% at 40% calc(env(safe-area-inset-top,0px) + 40px),rgba(35,50,110,.6),rgba(35,50,110,.18) 45%,transparent 78%)}
 body.ph-day .g-day,body.ph-dusk .g-dusk,body.ph-night .g-night{opacity:1}
 .nightsky{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 .nightsky i{position:absolute;border-radius:50%;background:#fff}
@@ -338,5 +341,5 @@ body.ph-night .nightsky{opacity:1}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active,.tabbar button:active{transform:none}
-  .progress i,.toggle i::after,.tab-ind,.glow,.nightsky,.atmo{transition:none}
+  .progress i,.toggle i::after,.tab-ind,.glow,.nightsky,.atmo,.qarrow{transition:none}
 }
