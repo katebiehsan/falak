@@ -1,4 +1,4 @@
-# Miqat
+# Falak
 
 Gebetszeiten (Muslimische Weltliga, Asr Standard, Siebtel der Nacht), Qibla-Kompass und Quran (Arabisch, Deutsch Bubenheim & Elyas, Englisch Saheeh International, Transliteration) als Web-App für den iPhone-Homescreen.
 
@@ -8,7 +8,7 @@ Gebetszeiten (Muslimische Weltliga, Asr Standard, Siebtel der Nacht), Qibla-Komp
 - Markierungen und Einstellungen bleiben lokal auf dem Gerät.
 
 - Islamische Tage (Weiße Tage, Ramadan, Arafah, Eid …) nach Umm al-Qura mit einstellbarer Hijri-Anpassung, Export als Kalenderdatei
-- App-Icon: Mim in Amiri (SIL Open Font License)
+- App-Icon: „فلك“ (Falak, die Himmelsbahn) in Amiri (SIL Open Font License)
 - Schrift: SF Pro (Apple-Systemschrift); Zahlen mit gleich breiten Ziffern
-- Qibla: kleines Kompass-Symbol neben dem aktuellen Gebet, antippen zum Starten
-- Startseite: Sonnenbogen von Fajr bis Isha statt Liste; Gebet antippen zum Anpassen (±30 Min.) und für eine Erinnerung; nachts Sternenhimmel mit Countdown bis Fajr
+- Qibla: „Qibla finden“ antippen, dann erscheint der Pfeil zur Kaaba
+- Startseite: Himmel in echten Farben (Tag, Maghrib, Isha mit Sternen); Gebet antippen zum Anpassen (±30 Min.) und für eine Erinnerung

@@ -4,9 +4,12 @@ const $=id=>document.getElementById(id);
 const R=Math.PI/180;
 
 /* ================= Speicher ================= */
+// Umzug von Miqat zu Falak: alte Einträge (gleiche Domain) einmalig übernehmen, damit Markierungen erhalten bleiben
+try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);
+  if(k&&k.startsWith("miqat.")){const n="falak."+k.slice(6);if(localStorage.getItem(n)==null)localStorage.setItem(n,localStorage.getItem(k))}}}catch(e){}
 const store={
-  get(k,d){try{const v=localStorage.getItem("miqat."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
-  set(k,v){try{localStorage.setItem("miqat."+k,JSON.stringify(v))}catch(e){}}
+  get(k,d){try{const v=localStorage.getItem("falak."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
+  set(k,v){try{localStorage.setItem("falak."+k,JSON.stringify(v))}catch(e){}}
 };
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
 let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:24},store.get("prefs",{}));
@@ -246,9 +249,9 @@ const icsEsc=t=>String(t).replace(/\\/g,"\\\\").replace(/([,;])/g,"\\$1");
 $("icsBtn").addEventListener("click",()=>{
   const pad=n=>String(n).padStart(2,"0"),ymd=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
   const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
-  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Miqat//Islamische Tage//DE","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Islamische Tage"];
+  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Falak//Islamische Tage//DE","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Islamische Tage"];
   events().forEach(e=>{const end=new Date(e.end);end.setDate(end.getDate()+1);
-    lines.push("BEGIN:VEVENT",`UID:${e.k}-${e.h.y}-${e.h.m}@miqat`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${ymd(e.start)}`,`DTEND;VALUE=DATE:${ymd(end)}`,
+    lines.push("BEGIN:VEVENT",`UID:${e.k}-${e.h.y}-${e.h.m}@falak`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${ymd(e.start)}`,`DTEND;VALUE=DATE:${ymd(end)}`,
       `SUMMARY:${icsEsc(e.title)}`,`DESCRIPTION:${icsEsc(e.note)}`,"TRANSP:TRANSPARENT",
       "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsEsc(e.title)}`,"TRIGGER:-PT6H","END:VALARM","END:VEVENT")});
   lines.push("END:VCALENDAR");
@@ -281,7 +284,7 @@ $("adjRemind").addEventListener("change",async e=>{
     if(!("Notification" in window)){e.target.checked=false;toast(standalone?"Mitteilungen werden nicht unterstützt":"Erinnerungen gehen nur in der Homescreen-App");return}
     let p=Notification.permission;
     if(p==="default"){try{p=await Notification.requestPermission()}catch(err){p="denied"}}
-    if(p!=="granted"){e.target.checked=false;toast("Mitteilungen sind für Miqat ausgeschaltet");return}
+    if(p!=="granted"){e.target.checked=false;toast("Mitteilungen sind für Falak ausgeschaltet");return}
     remind[k]=true;
   }else delete remind[k];
   store.set("remind",remind);
@@ -296,7 +299,7 @@ function checkRemind(){
     const key=`${dayStart(0).toDateString()}|${k}`;
     if(now>=t[k]&&now-t[k]<10*6e4&&lastFired.indexOf(key)<0){
       lastFired=(lastFired+";"+key).slice(-400);store.set("fired",lastFired);
-      const title=`Zeit für ${LABEL[k]}`,opt={body:`${fT(t[k])} · ${loc.name}`,tag:"miqat-"+k,icon:"icon-192.png"};
+      const title=`Zeit für ${LABEL[k]}`,opt={body:`${fT(t[k])} · ${loc.name}`,tag:"falak-"+k,icon:"icon-192.png"};
       if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(title,opt)).catch(()=>{});
       else try{new Notification(title,opt)}catch(err){}
     }
@@ -304,21 +307,21 @@ function checkRemind(){
 }
 $("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
 $("backupBtn").addEventListener("click",async()=>{
-  const data=JSON.stringify({app:"miqat",v:1,date:new Date().toISOString(),marks,bookmark,resume,prefs,settings,loc},null,1);
-  const name=`miqat-sicherung-${new Date().toISOString().slice(0,10)}.json`;
+  const data=JSON.stringify({app:"falak",v:1,date:new Date().toISOString(),marks,bookmark,resume,prefs,settings,loc},null,1);
+  const name=`falak-sicherung-${new Date().toISOString().slice(0,10)}.json`;
   const file=new File([data],name,{type:"application/json"});
-  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Miqat-Sicherung"});return}}catch(e){if(e&&e.name==="AbortError")return}
+  try{if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({files:[file],title:"Falak-Sicherung"});return}}catch(e){if(e&&e.name==="AbortError")return}
   const a=document.createElement("a");a.href=URL.createObjectURL(file);a.download=name;document.body.appendChild(a);a.click();
   setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast("Sicherung gespeichert");
 });
 $("restoreIn").addEventListener("change",async e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
-  try{const j=JSON.parse(await f.text());if(j.app!=="miqat")throw 0;
+  try{const j=JSON.parse(await f.text());if(j.app!=="falak"&&j.app!=="miqat")throw 0;
     marks=Object.assign({},marks,j.marks||{});store.set("marks",marks);
     if(j.bookmark){bookmark=j.bookmark;store.set("bookmark",bookmark)}
     if(j.resume){resume=j.resume;store.set("resume",resume)}
     updateMarksCount();toast(`${Object.keys(j.marks||{}).length} Markierungen geladen`);
-  }catch(err){toast("Diese Datei ist keine Miqat-Sicherung")}
+  }catch(err){toast("Diese Datei ist keine Falak-Sicherung")}
   e.target.value="";
 });
 
