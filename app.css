@@ -50,7 +50,7 @@ svg{flex:none}
 
 /* ---------- Layout ---------- */
 .view{max-width:520px;margin:0 auto;
-  padding:10px max(20px,env(safe-area-inset-right,0px)) calc(96px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
+  padding:10px max(20px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
   display:flex;flex-direction:column;gap:22px;animation:in 140ms ease}
 @keyframes in{from{opacity:0}to{opacity:1}}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
@@ -77,6 +77,9 @@ svg{flex:none}
 .qarrow{width:16px;height:16px;transition:transform 120ms linear}
 .qtext.on{color:var(--fg)}
 .qtext.ok{color:var(--accent)}
+.tools{display:flex;align-items:center;gap:22px;margin:12px 0 0 -2px}
+.tools .qtext{margin:0}
+.top-l{display:flex;align-items:center;gap:10px;min-width:0}
 
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:600}
@@ -322,7 +325,7 @@ body.ph-night .nightsky{opacity:1}
 .swatches button.on{box-shadow:0 0 0 3px rgba(22,22,25,1),0 0 0 5px var(--fg)}
 
 /* ---------- Toast ---------- */
-.toast{position:fixed;left:50%;bottom:calc(74px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
   background:var(--raise-2);border:1px solid #2e2e32;
   color:var(--fg);font-size:14px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;
   transition:opacity 150ms ease,transform 150ms var(--ease-out)}

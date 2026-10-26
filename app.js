@@ -25,23 +25,23 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().
 let toastT;
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1700)}
 
-/* ================= Tabs ================= */
+/* ================= Ansichten ================= */
+// Keine Tabbar mehr: „Quran“ neben „Qibla finden“ öffnet den Quran, Zurück-Pfeil (oder Zurück-Geste) führt heim
 let view="times";const scrollMem={};const TABS=["times","quran"];
-function moveInd(){$("tabInd").style.transform=`translateX(${TABS.indexOf(view)*70}px)`}
 function setView(v){
   if(v===view)return;
   scrollMem[view]=window.scrollY;
   view=v;
   TABS.forEach(n=>{$("v-"+n).hidden=n!==v});
-  document.querySelectorAll(".tabbar button").forEach(b=>b.setAttribute("aria-selected",b.dataset.v===v));
-  moveInd();
   window.scrollTo(0,scrollMem[v]||0);
   if(v!=="times")stopQibla();
   document.body.classList.toggle("on-times",v==="times");
   if(v==="quran")initQuran();
   if(v==="times")renderTimes();
 }
-document.querySelectorAll(".tabbar button").forEach(b=>b.addEventListener("click",()=>setView(b.dataset.v)));
+$("quranBtn").addEventListener("click",()=>{history.pushState({v:"quran"},"");setView("quran")});
+$("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="quran")history.back();else setView("times")});
+window.addEventListener("popstate",e=>setView(e.state&&e.state.v==="quran"?"quran":"times"));
 
 /* ================= Sheets ================= */
 let openSheetEl=null;
@@ -585,7 +585,7 @@ $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo
 const onScroll=()=>document.body.classList.toggle("scrolled",window.scrollY>4);
 window.addEventListener("scroll",onScroll,{passive:true});onScroll();
 document.body.classList.add("on-times");
-moveInd();
+if(history.state&&history.state.v==="quran")history.replaceState(null,"");
 renderTimes();
 loadHadith();
 setInterval(()=>{checkRemind();if(view==="times"&&!document.hidden)renderTimes()},15000);
