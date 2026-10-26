@@ -174,6 +174,8 @@ body.ph-night .nightsky{opacity:1}
 .hadith .more{align-self:flex-start;color:var(--fg)}
 
 .locline{font-size:13px;font-weight:500;color:var(--fg-2);padding:6px 10px;margin:-6px 0 -4px;border-radius:10px}
+.locline{display:inline-flex;align-items:center;gap:5px}
+.locic{width:11px;height:11px;flex:none}
 .locline:active{background:var(--raise-2)}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 
