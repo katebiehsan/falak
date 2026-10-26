@@ -436,10 +436,10 @@ function renderIndex(){
   if(!surahList)return;
   const q=norm($("search").value||"");
   const list=surahList.filter(s=>!q||String(s.n)===q||norm(s.en).includes(q)||norm(SURAH_DE[s.n-1]).includes(q));
-  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${s.en}</b><span>${SURAH_DE[s.n-1]||s.m}</span></span><span class="rt"><span class="ar">${arName(s.ar)}</span><small>${s.c} Verse</small></span></button>`).join("")
+  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${s.en}</b><span>${SURAH_DE[s.n-1]||s.m}</span></span><span class="rt"><span class="ar">${arName(s.ar)}</span></span></button>`).join("")
     :`<p class="empty">Keine Sure gefunden.</p>`;
   const box=$("resume");let h="";
-  const card=(lbl,p,kind)=>surahList[p.s-1]?`<button class="card resume" data-kind="${kind}"><small>${lbl}</small><b>${surahList[p.s-1].en}</b><span>Vers ${p.a}</span></button>`:"";
+  const card=(lbl,p,kind)=>surahList[p.s-1]?`<button class="resume" data-kind="${kind}"><small>${lbl}</small><b>${surahList[p.s-1].en} <span>· Vers ${p.a}</span></b></button>`:"";
   if(resume)h+=card("Zuletzt gelesen",resume,"resume");
   if(bookmark)h+=card("Lesezeichen",bookmark,"bookmark");
   box.innerHTML=h;box.hidden=!h;
@@ -577,7 +577,7 @@ document.querySelectorAll("[data-size]").forEach(b=>b.addEventListener("click",(
   prefs.size=Math.max(18,Math.min(36,prefs.size+2*(+b.dataset.size)));store.set("prefs",prefs);applyPrefs()}));
 
 // Markierungen
-function updateMarksCount(){const n=Object.keys(marks).length;$("marksCount").textContent=n?`${n} markiert`:"Markiert"}
+function updateMarksCount(){const n=Object.keys(marks).length;$("marksCount").textContent=n||""}
 $("marksBtn").addEventListener("click",()=>{
   showPane("q-marks");window.scrollTo(0,0);
   const keys=Object.keys(marks).sort((x,y)=>{const[a,b]=x.split(":").map(Number),[c,d]=y.split(":").map(Number);return a-c||b-d});
