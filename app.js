@@ -125,7 +125,7 @@ $("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
 /* ================= Gebetsliste ================= */
 // Ruhige Liste ohne Shuruq. Unter dem aktuellen Gebet wächst eine feine Linie bis zum nächsten.
 const ARC=["fajr","dhuhr","asr","maghrib","isha"];
-// Sterne nur im oberen Drittel, kräftiger, nach unten ausgeblendet; fest verteilt, damit nichts springt
+// Sterne nur ab Isha (Nacht), im oberen Drittel, kräftiger, nach unten ausgeblendet; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
   for(let i=0;i<42;i++){const r=rnd(),sz=r<.12?2:r<.45?1.5:1;
     o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*92).toFixed(2)}%;width:${sz}px;height:${sz}px;opacity:${(.35+rnd()*.5).toFixed(2)}"></i>`}

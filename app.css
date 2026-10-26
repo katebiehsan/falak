@@ -134,7 +134,6 @@ body.on-times .atmo{opacity:1}
 body.ph-day .g-day,body.ph-dusk .g-dusk,body.ph-night .g-night{opacity:1}
 .nightsky{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 .nightsky i{position:absolute;border-radius:50%;background:#fff}
-body.ph-dusk .nightsky{opacity:.45}
 body.ph-night .nightsky{opacity:1}
 .view{position:relative;z-index:1}
 
