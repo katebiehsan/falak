@@ -41,26 +41,6 @@ function setView(v){
 }
 $("quranBtn").addEventListener("click",()=>{history.pushState({v:"quran"},"");setView("quran")});
 $("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="quran")history.back();else setView("times")});
-// Herunterziehen ganz oben öffnet den Quran: Inhalt rutscht, Himmel bleibt stehen, „القرآن“ erscheint darin
-(()=>{const TH=90,el=$("v-times"),pq=$("pullQ"),w=pq.firstElementChild;
-  let y0=null,x0=0,d=0,armed=false,act=false;
-  const draw=()=>{const p=d<TH?d:TH+(d-TH)*.35,k=Math.min(1,d/TH);
-    el.style.transform=p?`translateY(${p}px)`:"";pq.style.height=p+"px";
-    w.style.opacity=(.15+k*.85).toFixed(2);w.style.transform=`scale(${(.85+k*.15).toFixed(3)})`;pq.classList.toggle("armed",d>=TH)};
-  const reset=anim=>{[el,pq,w].forEach(n=>n.style.transition=anim?"":"none");d=0;armed=false;draw()};
-  document.addEventListener("touchstart",e=>{
-    if(view!=="times"||openSheetEl||window.scrollY>0||e.touches.length>1){y0=null;return}
-    y0=e.touches[0].clientY;x0=e.touches[0].clientX;act=false;reset(false)},{passive:true});
-  document.addEventListener("touchmove",e=>{if(y0==null)return;
-    const dy=e.touches[0].clientY-y0,dx=e.touches[0].clientX-x0;
-    if(!act){if(Math.abs(dy)<6&&Math.abs(dx)<6)return;if(dy<=0||Math.abs(dx)>dy||window.scrollY>0){y0=null;return}act=true}
-    e.preventDefault();d=Math.max(0,dy);
-    if(d>=TH&&!armed){armed=true;try{navigator.vibrate&&navigator.vibrate(10)}catch(_){}}else if(d<TH)armed=false;
-    draw()},{passive:false});
-  const end=()=>{if(y0==null)return;y0=null;if(!act)return;const go=d>=TH;reset(true);
-    if(go)setTimeout(()=>{history.pushState({v:"quran"},"");setView("quran")},120)};
-  document.addEventListener("touchend",end);document.addEventListener("touchcancel",end);
-})();
 window.addEventListener("popstate",e=>setView(e.state&&e.state.v==="quran"?"quran":"times"));
 
 /* ================= Sheets ================= */
