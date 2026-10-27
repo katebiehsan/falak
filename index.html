@@ -10,13 +10,10 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Falak">
-<link rel="apple-touch-icon" href="icon-180.png?v=2">
-<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=2">
-<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=2">
+<link rel="apple-touch-icon" href="icon-180.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png?v=3">
+<link rel="icon" type="image/png" sizes="64x64" href="favicon-64.png?v=3">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri&family=Amiri+Quran&display=swap">
 <link rel="stylesheet" href="app.css">
 </head>
 <body>
@@ -165,16 +162,27 @@
         <button id="adjPlus" aria-label="Eine Minute später">+</button>
       </div>
     </div>
-    <label class="toggle rowline"><span>Erinnerung</span><input type="checkbox" id="adjRemind"><i></i></label>
+    <button class="rowbtn cal-row" id="adjCal"><span>Erinnerung im Kalender</span><svg class="ic16" aria-hidden="true"><use href="#i-cal"/></svg></button>
   </div>
+  <p class="hint-s" id="adjHint"></p>
 </section>
 
 <section class="sheet" id="daysSheet" aria-label="Islamische Tage">
   <div class="grab"></div>
   <h3>Islamische Tage</h3>
   <div class="sheetlist"><div class="list" id="daysList"></div></div>
+  <div class="rows">
+    <div class="rowline">
+      <span>Verschieben</span>
+      <div class="mini-step">
+        <button id="hijMinus" aria-label="Alle Tage einen Tag früher">−</button>
+        <span id="hijVal">0 Tage</span>
+        <button id="hijPlus" aria-label="Alle Tage einen Tag später">+</button>
+      </div>
+    </div>
+  </div>
   <button class="primary" id="icsBtn"><svg class="ic16"><use href="#i-cal"/></svg>In Kalender übernehmen</button>
-  <p class="hint-s">Mit Erinnerung am Vorabend. Daten nach Umm al-Qura und deiner Hijri-Anpassung; der tatsächliche Beginn hängt von der Mondsichtung ab.</p>
+  <p class="hint-s">Mit Erinnerung am Vorabend. Berechnet nach Umm al-Qura. Feiert deine Moschee einen Tag später, stell „+1 Tag“ ein.</p>
 </section>
 
 <section class="sheet" id="viewSheet" aria-label="Anzeige">
@@ -210,6 +218,7 @@
 <div class="toast" id="toast" role="status"></div>
 
 <script src="adhan.min.js"></script>
+<script src="magvar.min.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

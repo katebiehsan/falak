@@ -1,13 +1,13 @@
 // Gebet – Offline-Unterstützung
-const V="falak-v3";
-const SHELL=["./","index.html","app.css","app.js","adhan.min.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","favicon-32.png","favicon-64.png"];
+const V="falak-v4";
+const SHELL=["./","index.html","app.css","app.js","adhan.min.js","magvar.min.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","favicon-32.png","favicon-64.png","fonts/amiri-arabic.woff2","fonts/amiri-quran-arabic.woff2"];
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener("activate",e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==V&&k!=="falak-data").map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
 self.addEventListener("fetch",e=>{
   const u=new URL(e.request.url);
   if(e.request.method!=="GET")return;
-  // Quran-Texte und Schriften: aus dem Cache, im Hintergrund aktualisieren
-  if(u.hostname==="api.alquran.cloud"||u.hostname==="cdn.jsdelivr.net"||u.hostname==="raw.githubusercontent.com"||u.hostname.endsWith("fonts.googleapis.com")||u.hostname.endsWith("fonts.gstatic.com")){
+  // Quran-Texte und Hadithe: aus dem Cache, im Hintergrund aktualisieren
+  if(u.hostname==="api.alquran.cloud"||u.hostname==="cdn.jsdelivr.net"||u.hostname==="raw.githubusercontent.com"){
     e.respondWith(caches.open("falak-data").then(async c=>{
       const hit=await c.match(e.request);
       const net=fetch(e.request).then(r=>{if(r.ok||r.type==="opaque")c.put(e.request,r.clone());return r}).catch(()=>hit||Response.error());

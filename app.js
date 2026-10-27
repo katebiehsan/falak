@@ -14,8 +14,8 @@ const store={
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
 let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:24},store.get("prefs",{}));
 if(!prefs.v2){prefs.size=24;prefs.v2=1;store.set("prefs",prefs)}
-// Feste Berechnung wie Athan Utility; früher gespeicherte Abweichungen werden ignoriert
-const settings={method:"MuslimWorldLeague",asr:"standard",hijri:0};
+// Feste Berechnung wie Athan Utility. Nur das Hijri-Datum lässt sich um bis zu zwei Tage verschieben (Mondsichtung der eigenen Moschee).
+const settings={method:"MuslimWorldLeague",asr:"standard",hijri:Math.max(-2,Math.min(2,+store.get("hijri",0)||0))};
 let adj=store.get("adj",{})||{};
 let marks=store.get("marks",{});          // "2:255" -> {c:"yellow", t:"Snippet"}
 let resume=store.get("resume",null);       // zuletzt gelesen {s,a}
@@ -176,7 +176,8 @@ function dayRules(h){
   if(m===1&&d===1)out.push({k:"newyear",title:"Islamisches Neujahr",note:`1. Muharram ${h.y}`,kind:"zeit"});
   if(m===1&&(d===9||d===10))out.push({k:"ashura",title:"Tasu'a & Ashura",note:"Fasten am 9. und 10. Muharram",kind:"sunnah"});
   if(m===9&&d===1)out.push({k:"ramadan",title:"Ramadan beginnt",note:"Erstes Tarawih am Vorabend",kind:"fest"});
-  if(m===9&&d===21)out.push({k:"last10",title:"Letzte zehn Nächte",note:"Laylat al-Qadr in den ungeraden Nächten suchen",kind:"zeit"});
+  // Die erste der letzten zehn Nächte (21. Nacht) beginnt mit Maghrib am 20. Ramadan
+  if(m===9&&d===20)out.push({k:"last10",title:"Letzte zehn Nächte",note:"Ab Maghrib · Laylat al-Qadr in den ungeraden Nächten suchen",kind:"zeit",eve:true});
   if(m===10&&d===1)out.push({k:"fitr",title:"Eid al-Fitr",note:"Zakat al-Fitr vor dem Festgebet",kind:"fest"});
   if(m===10&&d===2)out.push({k:"shawwal",title:"Sechs Tage Shawwal",note:"Sechs Fastentage im Shawwal",kind:"sunnah"});
   if(m===12&&d===1)out.push({k:"dhul10",title:"Erste zehn Tage Dhul-Hijja",note:"Die besten Tage des Jahres",kind:"zeit"});
@@ -231,7 +232,7 @@ function renderDays(){
   const chip=$("todayChip");
   if(dayOffset===0&&(now||tom)){
     const e=now||tom,h=hParts(today);
-    let txt=now?(e.k==="bid"?`Weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:e.title):`Morgen: ${e.title}`;
+    let txt=now?(e.k==="bid"?`Weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:e.eve?`${e.title} ab heute Abend`:e.title):`Morgen: ${e.title}`;
     chip.innerHTML=`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`;chip.hidden=false;
   }else chip.hidden=true;
   const fut=list.filter(e=>e.start>today);
@@ -240,8 +241,20 @@ function renderDays(){
   $("upcoming").innerHTML=up.length?up.map(evRow).join(""):`<p class="empty">Keine Termine gefunden.</p>`;
 }
 function openDays(){
-  $("daysList").innerHTML=events().map(evRow).join("");openSheet("daysSheet");
+  renderShift();$("daysList").innerHTML=events().map(evRow).join("");openSheet("daysSheet");
 }
+// Verschiebung aus Sicht der Feiertage: +1 = alles einen Tag später = Hijri-Datum einen Tag zurück
+function renderShift(){
+  const v=-settings.hijri;
+  $("hijVal").textContent=v===0?"0 Tage":`${v>0?"+":"−"}${Math.abs(v)} ${Math.abs(v)===1?"Tag":"Tage"}`;
+  $("hijMinus").disabled=v<=-2;$("hijPlus").disabled=v>=2;
+}
+function setShift(v){
+  v=Math.max(-2,Math.min(2,v));settings.hijri=-v;store.set("hijri",settings.hijri);evCache=null;
+  renderShift();$("daysList").innerHTML=events().map(evRow).join("");renderTimes();
+}
+$("hijMinus").addEventListener("click",()=>setShift(-settings.hijri-1));
+$("hijPlus").addEventListener("click",()=>setShift(-settings.hijri+1));
 $("allDays").addEventListener("click",openDays);
 $("upcoming").addEventListener("click",openDays);
 $("todayChip").addEventListener("click",openDays);
@@ -255,16 +268,13 @@ $("icsBtn").addEventListener("click",()=>{
       `SUMMARY:${icsEsc(e.title)}`,`DESCRIPTION:${icsEsc(e.note)}`,"TRANSP:TRANSPARENT",
       "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsEsc(e.title)}`,"TRIGGER:-PT6H","END:VALARM","END:VEVENT")});
   lines.push("END:VCALENDAR");
-  const blob=new Blob([lines.join("\r\n")],{type:"text/calendar"});
-  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="islamische-tage.ics";document.body.appendChild(a);a.click();
-  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
+  download("islamische-tage.ics",lines.join("\r\n"),"text/calendar");
   toast("Kalenderdatei erstellt");
 });
 
 /* ================= Minuten-Anpassung ================= */
 // Berechnung ist fest (Weltliga, Asr Standard, Siebtel der Nacht). Jede Zeit lässt sich per Antippen um Minuten verschieben.
 let adjKey=null;
-let remind=store.get("remind",{})||{};
 function renderAdj(){
   const k=adjKey;if(!k)return;
   const m=adj[k]||0,t=times(dayStart(dayOffset)),fri=dayStart(dayOffset).getDay()===5;
@@ -273,38 +283,32 @@ function renderAdj(){
   $("adjCalc").textContent=`Berechnet: ${fT(new Date(t[k]-m*6e4))}`;
   $("adjVal").textContent=m===0?"0 Min.":`${m>0?"+":"−"}${Math.abs(m)} Min.`;
   $("adjMinus").disabled=m<=-30;$("adjPlus").disabled=m>=30;
-  $("adjRemind").checked=!!remind[k];
+  $("adjHint").textContent=`Legt ${$("adjTitle").textContent} für 30 Tage mit Erinnerung im Kalender an. Nach einer Anpassung erneut übernehmen.`;
 }
 function setAdj(k,m){m=Math.max(-30,Math.min(30,m));if(m)adj[k]=m;else delete adj[k];store.set("adj",adj);renderAdj();renderTimes()}
 $("adjMinus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)-1));
 $("adjPlus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)+1));
-$("adjRemind").addEventListener("change",async e=>{
-  const k=adjKey,on=e.target.checked;if(!k)return;
-  if(on){
-    if(!("Notification" in window)){e.target.checked=false;toast(standalone?"Mitteilungen werden nicht unterstützt":"Erinnerungen gehen nur in der Homescreen-App");return}
-    let p=Notification.permission;
-    if(p==="default"){try{p=await Notification.requestPermission()}catch(err){p="denied"}}
-    if(p!=="granted"){e.target.checked=false;toast("Mitteilungen sind für Falak ausgeschaltet");return}
-    remind[k]=true;
-  }else delete remind[k];
-  store.set("remind",remind);
-});
-// Erinnerung, solange die App geöffnet ist oder im Hintergrund noch läuft
-let lastFired=store.get("fired","");
-function checkRemind(){
-  if(!("Notification" in window)||Notification.permission!=="granted")return;
-  const now=new Date(),t=times(dayStart(0));
-  ARC.forEach(k=>{
-    if(!remind[k])return;
-    const key=`${dayStart(0).toDateString()}|${k}`;
-    if(now>=t[k]&&now-t[k]<10*6e4&&lastFired.indexOf(key)<0){
-      lastFired=(lastFired+";"+key).slice(-400);store.set("fired",lastFired);
-      const title=`Zeit für ${LABEL[k]}`,opt={body:`${fT(t[k])} · ${loc.name}`,tag:"falak-"+k,icon:"icon-192.png"};
-      if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(title,opt)).catch(()=>{});
-      else try{new Notification(title,opt)}catch(err){}
-    }
-  });
+// Erinnerung über den iPhone-Kalender: Eine Web-App wird im Hintergrund angehalten und kann nicht zuverlässig benachrichtigen.
+function download(name,text,type){
+  const blob=new Blob([text],{type});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=name;
+  document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);
 }
+const icsUTC=d=>d.toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+$("adjCal").addEventListener("click",()=>{
+  const k=adjKey;if(!k)return;
+  const stamp=icsUTC(new Date()),pad=n=>String(n).padStart(2,"0");
+  const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Falak//Gebetszeiten//DE","CALSCALE:GREGORIAN","METHOD:PUBLISH",`X-WR-CALNAME:Falak · ${LABEL[k]}`];
+  for(let i=0;i<30;i++){
+    const day=dayStart(i),t=times(day)[k],name=k==="dhuhr"&&day.getDay()===5?"Jumu'a":LABEL[k];
+    const end=new Date(t.getTime()+15*6e4),id=`${day.getFullYear()}${pad(day.getMonth()+1)}${pad(day.getDate())}`;
+    lines.push("BEGIN:VEVENT",`UID:${k}-${id}@falak`,`DTSTAMP:${stamp}`,`DTSTART:${icsUTC(t)}`,`DTEND:${icsUTC(end)}`,
+      `SUMMARY:${icsEsc(name)}`,`LOCATION:${icsEsc(loc.name)}`,"TRANSP:TRANSPARENT",
+      "BEGIN:VALARM","ACTION:DISPLAY",`DESCRIPTION:${icsEsc("Zeit für "+name)}`,"TRIGGER:PT0M","END:VALARM","END:VEVENT");
+  }
+  lines.push("END:VCALENDAR");
+  download(`falak-${k}.ics`,lines.join("\r\n"),"text/calendar");
+  toast("Kalenderdatei erstellt");
+});
 $("storeHint").textContent=standalone?"Markierungen liegen nur auf diesem Gerät. Eine Sicherung schützt sie beim Gerätewechsel.":"Tipp: Als App auf dem Homescreen bleiben Markierungen zuverlässiger gespeichert als in Safari.";
 $("backupBtn").addEventListener("click",async()=>{
   const data=JSON.stringify({app:"falak",v:1,date:new Date().toISOString(),marks,bookmark,resume,prefs,settings,loc},null,1);
@@ -358,15 +362,23 @@ $("gpsBtn").addEventListener("click",()=>{
 // Kleines Symbol neben dem aktuellen Gebet (wie Athan Utility): Antippen startet den Kompass,
 // die Spitze am Ring zeigt Richtung Kaaba, ausgerichtet wird alles grün. Nochmal tippen beendet.
 const MECCA={lat:21.4225,lon:39.8262};
-let qTarget=0,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null,warnedAcc=false;
+let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null,warnedAcc=false;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
-function updateQiblaTarget(){qTarget=adhan.Qibla(new adhan.Coordinates(loc.lat,loc.lon))}
+// Kompass liefert magnetisch Nord (Apple-Doku zu webkitCompassHeading); die Kaaba-Richtung ist geografisch.
+// Missweisung nach dem Weltmagnetfeldmodell WMM 2025 (Bremen 2026: rund 4° Ost) wird deshalb aufaddiert.
+function updateQiblaTarget(){
+  qTarget=adhan.Qibla(new adhan.Coordinates(loc.lat,loc.lon));
+  try{qDecl=typeof magvar==="function"?+magvar(loc.lat,loc.lon)||0:0}catch(e){qDecl=0}
+}
 function onOrient(e){
   if(!qActive)return;
   let h=null;
   if(typeof e.webkitCompassHeading==="number"&&!isNaN(e.webkitCompassHeading))h=e.webkitCompassHeading;
   else if(e.absolute&&e.alpha!=null)h=360-e.alpha;
   if(h==null)return;
+  h+=qDecl;
+  // Kompass misst nur flach gehalten sauber
+  if(e.beta!=null&&e.gamma!=null)tilted=Math.abs(e.beta)>40||Math.abs(e.gamma)>40;
   const so=(screen.orientation&&screen.orientation.angle)||window.orientation||0;h=(h+so+360)%360;
   lastEvt=Date.now();
   const x=Math.cos(h*R),y=Math.sin(h*R);
@@ -381,15 +393,15 @@ function drawHeading(){
   const h=(Math.atan2(sy,sx)/R+360)%360;
   if(shown==null)shown=h;else{let d=((h-shown+540)%360)-180;shown+=d}
   $("qRot").style.transform=`rotate(${(qTarget-shown).toFixed(1)}deg)`;
-  const diff=((qTarget-h+540)%360)-180,ad=Math.abs(diff),ok=ad<=3;
+  const diff=((qTarget-h+540)%360)-180,ad=Math.abs(diff),ok=!tilted&&ad<=3;
   $("qBtn").classList.toggle("ok",ok);
-  $("qLbl").textContent=ok?"Richtung stimmt":`${Math.round(ad)}° nach ${diff>0?"rechts":"links"} drehen`;
+  $("qLbl").textContent=tilted?"Handy flach halten":ok?"Richtung stimmt":`${Math.round(ad)}° nach ${diff>0?"rechts":"links"} drehen`;
   if(ok&&!wasAligned&&navigator.vibrate)navigator.vibrate(18);
   wasAligned=ok;
 }
 function stopQibla(){
   if(!qActive)return;
-  qActive=false;shown=null;sx=sy=null;wasAligned=false;
+  qActive=false;shown=null;sx=sy=null;wasAligned=false;tilted=false;
   const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");
   $("qRot").style.transform="";$("qLbl").textContent="Qibla";
 }
@@ -610,7 +622,7 @@ document.body.classList.add("on-times");
 if(history.state&&history.state.v==="quran")history.replaceState(null,"");
 renderTimes();
 loadHadith();
-setInterval(()=>{checkRemind();if(view==="times"&&!document.hidden)renderTimes()},15000);
+setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="times")renderTimes()});
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});
 })();
