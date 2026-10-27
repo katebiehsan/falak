@@ -131,12 +131,11 @@ function renderTimes(){
   if(live){
     $("heroLabel").hidden=true;
     $("curName").textContent=LABEL[cur.k];
-    $("qBtn").hidden=false;$("todayBtn").hidden=true;
+
     $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
   }else{
     if(qActive)stopQibla();
-    $("qBtn").hidden=true;$("todayBtn").hidden=false;
-    $("heroLabel").hidden=false;$("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
+    $("heroLabel").hidden=false;$("heroLabel").innerHTML=`${dayOffset>0?"Vorschau":"Rückblick"} · <button class="hl-today" id="heroToday">Heute ›</button>`;
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
   }
@@ -187,7 +186,8 @@ $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b
 // Abseits von heute erscheint „Heute“ in der Kapsel. Nach längerer Pause öffnet Falak wieder mit heute.
 function goDay(o){const dir=Math.sign(o-dayOffset);if(!dir)return;if(qActive)stopQibla();dayOffset=o;renderTimes();
   ["curName","nextLine","pts"].forEach(id=>slideIn($(id),dir,10,180))}
-$("todayBtn").addEventListener("click",()=>goDay(0));
+// „Heute ›“ steht neben „Vorschau“ bzw. „Rückblick“; die Kapsel bleibt beim Wischen unverändert
+$("heroLabel").addEventListener("click",e=>{if(e.target.closest("#heroToday"))goDay(0)});
 (()=>{let x0=null,y0=0,t0=0;const v=$("v-times");
   v.addEventListener("touchstart",e=>{if(e.touches.length!==1||view!=="times"||openSheetEl){x0=null;return}
     const t=e.touches[0];if(t.clientX<24||t.clientX>innerWidth-24){x0=null;return} // Bildschirmrand gehört iOS (Zurück-Geste)

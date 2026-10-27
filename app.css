@@ -357,13 +357,13 @@ body.ph-night .nightsky{opacity:1}
 /* Tastatur und VoiceOver: Vers-Aktionen beim Fokus sichtbar */
 .verse:focus-within .acts button{opacity:1;pointer-events:auto}
 /* Während der Qibla-Kompass läuft, braucht es kein Tage-Blättern: Platz für den längeren Hinweis, nichts rutscht um */
-.hrow.qon .hright{display:none}
+/* Während Qibla läuft, ist der Hinweis länger: Dhikr tritt so lange zurück */
+.hrow.qon #dhikrBtn{display:none}
 
 /* ---------- Dhikr ---------- */
-.hright{display:flex;align-items:center;gap:8px}
-.dz-btn{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:var(--fg-2)}
-.dz-btn svg{width:20px;height:20px}
-.dz-btn:active{background:rgba(255,255,255,.06)}
+/* Dhikr als drittes Segment der Kapsel, nur Symbol */
+.dz-seg{padding:0 13px!important}
+.dz-seg svg{width:18px;height:18px;display:block}
 #dhikrBack{margin-right:2px}
 #v-dhikr{min-height:100dvh}
 .dz-bars{display:grid;grid-template-columns:33fr 33fr 33fr 6fr;gap:6px}
@@ -386,4 +386,4 @@ body.ph-night .nightsky{opacity:1}
 
 /* ---------- Wischen über die Startseite blättert die Tage ---------- */
 #v-times{touch-action:pan-y}
-#todayBtn{color:var(--fg)}
+.hl-today{color:var(--fg);font:inherit;padding:4px 0}
