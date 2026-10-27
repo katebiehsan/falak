@@ -122,8 +122,7 @@ function renderTimes(){
   }
   renderArc(day,t,now,live);
   const dl=$("dayLabel");
-  dl.textContent=live?"Heute":day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
-  dl.classList.toggle("off",!live);
+  dl.hidden=live;
   $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
   $("hijriDate").textContent=hijriText(day);
   renderDays();
@@ -222,7 +221,7 @@ function fWhen(e){
 }
 function evRow(e){
   const w=fWhen(e);
-  return `<div class="item"><span class="ev"><b>${e.title}</b><span>${fRange(e)} · ${e.note}</span></span><span class="when${w==="heute"||w==="morgen"?" soon":""}">${w}</span></div>`;
+  return `<div class="item"><span class="ev"><b>${e.title}</b><span>${fRange(e)}<i class="nt"> · ${e.note}</i></span></span><span class="when${w==="heute"||w==="morgen"?" soon":""}">${w}</span></div>`;
 }
 function renderDays(){
   const list=events(),today=dayStart(0);
@@ -496,8 +495,8 @@ function verseHTML(n,v){
       <button data-act="cp" aria-label="Kopieren">${ICON.cp}</button></span></div>
     <div class="ar" lang="ar">${esc(v.ar)} <span class="end">${arNum(v.a)}</span></div>
     <div class="tr">${esc(v.tr)}</div>
-    <div class="de" lang="de">${esc(v.de)}<span class="who">Bubenheim &amp; Elyas</span></div>
-    <div class="en" lang="en">${esc(v.en)}<span class="who">Saheeh International</span></div></article>`;
+    <div class="de" lang="de">${esc(v.de)}</div>
+    <div class="en" lang="en">${esc(v.en)}</div></article>`;
 }
 async function openSurah(n,ayah){
   showPane("q-reader");window.scrollTo(0,0);
@@ -508,7 +507,7 @@ async function openSurah(n,ayah){
   try{s=await loadSurah(n)}catch(e){$("verses").innerHTML=`<p class="loading">Keine Verbindung. Einmal geöffnete Suren sind danach auch offline verfügbar.</p>`;return}
   curSurah=s;
   $("rName").textContent=s.name;$("rSub").textContent=`Sure ${n}`;
-  let h=`<header class="chapter"><div class="car" lang="ar">${arName(s.arName)}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span></header>`;
+  let h=`<header class="chapter"><div class="car" lang="ar">${arName(s.arName)}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span><small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small></header>`;
   if(n!==1&&n!==9)h+=`<div class="bismillah" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>`;
   h+=s.verses.map(v=>verseHTML(n,v)).join("");
   $("verses").innerHTML=h;applyPrefs();
@@ -528,7 +527,10 @@ $("backBtn").addEventListener("click",()=>{if(io)io.disconnect();showPane("q-ind
 
 // Aktionen pro Vers
 $("verses").addEventListener("click",async e=>{
-  const b=e.target.closest("[data-act]");if(!b||!curSurah)return;
+  const b=e.target.closest("[data-act]");
+  // Vers antippen blendet Markieren, Lesezeichen und Kopieren ein; erneutes Antippen blendet sie aus
+  if(!b){const v=e.target.closest(".verse");if(v){const was=v.classList.contains("open");document.querySelectorAll("#verses .verse.open").forEach(x=>x.classList.remove("open"));if(!was)v.classList.add("open")}return}
+  if(!curSurah)return;
   const art=b.closest(".verse"),a=+art.dataset.a,n=curSurah.n,k=`${n}:${a}`,v=curSurah.verses[a-1];
   if(b.dataset.act==="hl"){
     activeKey=k;$("vsTitle").textContent=`${curSurah.name} · Vers ${a}`;

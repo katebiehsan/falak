@@ -53,20 +53,23 @@
     <p class="eyebrow" id="heroLabel" hidden></p>
     <h1 id="curName">–</h1>
     <p class="next" id="nextLine">&nbsp;</p>
+    <div class="hrow">
     <div class="tools">
     <button class="qtext" id="qBtn" aria-pressed="false"><svg class="qarrow" id="qRot" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="qLbl">Qibla</span></button>
     <button class="qtext" id="quranBtn"><span>Quran</span></button>
+    </div>
+    <!-- Tage blättern: Kapsel rechts über den Uhrzeiten; „Heute“ erscheint nur, wenn ein anderer Tag gezeigt wird -->
+    <nav class="daynav" aria-label="Tag wählen">
+      <button id="prevDay" aria-label="Vorheriger Tag"><svg class="ic16"><use href="#i-chev-l"/></svg></button>
+      <button class="daylabel" id="dayLabel" hidden>Heute</button>
+      <button id="nextDay" aria-label="Nächster Tag"><svg class="ic16"><use href="#i-chev-r"/></svg></button>
+    </nav>
     </div>
     <button class="today" id="todayChip" hidden></button>
   </section>
 
   <section class="plist" id="pts" aria-label="Gebetszeiten"></section>
 
-  <nav class="daynav">
-    <button class="icon-btn" id="prevDay" aria-label="Vorheriger Tag"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
-    <button class="daylabel" id="dayLabel">Heute</button>
-    <button class="icon-btn" id="nextDay" aria-label="Nächster Tag"><svg class="ic18"><use href="#i-chev-r"/></svg></button>
-  </nav>
 
   <section class="block" aria-label="Demnächst">
     <div class="block-h"><span class="label">Demnächst</span><button class="link" id="allDays">Alle</button></div>
