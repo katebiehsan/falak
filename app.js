@@ -98,6 +98,9 @@ function hParts(date){
   return p.day?{d:p.day,m:p.month,y:p.year}:null;
 }
 function hijriText(date){const h=hParts(date);return h?`${h.d}. ${HMONTH[h.m-1]} ${h.y}`:""}
+// Kurzform passend zum gekürzten deutschen Datum in der Fußzeile („Okt.“ ↔ „Jum. I“)
+const HMONTH_S=["Muh.","Saf.","Rab. I","Rab. II","Jum. I","Jum. II","Raj.","Sha.","Ram.","Shaw.","Dhul-Q.","Dhul-H."];
+function hijriShort(date){const h=hParts(date);return h?`${h.d}. ${HMONTH_S[h.m-1]} ${h.y}`:""}
 
 /* ================= Gebetszeiten ================= */
 const PRAYERS=[["fajr","Fajr"],["sunrise","Shuruq"],["dhuhr","Dhuhr"],["asr","Asr"],["maghrib","Maghrib"],["isha","Isha"]];
@@ -139,7 +142,7 @@ function renderTimes(){
   }
   renderArc(day,t,now,live);
   $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
-  $("hijriDate").textContent=hijriText(day);
+  $("hijriDate").textContent=hijriShort(day);
   renderDays();
 }
 
