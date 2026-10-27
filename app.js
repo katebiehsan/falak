@@ -138,17 +138,10 @@ function renderTimes(){
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
   }
   renderArc(day,t,now,live);
-  const dl=$("dayLabel");
-  dl.hidden=live;
   $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
   $("hijriDate").textContent=hijriText(day);
   renderDays();
 }
-function goDay(o){const dir=Math.sign(o-dayOffset);if(!dir)return;dayOffset=o;renderTimes();
-  ["curName","nextLine","pts"].forEach(id=>slideIn($(id),dir,10,180))}
-$("prevDay").addEventListener("click",()=>goDay(dayOffset-1));
-$("nextDay").addEventListener("click",()=>goDay(dayOffset+1));
-$("dayLabel").addEventListener("click",()=>goDay(0));
 
 
 /* ================= Gebetsliste ================= */
@@ -185,6 +178,23 @@ function renderArc(day,t,now,live){
   }).join("");
 }
 $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});
+
+/* ================= Andere Tage ================= */
+// Die Startseite zeigt immer heute. Andere Tage öffnen sich über das Datum unten in einem Fenster mit eigenen Pfeilen,
+// damit die Zeiten direkt neben den Pfeilen stehen. Startet mit morgen, dem häufigsten Fall.
+let dvOff=1;
+function renderDv(){
+  const day=dayStart(dvOff),t=times(day),fri=day.getDay()===5;
+  $("dvTitle").textContent=dvOff===0?"Heute":dvOff===1?"Morgen":dvOff===-1?"Gestern":day.toLocaleDateString("de-DE",{weekday:"long"});
+  $("dvSub").innerHTML=`${esc(day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"}))}<br>${esc(hijriText(day))}`;
+  $("dvList").innerHTML=["fajr","sunrise","dhuhr","asr","maghrib","isha"].map(k=>`<div class="dv-row${k==="sunrise"?" sun":""}"><span>${k==="dhuhr"&&fri?"Jumu'a":LABEL[k]}</span><span>${fT(t[k])}</span></div>`).join("");
+  $("dvToday").hidden=dvOff===0;
+}
+function dvGo(o){const dir=Math.sign(o-dvOff);dvOff=o;renderDv();if(dir)slideIn($("dvList"),dir,10,180)}
+$("dateBtn").addEventListener("click",()=>{dvOff=1;renderDv();openSheet("dayvSheet")});
+$("dvPrev").addEventListener("click",()=>dvGo(dvOff-1));
+$("dvNext").addEventListener("click",()=>dvGo(dvOff+1));
+$("dvToday").addEventListener("click",()=>dvGo(0));
 
 /* ================= Islamische Tage ================= */
 // kind: fest = Festtag, sunnah = empfohlenes Fasten/Ibada, zeit = besondere Zeit

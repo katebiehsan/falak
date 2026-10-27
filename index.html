@@ -59,14 +59,8 @@
     <button class="qtext" id="qBtn" aria-pressed="false"><svg class="qarrow" id="qRot" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 13V3M3.5 7.5 8 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><span id="qLbl">Qibla</span></button>
     <button class="qtext" id="quranBtn"><span>Quran</span></button>
     </div>
-    <!-- Tage blättern: Kapsel rechts über den Uhrzeiten; „Heute“ erscheint nur, wenn ein anderer Tag gezeigt wird -->
     <div class="hright">
     <button class="dz-btn" id="dhikrBtn" aria-label="Dhikr nach dem Gebet"><svg aria-hidden="true"><use href="#i-tasbih"/></svg></button>
-    <nav class="daynav" aria-label="Tag wählen">
-      <button id="prevDay" aria-label="Vorheriger Tag"><svg class="ic16"><use href="#i-chev-l"/></svg></button>
-      <button class="daylabel" id="dayLabel" hidden>Heute</button>
-      <button id="nextDay" aria-label="Nächster Tag"><svg class="ic16"><use href="#i-chev-r"/></svg></button>
-    </nav>
     </div>
     </div>
     <button class="today" id="todayChip" hidden></button>
@@ -89,7 +83,7 @@
 
   <footer class="dates">
     <button class="locline" id="locBtn" aria-label="Ort ändern"><svg class="locic" aria-hidden="true"><use href="#i-loc"/></svg><span id="locName">Bremen</span></button>
-    <span class="dline"><span id="gregDate"></span> · <span id="hijriDate"></span></span>
+    <button class="dline" id="dateBtn" aria-label="Gebetszeiten an anderen Tagen"><span id="gregDate"></span> · <span id="hijriDate"></span></button>
   </footer>
 </main>
 
@@ -188,6 +182,17 @@
     <button class="rowbtn cal-row" id="adjCal"><span>Erinnerung im Kalender</span><svg class="ic16" aria-hidden="true"><use href="#i-cal"/></svg></button>
   </div>
   <p class="hint-s" id="adjHint"></p>
+</section>
+
+<section class="sheet" id="dayvSheet" aria-label="Gebetszeiten an anderen Tagen">
+  <div class="grab"></div>
+  <div class="dv-head">
+    <button class="dv-arrow" id="dvPrev" aria-label="Vorheriger Tag"><svg class="ic16"><use href="#i-chev-l"/></svg></button>
+    <div class="dv-t"><h3 id="dvTitle">Morgen</h3><small id="dvSub"></small></div>
+    <button class="dv-arrow" id="dvNext" aria-label="Nächster Tag"><svg class="ic16"><use href="#i-chev-r"/></svg></button>
+  </div>
+  <div class="dv-list" id="dvList"></div>
+  <button class="link dv-today" id="dvToday" hidden>Zurück zu heute</button>
 </section>
 
 <section class="sheet" id="daysSheet" aria-label="Islamische Tage">
