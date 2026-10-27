@@ -363,4 +363,28 @@ body.ph-night .nightsky{opacity:1}
 /* Tastatur und VoiceOver: Vers-Aktionen beim Fokus sichtbar */
 .verse:focus-within .acts button{opacity:1;pointer-events:auto}
 /* Während der Qibla-Kompass läuft, braucht es kein Tage-Blättern: Platz für den längeren Hinweis, nichts rutscht um */
-.hrow.qon .daynav{display:none}
+.hrow.qon .hright{display:none}
+
+/* ---------- Dhikr ---------- */
+.hright{display:flex;align-items:center;gap:8px}
+.dz-btn{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:var(--fg-2)}
+.dz-btn svg{width:20px;height:20px}
+.dz-btn:active{background:rgba(255,255,255,.06)}
+#dhikrBack{margin-right:2px}
+#v-dhikr{min-height:100dvh}
+.dz-bars{display:grid;grid-template-columns:33fr 33fr 33fr 6fr;gap:6px}
+.dz-bars i{height:2px;border-radius:2px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}
+.dz-bars i::after{content:"";position:absolute;inset:0;background:var(--fg);transform-origin:left;transform:scaleX(var(--p,0));transition:transform 160ms var(--ease-out)}
+/* Ganze Fläche zählt; kein Doppeltipp-Zoom und keine Textauswahl beim schnellen Tippen */
+.dz{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58vh;padding:20px 8px;border-radius:24px;text-align:center;
+  touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.dz:active{transform:scale(.99);background:rgba(255,255,255,.03)}
+.dz-step{font-size:13px;color:var(--fg-3)}
+.dz-ar{font-family:var(--font-quran);font-size:32px;line-height:1.9;direction:rtl;margin-top:8px}
+.dz-ar.long{font-size:22px}
+.dz-tr{font-size:15px;color:var(--fg-2);font-style:italic;max-width:30ch}
+.dz-de{font-size:15px;color:var(--fg-3);max-width:30ch}
+.dz-count{display:flex;flex-direction:column;align-items:center;margin-top:22px}
+.dz-count b{font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.dz-count small{font-size:13px;color:var(--fg-3);margin-top:6px}
+.dz-hint{margin:0;text-align:center;font-size:13px;color:var(--fg-3)}

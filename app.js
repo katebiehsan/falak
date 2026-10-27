@@ -45,19 +45,20 @@ function slideIn(el,dir,dist=18,dur=220){
 
 /* ================= Ansichten ================= */
 // Keine Tabbar mehr: „Quran“ in der Kapsel neben „Qibla“ öffnet den Quran, Zurück-Pfeil (oder Zurück-Geste) führt heim
-let view="times";const scrollMem={};const TABS=["times","quran"];
+let view="times";const scrollMem={};const TABS=["times","quran","dhikr"];
 function setView(v){
   if(v===view)return;
   scrollMem[view]=window.scrollY;
   view=v;
   TABS.forEach(n=>{$("v-"+n).hidden=n!==v});
-  slideIn($("v-"+v),v==="quran"?1:-1);
+  slideIn($("v-"+v),v==="times"?-1:1);
   window.scrollTo(0,scrollMem[v]||0);
   if(v!=="times")stopQibla();
   $("atmo").style.transition="";
   if(v==="times")requestAnimationFrame(()=>window.dispatchEvent(new Event("scroll")));
   document.body.classList.toggle("on-times",v==="times");
   if(v==="quran")initQuran();
+  if(v==="dhikr")renderDz();
   if(v==="times")renderTimes();
 }
 $("quranBtn").addEventListener("click",()=>{history.pushState({v:"quran"},"");setView("quran")});
@@ -68,7 +69,7 @@ $("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="
     a.style.transition="none";a.style.setProperty("--sf",Math.max(0,1-y/220).toFixed(3));a.style.transform=y?`translateY(${(-y*.25).toFixed(1)}px)`:""};
   window.addEventListener("scroll",()=>{if(!tick){tick=true;requestAnimationFrame(upd)}},{passive:true});
 })();
-window.addEventListener("popstate",e=>setView(e.state&&e.state.v==="quran"?"quran":"times"));
+window.addEventListener("popstate",e=>setView(e.state&&TABS.includes(e.state.v)?e.state.v:"times"));
 
 /* ================= Sheets ================= */
 let openSheetEl=null;
@@ -575,6 +576,36 @@ $("swatches").addEventListener("click",e=>{
   closeSheet();
 });
 
+/* ================= Dhikr ================= */
+// Tasbih nach dem Pflichtgebet (Sahih Muslim): 33 × SubhanAllah, 33 × Alhamdulillah, 33 × Allahu Akbar, dann einmal Tahlil = 100.
+// Der Stand bleibt beim Verlassen erhalten und beginnt am nächsten Tag von vorn.
+const DZ=[
+ {ar:"سُبْحَانَ ٱللَّٰهِ",tr:"SubhanAllah",de:"Gepriesen sei Allah",n:33},
+ {ar:"ٱلْحَمْدُ لِلَّٰهِ",tr:"Alhamdulillah",de:"Alles Lob gebührt Allah",n:33},
+ {ar:"ٱللَّٰهُ أَكْبَرُ",tr:"Allahu Akbar",de:"Allah ist größer",n:33},
+ {ar:"لَا إِلَٰهَ إِلَّا ٱللَّٰهُ وَحْدَهُ لَا شَرِيكَ لَهُ، لَهُ ٱلْمُلْكُ وَلَهُ ٱلْحَمْدُ وَهُوَ عَلَىٰ كُلِّ شَيْءٍ قَدِيرٌ",tr:"La ilaha illallahu wahdahu la scharika lah, lahul-mulku wa lahul-hamd, wa huwa ala kulli schay'in qadir",de:"Es gibt keinen Gott außer Allah allein, ohne Partner. Ihm gehört die Herrschaft und das Lob, und Er hat Macht über alle Dinge.",n:1}];
+const dzDay=()=>dayStart(0).toDateString();
+let dz=(()=>{const s=store.get("dhikr",null);return s&&s.d===dzDay()?s:{d:dzDay(),i:0,c:0}})();
+function saveDz(){dz.d=dzDay();store.set("dhikr",dz)}
+function renderDz(){
+  if(dz.d!==dzDay())dz={d:dzDay(),i:0,c:0};
+  const done=dz.i>=DZ.length,d=DZ[Math.min(dz.i,DZ.length-1)];
+  $("dzStep").textContent=done?"Fertig · 100 von 100":`${dz.i+1} von 4 · nach dem Gebet`;
+  $("dzAr").textContent=done?"تَقَبَّلَ ٱللَّٰهُ":d.ar;$("dzTr").textContent=done?"Taqabbal Allah":d.tr;$("dzDe").textContent=done?"Möge Allah es annehmen":d.de;
+  $("dzN").textContent=done?"✓":dz.c;$("dzOf").textContent=done?"":`von ${d.n}`;
+  $("dzAr").classList.toggle("long",!done&&d.ar.length>40);
+  $("dzHint").textContent=done?"Oben rechts von vorn beginnen":"Irgendwo tippen zum Zählen";
+  [...$("dzBars").children].forEach((b,k)=>b.style.setProperty("--p",k<dz.i?1:k===dz.i?dz.c/DZ[k].n:0));
+}
+$("dhikrTap").addEventListener("click",()=>{
+  if(dz.i>=DZ.length)return;
+  dz.c++;if(dz.c>=DZ[dz.i].n){dz.i++;dz.c=0;if(navigator.vibrate)navigator.vibrate(30);slideIn($("dzAr"),1,8,180)}
+  saveDz();renderDz();
+});
+$("dhikrReset").addEventListener("click",()=>{dz={d:dzDay(),i:0,c:0};saveDz();renderDz()});
+$("dhikrBtn").addEventListener("click",()=>{history.pushState({v:"dhikr"},"");setView("dhikr")});
+$("dhikrBack").addEventListener("click",()=>{if(history.state&&history.state.v==="dhikr")history.back();else setView("times")});
+
 /* ================= Hadith des Tages ================= */
 const HAPI=["https://cdn.jsdelivr.net/gh/fawazahmed0/hadith-api@1/editions","https://raw.githubusercontent.com/fawazahmed0/hadith-api/1/editions"];
 // min: Muslim beginnt mit einer Einleitung (1–92) ohne Hadith-Texte
@@ -638,7 +669,7 @@ $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo
 const onScroll=()=>document.body.classList.toggle("scrolled",window.scrollY>4);
 window.addEventListener("scroll",onScroll,{passive:true});onScroll();
 document.body.classList.add("on-times");
-if(history.state&&history.state.v==="quran")history.replaceState(null,"");
+if(history.state&&history.state.v)history.replaceState(null,"");
 renderTimes();
 loadHadith();
 setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);

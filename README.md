@@ -9,6 +9,7 @@ Gebetszeiten, Qibla-Kompass und Quran als Web-App für den iPhone-Homescreen. OL
 - **Qibla:** In der Kapsel „Qibla“ antippen. Der Kompass rechnet die magnetische Missweisung nach dem Weltmagnetfeldmodell WMM 2025 ein (Bremen 2026: rund 4° Ost) und meldet, wenn das Handy nicht flach gehalten wird.
 - **Islamische Tage:** Weiße Tage, Ramadan, letzte zehn Nächte (ab Maghrib am 20.), Eid, Arafah, Ashura und weitere nach Umm al-Qura. Lassen sich um bis zu zwei Tage verschieben, falls die eigene Moschee abweicht. Export als Kalenderdatei mit Erinnerung am Vorabend.
 - **Quran:** Arabisch (Amiri Quran), Deutsch (Bubenheim & Elyas), Englisch (Saheeh International), Transliteration. Verse markieren, Lesezeichen, zuletzt gelesen, Sicherung als Datei.
+- **Dhikr:** Tasbih nach dem Gebet (33 · 33 · 33 + 1) über den Perlenring neben den Tage-Pfeilen; ganze Fläche zählt, Stand bleibt bis zum nächsten Tag.
 - **Hadith des Tages:** Sahih al-Bukhari, Sahih Muslim, 40 Hadith an-Nawawi.
 - **Offline:** App, Schriften und einmal geöffnete Suren funktionieren ohne Netz. Markierungen und Einstellungen bleiben auf dem Gerät.
 

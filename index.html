@@ -41,6 +41,7 @@
   <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.6"/><path d="M15.5 8.5V6.6A2.6 2.6 0 0 0 12.9 4H6.6A2.6 2.6 0 0 0 4 6.6v6.3a2.6 2.6 0 0 0 2.6 2.6h1.9"/></g></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.8" y="5" width="16.4" height="15.2" rx="3"/><path d="M3.8 9.8h16.4M8.2 3v3.6M15.8 3v3.6"/></g></symbol>
   <symbol id="i-rehal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 11l9-3.5"/><path d="M5.5 20 18.5 12.5M18.5 20 5.5 12.5"/></g></symbol>
+<symbol id="i-tasbih" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="19.5" cy="12" r="1.6"/><circle cx="17.75" cy="16.82" r="1.6"/><circle cx="13.3" cy="19.39" r="1.6"/><circle cx="8.25" cy="18.5" r="1.6"/><circle cx="4.95" cy="14.57" r="1.6"/><circle cx="4.95" cy="9.43" r="1.6"/><circle cx="8.25" cy="5.5" r="1.6"/><circle cx="13.3" cy="4.61" r="1.6"/><circle cx="17.75" cy="7.18" r="1.6"/></g></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M15.6 3.6a8.6 8.6 0 1 0 4.8 13.5A7 7 0 0 1 15.6 3.6z" fill="currentColor"/></symbol>
 </svg>
 
@@ -59,11 +60,14 @@
     <button class="qtext" id="quranBtn"><span>Quran</span></button>
     </div>
     <!-- Tage blättern: Kapsel rechts über den Uhrzeiten; „Heute“ erscheint nur, wenn ein anderer Tag gezeigt wird -->
+    <div class="hright">
+    <button class="dz-btn" id="dhikrBtn" aria-label="Dhikr nach dem Gebet"><svg aria-hidden="true"><use href="#i-tasbih"/></svg></button>
     <nav class="daynav" aria-label="Tag wählen">
       <button id="prevDay" aria-label="Vorheriger Tag"><svg class="ic16"><use href="#i-chev-l"/></svg></button>
       <button class="daylabel" id="dayLabel" hidden>Heute</button>
       <button id="nextDay" aria-label="Nächster Tag"><svg class="ic16"><use href="#i-chev-r"/></svg></button>
     </nav>
+    </div>
     </div>
     <button class="today" id="todayChip" hidden></button>
   </section>
@@ -87,6 +91,23 @@
     <button class="locline" id="locBtn" aria-label="Ort ändern"><svg class="locic" aria-hidden="true"><use href="#i-loc"/></svg><span id="locName">Bremen</span></button>
     <span class="dline"><span id="gregDate"></span> · <span id="hijriDate"></span></span>
   </footer>
+</main>
+
+<!-- ============ DHIKR ============ -->
+<main class="view" id="v-dhikr" hidden>
+  <header class="top">
+    <span class="top-l"><button class="glass round" id="dhikrBack" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button><h2 class="title">Dhikr</h2></span>
+    <button class="icon-btn" id="dhikrReset" aria-label="Von vorn"><svg class="ic18" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  </header>
+  <div class="dz-bars" id="dzBars"><i></i><i></i><i></i><i></i></div>
+  <button class="dz" id="dhikrTap" aria-live="polite">
+    <span class="dz-step" id="dzStep"></span>
+    <span class="dz-ar" id="dzAr" lang="ar"></span>
+    <span class="dz-tr" id="dzTr"></span>
+    <span class="dz-de" id="dzDe"></span>
+    <span class="dz-count"><b id="dzN">0</b><small id="dzOf"></small></span>
+  </button>
+  <p class="dz-hint" id="dzHint">Irgendwo tippen zum Zählen</p>
 </main>
 
 <!-- ============ QURAN ============ -->
