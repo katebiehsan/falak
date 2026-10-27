@@ -128,11 +128,11 @@ function renderTimes(){
   if(live){
     $("heroLabel").hidden=true;
     $("curName").textContent=LABEL[cur.k];
-    $("qBtn").hidden=false;
+    $("qBtn").hidden=false;$("todayBtn").hidden=true;
     $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
   }else{
     if(qActive)stopQibla();
-    $("qBtn").hidden=true;
+    $("qBtn").hidden=true;$("todayBtn").hidden=false;
     $("heroLabel").hidden=false;$("heroLabel").textContent=dayOffset>0?"Vorschau":"Rückblick";
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
@@ -180,21 +180,21 @@ function renderArc(day,t,now,live){
 $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});
 
 /* ================= Andere Tage ================= */
-// Die Startseite zeigt immer heute. Andere Tage öffnen sich über das Datum unten in einem Fenster mit eigenen Pfeilen,
-// damit die Zeiten direkt neben den Pfeilen stehen. Startet mit morgen, dem häufigsten Fall.
-let dvOff=1;
-function renderDv(){
-  const day=dayStart(dvOff),t=times(day),fri=day.getDay()===5;
-  $("dvTitle").textContent=dvOff===0?"Heute":dvOff===1?"Morgen":dvOff===-1?"Gestern":day.toLocaleDateString("de-DE",{weekday:"long"});
-  $("dvSub").innerHTML=`${esc(day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"}))}<br>${esc(hijriText(day))}`;
-  $("dvList").innerHTML=["fajr","sunrise","dhuhr","asr","maghrib","isha"].map(k=>`<div class="dv-row${k==="sunrise"?" sun":""}"><span>${k==="dhuhr"&&fri?"Jumu'a":LABEL[k]}</span><span>${fT(t[k])}</span></div>`).join("");
-  $("dvToday").hidden=dvOff===0;
-}
-function dvGo(o){const dir=Math.sign(o-dvOff);dvOff=o;renderDv();if(dir)slideIn($("dvList"),dir,10,180)}
-$("dateBtn").addEventListener("click",()=>{dvOff=1;renderDv();openSheet("dayvSheet")});
-$("dvPrev").addEventListener("click",()=>dvGo(dvOff-1));
-$("dvNext").addEventListener("click",()=>dvGo(dvOff+1));
-$("dvToday").addEventListener("click",()=>dvGo(0));
+// Über Startseite und Gebetszeiten nach links wischen = nächster Tag, nach rechts = vorheriger Tag (wie Kalender und Wetter).
+// Abseits von heute erscheint „Heute“ in der Kapsel. Nach längerer Pause öffnet Falak wieder mit heute.
+function goDay(o){const dir=Math.sign(o-dayOffset);if(!dir)return;if(qActive)stopQibla();dayOffset=o;renderTimes();
+  ["curName","nextLine","pts"].forEach(id=>slideIn($(id),dir,10,180))}
+$("todayBtn").addEventListener("click",()=>goDay(0));
+(()=>{let x0=null,y0=0,t0=0;const v=$("v-times");
+  v.addEventListener("touchstart",e=>{if(e.touches.length!==1||view!=="times"||openSheetEl){x0=null;return}
+    const t=e.touches[0];if(t.clientX<24||t.clientX>innerWidth-24){x0=null;return} // Bildschirmrand gehört iOS (Zurück-Geste)
+    x0=t.clientX;y0=t.clientY;t0=Date.now()},{passive:true});
+  v.addEventListener("touchend",e=>{if(x0==null)return;const t=e.changedTouches[0],dx=t.clientX-x0,dy=t.clientY-y0;x0=null;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.6&&Date.now()-t0<700)goDay(dayOffset+(dx<0?1:-1))},{passive:true});
+})();
+let hiddenAt=0;
+document.addEventListener("visibilitychange",()=>{if(document.hidden){hiddenAt=Date.now();return}
+  if(dayOffset!==0&&Date.now()-hiddenAt>5*6e4){dayOffset=0;renderTimes()}});
 
 /* ================= Islamische Tage ================= */
 // kind: fest = Festtag, sunnah = empfohlenes Fasten/Ibada, zeit = besondere Zeit

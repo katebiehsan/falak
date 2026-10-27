@@ -80,7 +80,7 @@ svg{flex:none}
 .tools{align-self:flex-start;display:inline-flex;align-items:center;margin:14px 0 0;padding:2px;border:1px solid rgba(255,255,255,.14);border-radius:999px}
 .tools .qtext{position:relative;margin:0;height:34px;padding:0 14px;border-radius:999px;transition:background-color 160ms ease,color 160ms ease}
 .tools .qtext:active{transform:none;background:rgba(255,255,255,.06)}
-.tools .qtext:not([hidden])+.qtext::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:1px;background:rgba(255,255,255,.1)}
+.tools .qtext:not([hidden])~.qtext:not([hidden])::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:1px;background:rgba(255,255,255,.1)}
 .top-l{display:flex;align-items:center;gap:10px;min-width:0}
 
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
@@ -383,17 +383,8 @@ body.ph-night .nightsky{opacity:1}
 .dz-count small{font-size:13px;color:var(--fg-3);margin-top:6px}
 .dz-hint{margin:0;text-align:center;font-size:13px;color:var(--fg-3)}
 
-/* ---------- Andere Tage: Datum unten antippbar (feine Linie), Fenster mit eigenen Pfeilen ---------- */
-.dline{padding:6px 10px;border-radius:10px;color:var(--fg-3);font-size:13px;
-  text-decoration:underline;text-decoration-color:rgba(255,255,255,.22);text-decoration-thickness:1px;text-underline-offset:5px}
-.dline:active{transform:none;background:var(--raise-2)}
-.dv-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
-.dv-arrow{width:40px;height:40px;border-radius:50%;border:1px solid rgba(255,255,255,.14);display:grid;place-items:center;color:var(--fg-2)}
-.dv-arrow:active{background:rgba(255,255,255,.06)}
-.dv-t{text-align:center;display:flex;flex-direction:column;gap:2px}
-.dv-t small{font-size:13px;color:var(--fg-3)}
-.dv-list{display:flex;flex-direction:column}
-.dv-row{display:flex;justify-content:space-between;padding:13px 4px;font-size:17px;font-weight:500;position:relative;font-variant-numeric:tabular-nums}
-.dv-row:not(:last-child)::after{content:"";position:absolute;left:4px;right:4px;bottom:0;height:1px;background:var(--line)}
-.dv-row.sun{color:var(--fg-3);font-size:15px;font-weight:400}
-.dv-today{align-self:center}
+
+/* ---------- Kein Gummiband-Federn der Seite; Wischen über die Startseite blättert die Tage ---------- */
+html,body{overscroll-behavior-y:none}
+#v-times{touch-action:pan-y}
+#todayBtn{color:var(--fg)}

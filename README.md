@@ -5,7 +5,7 @@ Gebetszeiten, Qibla-Kompass und Quran als Web-App für den iPhone-Homescreen. OL
 ## Funktionen
 
 - **Gebetszeiten:** Muslimische Weltliga, Asr nach Standardmethode, Siebtel der Nacht für kurze Sommernächte. Jede Zeit lässt sich antippen und um ±30 Minuten anpassen.
-- **Andere Tage:** Datum unten antippen; ein Fenster zeigt morgen und lässt weiterblättern.
+- **Andere Tage:** Über die Startseite nach links wischen für morgen, nach rechts für gestern; „Heute“ in der Kapsel führt zurück.
 - **Erinnerungen:** Über den iPhone-Kalender. Im Anpassen-Fenster „Erinnerung im Kalender“ antippen; das legt die Zeit für 30 Tage mit Alarm an. Eine Web-App wird im Hintergrund angehalten und kann selbst nicht zuverlässig benachrichtigen.
 - **Qibla:** In der Kapsel „Qibla“ antippen. Der Kompass rechnet die magnetische Missweisung nach dem Weltmagnetfeldmodell WMM 2025 ein (Bremen 2026: rund 4° Ost) und meldet, wenn das Handy nicht flach gehalten wird.
 - **Islamische Tage:** Weiße Tage, Ramadan, letzte zehn Nächte (ab Maghrib am 20.), Eid, Arafah, Ashura und weitere nach Umm al-Qura. Lassen sich um bis zu zwei Tage verschieben, falls die eigene Moschee abweicht. Export als Kalenderdatei mit Erinnerung am Vorabend.
