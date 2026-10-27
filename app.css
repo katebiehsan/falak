@@ -28,6 +28,15 @@ body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset
 /* Oben steht der Himmel bis unter die Statusleiste; erst beim Scrollen wird der Streifen schwarz */
 body::before{transition:opacity 160ms ease}
 body:not(.scrolled)::before{opacity:0}
+/* Safari-Tab (nicht Homescreen): Safari lässt die Seite nicht unter die Statusleiste, sondern färbt sie einfarbig
+   nach einem festen Element am oberen Rand. Dieser Streifen gibt dort den Himmelston vor, beim Scrollen wieder Schwarz. */
+.tint{display:none}
+@media (display-mode: browser){
+  .tint{display:block;position:fixed;top:0;left:0;right:0;height:2px;z-index:0;pointer-events:none;background-color:#000;transition:background-color 300ms ease}
+  body.on-times:not(.scrolled).ph-day .tint{background-color:#26344a}
+  body.on-times:not(.scrolled).ph-dusk .tint{background-color:#432f2d}
+  body.on-times:not(.scrolled).ph-night .tint{background-color:#111936}
+}
 [hidden]{display:none!important}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;
   transition:transform 160ms var(--ease-out),background-color 160ms ease,color 160ms ease,opacity 160ms ease}
