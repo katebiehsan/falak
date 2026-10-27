@@ -358,7 +358,7 @@ body.ph-night .nightsky{opacity:1}
 .verse:focus-within .acts button{opacity:1;pointer-events:auto}
 /* Während der Qibla-Kompass läuft, braucht es kein Tage-Blättern: Platz für den längeren Hinweis, nichts rutscht um */
 /* Während Qibla läuft, ist der Hinweis länger: Dhikr tritt so lange zurück */
-.hrow.qon #dhikrBtn{display:none}
+.hrow.qon #dhikrBtn,.hrow.qon #quranBtn{display:none}
 
 /* ---------- Dhikr ---------- */
 /* Dhikr als drittes Segment der Kapsel, nur Symbol */
