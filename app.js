@@ -139,7 +139,7 @@ function renderTimes(){
   renderArc(day,t,now,live);
   const dl=$("dayLabel");
   dl.hidden=live;
-  $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"long",day:"numeric",month:"long",year:"numeric"});
+  $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
   $("hijriDate").textContent=hijriText(day);
   renderDays();
 }

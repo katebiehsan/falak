@@ -335,9 +335,8 @@ body.ph-night .nightsky{opacity:1}
 .prow{color:var(--fg-2)}
 .prow.past{color:var(--fg-3)}
 .prow.cur{color:var(--fg)}
-/* Fußzeile linksbündig, Ort bleibt unten */
-.dates{align-items:flex-start}
-.locline{margin-left:-10px}
+/* Fußzeile zentriert als Abschluss der Seite: Ort, darunter beide Daten in einer Zeile */
+.dates .dline{text-align:center}
 
 /* ---------- Demnächst: kurze zweite Zeile, rechte Spalte auf Titelhöhe ---------- */
 .upcoming .nt{display:none}
