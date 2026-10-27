@@ -6,16 +6,18 @@ const R=Math.PI/180;
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ================= Speicher ================= */
-// Umzug von Miqat zu Falak: alte Einträge (gleiche Domain) einmalig übernehmen, damit Markierungen erhalten bleiben
-try{for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);
-  if(k&&k.startsWith("miqat.")){const n="falak."+k.slice(6);if(localStorage.getItem(n)==null)localStorage.setItem(n,localStorage.getItem(k))}}}catch(e){}
+// Aufräumen: Miqat-Einträge (vor dem Umbenennen) übernehmen, falls noch nicht geschehen, und dann löschen.
+// Dazu die Reste der früheren Mitteilungs-Erinnerung, die durch den Kalender ersetzt ist.
+try{const old=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("miqat."))old.push(k)}
+  old.forEach(k=>{const n="falak."+k.slice(6);if(localStorage.getItem(n)==null)localStorage.setItem(n,localStorage.getItem(k));localStorage.removeItem(k)});
+  ["falak.remind","falak.fired"].forEach(k=>localStorage.removeItem(k))}catch(e){}
 const store={
   get(k,d){try{const v=localStorage.getItem("falak."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem("falak."+k,JSON.stringify(v))}catch(e){}}
 };
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
 let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:24},store.get("prefs",{}));
-if(!prefs.v2){prefs.size=24;prefs.v2=1;store.set("prefs",prefs)}
+if("v2" in prefs){delete prefs.v2;store.set("prefs",prefs)}
 // Feste Berechnung wie Athan Utility. Nur das Hijri-Datum lässt sich um bis zu zwei Tage verschieben (Mondsichtung der eigenen Moschee).
 const settings={method:"MuslimWorldLeague",asr:"standard",hijri:Math.max(-2,Math.min(2,+store.get("hijri",0)||0))};
 let adj=store.get("adj",{})||{};
@@ -149,7 +151,7 @@ $("dayLabel").addEventListener("click",()=>goDay(0));
 
 
 /* ================= Gebetsliste ================= */
-// Ruhige Liste ohne Shuruq. Unter dem aktuellen Gebet wächst eine feine Linie bis zum nächsten.
+// Ruhige Liste ohne Shuruq: vergangen grau, aktuell weiß, kommend hellgrau.
 const ARC=["fajr","dhuhr","asr","maghrib","isha"];
 // Sterne nur ab Isha (Nacht), im oberen Drittel, sehr dezent, nach unten ausgeblendet; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
@@ -374,8 +376,8 @@ $("gpsBtn").addEventListener("click",()=>{
 });
 
 /* ================= Qibla ================= */
-// Kleines Symbol neben dem aktuellen Gebet (wie Athan Utility): Antippen startet den Kompass,
-// die Spitze am Ring zeigt Richtung Kaaba, ausgerichtet wird alles grün. Nochmal tippen beendet.
+// „Qibla“ in der Kapsel startet den Kompass: Der Pfeil zeigt zur Kaaba, der Text sagt, wohin drehen;
+// ausgerichtet wird er grün. Nochmal tippen beendet.
 const MECCA={lat:21.4225,lon:39.8262};
 let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null,warnedAcc=false;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
