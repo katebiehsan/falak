@@ -74,23 +74,28 @@ svg{flex:none}
 /* Qibla nur als Text: Pfeil dreht sich zur Kaaba, der Text führt; ausgerichtet grün */
 .qtext{align-self:flex-start;margin:12px 0 0 -2px;display:inline-flex;align-items:center;gap:0;height:36px;padding:0 2px;
   font-size:15px;font-weight:500;color:var(--fg-2);font-variant-numeric:tabular-nums}
-/* Pfeil erst sichtbar, wenn Qibla aktiv ist; in Ruhe stehen „Qibla finden“ und „Quran“ als reiner Text nebeneinander */
+/* Pfeil erst sichtbar, wenn Qibla aktiv ist; in Ruhe stehen „Qibla“ und „Quran“ in der Kapsel */
 .qarrow{flex:none;width:0;height:16px;margin-right:0;opacity:0;scale:.6;
   transition:transform 120ms linear,width 220ms cubic-bezier(.23,1,.32,1),margin 220ms cubic-bezier(.23,1,.32,1),scale 220ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}
 .qtext.on .qarrow{width:16px;margin-right:8px;opacity:1;scale:1}
 .qtext.on{color:var(--fg)}
 .qtext.ok{color:var(--accent)}
-.tools{display:flex;align-items:center;gap:22px;margin:12px 0 0 -2px}
-.tools .qtext{margin:0}
+/* Qibla und Quran als eine Kapsel: Haarlinie außen, feiner Trennstrich innen */
+.tools{align-self:flex-start;display:inline-flex;align-items:center;margin:14px 0 0;padding:2px;border:1px solid rgba(255,255,255,.14);border-radius:999px}
+.tools .qtext{position:relative;margin:0;height:34px;padding:0 14px;border-radius:999px;transition:background-color 160ms ease,color 160ms ease}
+.tools .qtext:active{transform:none;background:rgba(255,255,255,.06)}
+.tools .qtext:not([hidden])+.qtext::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:1px;background:rgba(255,255,255,.1)}
 .top-l{display:flex;align-items:center;gap:10px;min-width:0}
 
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:600}
 .progress{margin-top:16px;height:3px;border-radius:99px;background:var(--raise-3);overflow:hidden}
 .progress i{display:block;height:100%;background:var(--fg);border-radius:99px;transform-origin:left;transform:scaleX(0);transition:transform 300ms var(--ease-out)}
-.today{margin-top:16px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 13px 0 11px;border-radius:999px;
-  background:rgba(255,255,255,.06);color:var(--fg-2);font-size:14px;font-weight:500;text-align:left}
-.today svg{width:13px;height:13px;color:var(--fg-3)}
+/* Besonderer Tag: reine Textzeile unter der Kapsel, kein Chip */
+.today{margin-top:12px;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;min-height:28px;padding:0 2px;
+  color:var(--fg-3);font-size:14px;font-weight:500;text-align:left;transition:color 160ms ease}
+.today:active{transform:none;color:var(--fg-2)}
+.today svg{width:12px;height:12px;flex:none;color:var(--fg-3)}
 
 .times .n{font-size:17px;font-weight:500}
 .times .row{width:100%;text-align:left;color:inherit}

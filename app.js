@@ -29,7 +29,7 @@ let toastT;
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1700)}
 
 /* ================= Ansichten ================= */
-// Keine Tabbar mehr: „Quran“ neben „Qibla finden“ öffnet den Quran, Zurück-Pfeil (oder Zurück-Geste) führt heim
+// Keine Tabbar mehr: „Quran“ in der Kapsel neben „Qibla“ öffnet den Quran, Zurück-Pfeil (oder Zurück-Geste) führt heim
 let view="times";const scrollMem={};const TABS=["times","quran"];
 function setView(v){
   if(v===view)return;
@@ -231,7 +231,7 @@ function renderDays(){
   const chip=$("todayChip");
   if(dayOffset===0&&(now||tom)){
     const e=now||tom,h=hParts(today);
-    let txt=now?(e.k==="bid"?`Heute weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:`Heute: ${e.title}`):`Morgen: ${e.title}`;
+    let txt=now?(e.k==="bid"?`Weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:e.title):`Morgen: ${e.title}`;
     chip.innerHTML=`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`;chip.hidden=false;
   }else chip.hidden=true;
   const fut=list.filter(e=>e.start>today);
@@ -391,7 +391,7 @@ function stopQibla(){
   if(!qActive)return;
   qActive=false;shown=null;sx=sy=null;wasAligned=false;
   const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");
-  $("qRot").style.transform="";$("qLbl").textContent="Qibla finden";
+  $("qRot").style.transform="";$("qLbl").textContent="Qibla";
 }
 async function startQibla(){
   try{
