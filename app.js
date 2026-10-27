@@ -2,6 +2,8 @@
 "use strict";
 const $=id=>document.getElementById(id);
 const R=Math.PI/180;
+// Texte aus fremden Quellen (Quran-API) nie ungeprüft ins HTML
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 /* ================= Speicher ================= */
 // Umzug von Miqat zu Falak: alte Einträge (gleiche Domain) einmalig übernehmen, damit Markierungen erhalten bleiben
@@ -28,6 +30,17 @@ try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().
 let toastT;
 function toast(msg){const t=$("toast");t.textContent=msg;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1700)}
 
+/* ================= Bewegung ================= */
+// Tiefer in die App (Quran, Sure) schiebt die neue Ansicht von rechts herein, zurück von links.
+// Kurz (220 ms), nur transform und opacity; bei „Bewegung reduzieren“ nur ein leichtes Einblenden.
+const reduceMotion=window.matchMedia("(prefers-reduced-motion: reduce)");
+const EASE="cubic-bezier(.23,1,.32,1)";
+function slideIn(el,dir,dist=18,dur=220){
+  if(!el||!el.animate)return;
+  const k=reduceMotion.matches?[{opacity:0},{opacity:1}]:[{opacity:0,transform:`translateX(${dir*dist}px)`},{opacity:1,transform:"none"}];
+  el.animate(k,{duration:reduceMotion.matches?140:dur,easing:EASE});
+}
+
 /* ================= Ansichten ================= */
 // Keine Tabbar mehr: „Quran“ in der Kapsel neben „Qibla“ öffnet den Quran, Zurück-Pfeil (oder Zurück-Geste) führt heim
 let view="times";const scrollMem={};const TABS=["times","quran"];
@@ -36,6 +49,7 @@ function setView(v){
   scrollMem[view]=window.scrollY;
   view=v;
   TABS.forEach(n=>{$("v-"+n).hidden=n!==v});
+  slideIn($("v-"+v),v==="quran"?1:-1);
   window.scrollTo(0,scrollMem[v]||0);
   if(v!=="times")stopQibla();
   $("atmo").style.transition="";
@@ -127,9 +141,11 @@ function renderTimes(){
   $("hijriDate").textContent=hijriText(day);
   renderDays();
 }
-$("prevDay").addEventListener("click",()=>{dayOffset--;renderTimes()});
-$("nextDay").addEventListener("click",()=>{dayOffset++;renderTimes()});
-$("dayLabel").addEventListener("click",()=>{dayOffset=0;renderTimes()});
+function goDay(o){const dir=Math.sign(o-dayOffset);if(!dir)return;dayOffset=o;renderTimes();
+  ["curName","nextLine","pts"].forEach(id=>slideIn($(id),dir,10,180))}
+$("prevDay").addEventListener("click",()=>goDay(dayOffset-1));
+$("nextDay").addEventListener("click",()=>goDay(dayOffset+1));
+$("dayLabel").addEventListener("click",()=>goDay(0));
 
 
 /* ================= Gebetsliste ================= */
@@ -450,10 +466,10 @@ function renderIndex(){
   if(!surahList)return;
   const q=norm($("search").value||"");
   const list=surahList.filter(s=>!q||String(s.n)===q||norm(s.en).includes(q)||norm(SURAH_DE[s.n-1]).includes(q));
-  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${s.en}</b><span>${SURAH_DE[s.n-1]||s.m}</span></span><span class="rt"><span class="ar">${arName(s.ar)}</span></span></button>`).join("")
+  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${esc(s.en)}</b><span>${esc(SURAH_DE[s.n-1]||s.m)}</span></span><span class="rt"><span class="ar">${esc(arName(s.ar))}</span></span></button>`).join("")
     :`<p class="empty">Keine Sure gefunden.</p>`;
   const box=$("resume");let h="";
-  const card=(lbl,p,kind)=>surahList[p.s-1]?`<button class="resume" data-kind="${kind}"><small>${lbl}</small><b>${surahList[p.s-1].en} <span>· Vers ${p.a}</span></b></button>`:"";
+  const card=(lbl,p,kind)=>surahList[p.s-1]?`<button class="resume" data-kind="${kind}"><small>${lbl}</small><b>${esc(surahList[p.s-1].en)} <span>· Vers ${p.a}</span></b></button>`:"";
   if(resume)h+=card("Zuletzt gelesen",resume,"resume");
   if(bookmark)h+=card("Lesezeichen",bookmark,"bookmark");
   box.innerHTML=h;box.hidden=!h;
@@ -469,7 +485,7 @@ $("search").addEventListener("blur",()=>{setTimeout(()=>{if(!$("search").value&&
 $("surahs").addEventListener("click",e=>{const b=e.target.closest(".surah");if(b)openSurah(+b.dataset.n)});
 $("resume").addEventListener("click",e=>{const b=e.target.closest(".resume");if(!b)return;const p=b.dataset.kind==="bookmark"?bookmark:resume;if(p)openSurah(p.s,p.a)});
 
-function showPane(p){["q-index","q-reader","q-marks"].forEach(id=>$(id).hidden=id!==p)}
+function showPane(p){const was=["q-index","q-reader","q-marks"].find(id=>!$(id).hidden);["q-index","q-reader","q-marks"].forEach(id=>$(id).hidden=id!==p);if(was&&was!==p)slideIn($(p),p==="q-index"?-1:1)}
 async function loadSurah(n){
   if(cache[n])return cache[n];
   const r=await fetch(`${API}/surah/${n}/editions/${EDS}`);if(!r.ok)throw new Error("http");
@@ -485,7 +501,6 @@ const ICON={
   bmOn:'<svg><use href="#i-bm-f"/></svg>',
   cp:'<svg><use href="#i-copy"/></svg>'
 };
-const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function verseHTML(n,v){
   const k=`${n}:${v.a}`,m=marks[k],isBm=bookmark&&bookmark.s===n&&bookmark.a===v.a;
   return `<article class="verse${m?" hl-"+m.c:""}" id="v${v.a}" data-a="${v.a}">
@@ -507,7 +522,7 @@ async function openSurah(n,ayah){
   try{s=await loadSurah(n)}catch(e){$("verses").innerHTML=`<p class="loading">Keine Verbindung. Einmal geöffnete Suren sind danach auch offline verfügbar.</p>`;return}
   curSurah=s;
   $("rName").textContent=s.name;$("rSub").textContent=`Sure ${n}`;
-  let h=`<header class="chapter"><div class="car" lang="ar">${arName(s.arName)}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span><small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small></header>`;
+  let h=`<header class="chapter"><div class="car" lang="ar">${esc(arName(s.arName))}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span><small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small></header>`;
   if(n!==1&&n!==9)h+=`<div class="bismillah" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>`;
   h+=s.verses.map(v=>verseHTML(n,v)).join("");
   $("verses").innerHTML=h;applyPrefs();
@@ -610,7 +625,7 @@ $("marksBtn").addEventListener("click",()=>{
   showPane("q-marks");window.scrollTo(0,0);
   const keys=Object.keys(marks).sort((x,y)=>{const[a,b]=x.split(":").map(Number),[c,d]=y.split(":").map(Number);return a-c||b-d});
   $("marksSub").textContent=keys.length?`${keys.length} Verse`:"";
-  $("marksList").innerHTML=keys.length?keys.map(k=>{const s=+k.split(":")[0],nm=surahList&&surahList[s-1]?surahList[s-1].en:`Sure ${s}`;
+  $("marksList").innerHTML=keys.length?keys.map(k=>{const s=+k.split(":")[0],nm=surahList&&surahList[s-1]?esc(surahList[s-1].en):`Sure ${s}`;
     return `<button class="mark" data-k="${k}"><span class="h"><i style="background:var(--sw-${marks[k].c})"></i>${nm} · ${k}</span><p>${(marks[k].t||"").replace(/[&<>]/g,"")}</p></button>`}).join("")
     :`<p class="empty">Noch nichts markiert. Tipp im Quran beim Vers auf den Marker, um ihn farbig zu markieren.</p>`;
 });
