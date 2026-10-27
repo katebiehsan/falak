@@ -384,7 +384,6 @@ body.ph-night .nightsky{opacity:1}
 .dz-hint{margin:0;text-align:center;font-size:13px;color:var(--fg-3)}
 
 
-/* ---------- Kein Gummiband-Federn der Seite; Wischen über die Startseite blättert die Tage ---------- */
-html,body{overscroll-behavior-y:none}
+/* ---------- Wischen über die Startseite blättert die Tage ---------- */
 #v-times{touch-action:pan-y}
 #todayBtn{color:var(--fg)}
