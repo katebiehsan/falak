@@ -331,11 +331,10 @@ body.ph-night .nightsky{opacity:1}
 .daynav button:active{transform:none;background:rgba(255,255,255,.06)}
 .daynav button+button::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:1px;background:rgba(255,255,255,.1)}
 .daylabel{color:var(--fg)!important}
-/* Drei Zustände ohne Farbe: vergangen grau, jetzt weiß auf leichter Fläche, kommend hellgrau */
+/* Drei Zustände nur über Helligkeit: vergangen grau, jetzt weiß, kommend hellgrau */
 .prow{color:var(--fg-2)}
 .prow.past{color:var(--fg-3)}
-.prow.cur{color:var(--fg);background:rgba(255,255,255,.06)}
-.prow.cur::before,.prow:has(+ .cur)::before{opacity:0}
+.prow.cur{color:var(--fg)}
 /* Fußzeile linksbündig, Ort bleibt unten */
 .dates{align-items:flex-start}
 .locline{margin-left:-10px}
@@ -364,3 +363,5 @@ body.ph-night .nightsky{opacity:1}
 .top-l #homeBtn{margin-right:2px}
 /* Tastatur und VoiceOver: Vers-Aktionen beim Fokus sichtbar */
 .verse:focus-within .acts button{opacity:1;pointer-events:auto}
+/* Während der Qibla-Kompass läuft, braucht es kein Tage-Blättern: Platz für den längeren Hinweis, nichts rutscht um */
+.hrow.qon .daynav{display:none}
