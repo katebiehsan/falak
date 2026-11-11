@@ -27,6 +27,16 @@ let marks=store.get("marks",{});          // "2:255" -> {c:"yellow", t:"Snippet"
 let resume=store.get("resume",null);       // zuletzt gelesen {s,a}
 let bookmark=store.get("bookmark",null);   // Lesezeichen {s,a}
 const standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+// In Safari (nicht als Homescreen-App) bekommt der Bereich um Notch und Uhrzeit die Farbe des oberen Himmelsrands
+document.body.classList.toggle("browser",!standalone);
+const metaTheme=document.querySelector('meta[name="theme-color"]');
+// Safari bis iOS 18 färbt diesen Bereich nach theme-color, ab iOS 26 nach dem fixierten Streifen .tint (siehe app.css)
+function updTint(){
+  if(standalone||!metaTheme)return;
+  const on=view==="times"&&!document.body.classList.contains("scrolled");
+  const c=on&&getComputedStyle(document.body).getPropertyValue("--tint").trim()||"#000000";
+  if(metaTheme.content!==c)metaTheme.content=c;
+}
 // Dauerhaften Speicher anfragen (Safari gewährt ihn vor allem der Homescreen-App)
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
 
@@ -62,6 +72,7 @@ function setView(v){
   if(v==="quran")initQuran();
   if(v==="dhikr")renderDz();
   if(v==="times")renderTimes();
+  updTint();
 }
 $("quranBtn").addEventListener("click",()=>{history.pushState({v:"quran"},"");setView("quran")});
 $("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="quran")history.back();else setView("times")});
