@@ -14,7 +14,25 @@ Gebetszeiten, Qibla-Kompass und Quran als Web-App für den iPhone-Homescreen. OL
 - **Hadith des Tages:** Sahih al-Bukhari, Sahih Muslim, 40 Hadith an-Nawawi.
 - **Offline:** App, Schriften und einmal geöffnete Suren funktionieren ohne Netz. Markierungen und Einstellungen bleiben auf dem Gerät.
 
+## Aufbau
+
+Klassische Skripte ohne Build-Schritt. Sie teilen sich einen Gültigkeitsbereich und werden in dieser Reihenfolge geladen (siehe `index.html`):
+
+| Datei | Inhalt |
+|---|---|
+| `js/basis.js` | Hilfsfunktionen, Speicher, Toast, Bewegung, Ansichten, Sheets |
+| `js/zeiten.js` | Hijri, Gebetszeiten, Gebetsliste, andere Tage, islamische Tage, Minuten-Anpassung, Ort |
+| `js/qibla.js` | Qibla-Kompass |
+| `js/quran.js` | Quran, Markierungen, Anzeige, Sicherung |
+| `js/dhikr.js` | Tasbih |
+| `js/hadith.js` | Hadith des Tages |
+| `js/start.js` | Start, muss zuletzt geladen werden |
+
+Neue Dateien auch in `sw.js` (Liste `SHELL`) eintragen und dort die Cache-Version `V` erhöhen.
+
 ## Quellen und Lizenzen
+
+- Falak selbst: MIT-Lizenz (`LICENSE`)
 
 - Gebetszeiten: [adhan-js](https://github.com/batoulapps/adhan-js) (MIT)
 - Missweisung: [magvar](https://github.com/dpyeates/magvar), WMM 2025 (MIT)
