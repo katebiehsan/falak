@@ -387,3 +387,16 @@ body.ph-night .nightsky{opacity:1}
 /* ---------- Wischen über die Startseite blättert die Tage ---------- */
 #v-times{touch-action:pan-y}
 .hl-today{color:var(--fg);font:inherit;padding:4px 0}
+
+/* ---------- Safari (nicht als App): Bereich um Notch und Uhrzeit in Himmelsfarbe ---------- */
+/* Safari 26 färbt ihn nach dem Seitenhintergrund oder einem fixierten Element am oberen Rand (theme-color gilt dort nur noch für Homescreen-Apps).
+   Farben = gemessener Durchschnitt der obersten Himmelszeile je Tageszeit; der Himmel läuft oben weich in diese Farbe. */
+body{--tint:#000000}
+body.ph-day{--tint:#212c3a}
+body.ph-dusk{--tint:#37282a}
+body.ph-night{--tint:#0d1228}
+.tint{display:none}
+body.browser.on-times:not(.scrolled) .tint{display:block;position:fixed;top:0;left:0;right:0;height:max(6px,env(safe-area-inset-top,0px));background:var(--tint);z-index:1;pointer-events:none}
+body.browser .atmo::after{content:"";position:absolute;inset:0 0 auto;height:72px;background:linear-gradient(var(--tint),rgba(0,0,0,0))}
+/* Der schwarze Streifen unter der Statusleiste ist nur für die Homescreen-App; in Safari würde er den Bereich oben schwarz färben */
+body.browser::before{display:none}

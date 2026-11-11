@@ -72,6 +72,7 @@ function renderArc(day,t,now,live){
   // Himmel oben: Tag (Fajr–Maghrib), Abend (Maghrib–Isha), Nacht (Isha–Fajr)
   const ph=now>=tod.isha||now<tod.fajr?"night":now>=tod.maghrib?"dusk":"day";
   ["day","dusk","night"].forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
+  updTint();
   // aktuelles und nächstes Gebet ohne Shuruq
   let cur=null,nxt=null;
   if(live){
