@@ -103,7 +103,7 @@ svg{flex:none}
 .plist{display:flex;flex-direction:column;margin:0 -12px}
 .prow{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;height:52px;box-sizing:border-box;padding:0 12px;border-radius:14px;text-align:left;font-size:17px;color:var(--fg-2)}
 .prow:not(:last-child)::before{content:"";position:absolute;left:12px;right:12px;bottom:0;height:1px;background:var(--line)}
-.prow:active{transform:scale(.99);background:rgba(255,255,255,.04)}
+.prow:active{transform:scale(.98);background:rgba(255,255,255,.04)}
 .prow .pn{font-weight:500;display:flex;align-items:center;gap:8px;line-height:24px}
 .prow .pn small{font-size:13px;font-weight:400;color:var(--fg-3);line-height:24px;padding-top:2px}
 .prow .pt-t{line-height:24px}
@@ -268,7 +268,7 @@ body.ph-night .nightsky{opacity:1}
 .rows{display:flex;flex-direction:column;background:rgba(255,255,255,.05);border-radius:16px;padding:2px}
 .rowbtn{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;font-size:17px;text-align:left;border-radius:14px;cursor:pointer}
 .rowbtn:not(:last-child)::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;background:var(--line)}
-.rowbtn:active{transform:scale(.99);background:rgba(255,255,255,.06)}
+.rowbtn:active{transform:scale(.98);background:rgba(255,255,255,.06)}
 .rowbtn{transition:transform 160ms var(--ease-out),background-color 160ms ease}
 .toggle:active i{transform:scale(.96)}
 .toggle i{transition:background-color 200ms ease,transform 160ms var(--ease-out)}
