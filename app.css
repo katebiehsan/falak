@@ -244,8 +244,9 @@ body.ph-night .nightsky{opacity:1}
 .mark p{margin:0;font-size:15px;color:var(--fg-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 
 /* ---------- Sheets ---------- */
-.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity 200ms ease}
-.scrim.open{opacity:1;pointer-events:auto}
+/* geschlossen per visibility ausgeblendet: Safari 26 würde sonst die Farbe dieser fixierten Fläche für den Bereich oben übernehmen */
+.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;visibility:hidden;transition:opacity 200ms ease,visibility 0s linear 200ms}
+.scrim.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity 200ms ease,visibility 0s}
 .sheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;max-height:82vh;
   display:flex;flex-direction:column;gap:14px;background:var(--raise);
   border:1px solid #2e2e32;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,.6);
@@ -295,8 +296,8 @@ body.ph-night .nightsky{opacity:1}
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
   background:var(--raise-2);border:1px solid #2e2e32;
   color:var(--fg);font-size:15px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;
-  transition:opacity 150ms ease,transform 150ms var(--ease-out)}
-.toast.show{opacity:1;transform:translate(-50%,0) scale(1);transition:opacity 200ms ease,transform 240ms var(--ease-out)}
+  visibility:hidden;transition:opacity 150ms ease,transform 150ms var(--ease-out),visibility 0s linear 150ms}
+.toast.show{opacity:1;visibility:visible;transform:translate(-50%,0) scale(1);transition:opacity 200ms ease,transform 240ms var(--ease-out),visibility 0s}
 
 @media (prefers-reduced-motion:reduce){
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
@@ -389,14 +390,15 @@ body.ph-night .nightsky{opacity:1}
 .hl-today{color:var(--fg);font:inherit;padding:4px 0}
 
 /* ---------- Safari (nicht als App): Bereich um Notch und Uhrzeit in Himmelsfarbe ---------- */
-/* Safari 26 färbt ihn nach dem Seitenhintergrund oder einem fixierten Element am oberen Rand (theme-color gilt dort nur noch für Homescreen-Apps).
+/* Safari 26 nimmt dafür die Hintergrundfarbe der Seite (theme-color gilt dort nur noch für Homescreen-Apps).
+   Daher bekommt html als Hintergrundfarbe die Himmelsfarbe (--top, gesetzt von updTint); sichtbar bleibt sie nur oben, darunter Schwarz wie bisher.
    Farben = gemessener Durchschnitt der obersten Himmelszeile je Tageszeit; der Himmel läuft oben weich in diese Farbe. */
 body{--tint:#000000}
 body.ph-day{--tint:#212c3a}
 body.ph-dusk{--tint:#37282a}
 body.ph-night{--tint:#0d1228}
-.tint{display:none}
-body.browser.on-times:not(.scrolled) .tint{display:block;position:fixed;top:0;left:0;right:0;height:max(6px,env(safe-area-inset-top,0px));background:var(--tint);z-index:1;pointer-events:none}
+html.browser{background-color:var(--top,#000000);background-image:linear-gradient(var(--top,#000000),#000000 72px)}
+body.browser{background:transparent}
 body.browser .atmo::after{content:"";position:absolute;inset:0 0 auto;height:72px;background:linear-gradient(var(--tint),rgba(0,0,0,0))}
 /* Der schwarze Streifen unter der Statusleiste ist nur für die Homescreen-App; in Safari würde er den Bereich oben schwarz färben */
 body.browser::before{display:none}

@@ -29,13 +29,15 @@ let bookmark=store.get("bookmark",null);   // Lesezeichen {s,a}
 const standalone=window.matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
 // In Safari (nicht als Homescreen-App) bekommt der Bereich um Notch und Uhrzeit die Farbe des oberen Himmelsrands
 document.body.classList.toggle("browser",!standalone);
+document.documentElement.classList.toggle("browser",!standalone);
 const metaTheme=document.querySelector('meta[name="theme-color"]');
-// Safari bis iOS 18 färbt diesen Bereich nach theme-color, ab iOS 26 nach dem fixierten Streifen .tint (siehe app.css)
+// Safari bis iOS 18 färbt diesen Bereich nach theme-color, ab iOS 26 nach der Hintergrundfarbe von html (--top, siehe app.css)
 function updTint(){
   if(standalone||!metaTheme)return;
   const on=view==="times"&&!document.body.classList.contains("scrolled");
   const c=on&&getComputedStyle(document.body).getPropertyValue("--tint").trim()||"#000000";
   if(metaTheme.content!==c)metaTheme.content=c;
+  document.documentElement.style.setProperty("--top",c);
 }
 // Dauerhaften Speicher anfragen (Safari gewährt ihn vor allem der Homescreen-App)
 try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{})}catch(e){}
