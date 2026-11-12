@@ -80,12 +80,16 @@ function renderArc(day,t,now,live){
     if(cur){const i=ARC.indexOf(cur);nxt=i<ARC.length-1?{k:ARC[i+1],t:t[ARC[i+1]]}:{k:null,t:times(dayStart(1)).fajr}}
     else nxt={k:"fajr",t:t.fajr};
   }
+  // Weiß ist immer das Gebet, dessen Zeit gerade läuft: vor Fajr noch Isha der Nacht; nach Shuruq ist Fajr vorbei
+  let curRow=cur;
+  if(live&&!cur)curRow="isha";
+  else if(cur==="fajr"&&now>=t.sunrise)curRow=null;
   const fri=day.getDay()===5;
   $("pts").innerHTML=ARC.map(k=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
     let c="prow";
     if(live){
-      if(k===cur)c+=" cur";
+      if(k===curRow)c+=" cur";
       else if(nxt&&k===nxt.k)c+=" upnext";
       else if(now>=t[k])c+=" past";
     }
