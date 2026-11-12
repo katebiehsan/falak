@@ -109,7 +109,7 @@ svg{flex:none}
 .prow .pt-t{line-height:24px}
 .prow .pt-t{font-weight:500;font-variant-numeric:tabular-nums}
 .prow .pt-t em{font-style:normal;font-size:13px;color:var(--fg-3);margin-right:6px;vertical-align:2px}
-.prow.past{color:var(--fg-3)}
+.prow.past{color:#6f6f6f}
 .prow.cur{color:var(--fg)}
 .prow.cur .pt-t{font-weight:500}
 .prow.sel{background:rgba(255,255,255,.05)}
@@ -328,7 +328,7 @@ body.ph-night .nightsky{opacity:1}
 .hrow .tools{margin:0}
 /* Drei Zustände nur über Helligkeit: vergangen grau, jetzt weiß, kommend hellgrau */
 .prow{color:var(--fg-2)}
-.prow.past{color:var(--fg-3)}
+.prow.past{color:#6f6f6f}
 .prow.cur{color:var(--fg)}
 /* Fußzeile zentriert als Abschluss der Seite: Ort, darunter beide Daten in einer Zeile */
 .dates .dline{text-align:center}
