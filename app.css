@@ -21,7 +21,7 @@
   color-scheme:dark;
 }
 *{box-sizing:border-box}
-html{-webkit-text-size-adjust:100%;background:var(--bg)}
+html{-webkit-text-size-adjust:100%;background:var(--bg);overscroll-behavior:none} /* kein Federn der ganzen Seite, damit auch kein Neuladen per Herunterziehen */
 body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.45;letter-spacing:-.006em;
   -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}

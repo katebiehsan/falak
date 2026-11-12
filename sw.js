@@ -1,5 +1,5 @@
 // Falak – Offline-Unterstützung
-const V="falak-v22";
+const V="falak-v23";
 const SHELL=["./","index.html","app.css","js/basis.js","js/zeiten.js","js/qibla.js","js/quran.js","js/dhikr.js","js/hadith.js","js/start.js","adhan.min.js","magvar.min.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","favicon-32.png","favicon-64.png","fonts/amiri-arabic.woff2","fonts/amiri-quran-arabic.woff2"];
 // Beim Installieren am HTTP-Cache vorbei laden (cache:"reload"), sonst kann GitHub Pages bis zu 10 Min. alte Dateien liefern
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL.map(p=>new Request(p,{cache:"reload"})))).then(()=>self.skipWaiting()))});
