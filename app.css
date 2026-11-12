@@ -399,6 +399,8 @@ body.ph-dusk{--tint:#37282a}
 body.ph-night{--tint:#0d1228}
 html.browser{background-color:var(--top,#000000);background-image:linear-gradient(var(--top,#000000),#000000 72px)}
 body.browser{background:transparent}
-body.browser .atmo::after{content:"";position:absolute;inset:0 0 auto;height:72px;background:linear-gradient(var(--tint),rgba(0,0,0,0))}
+/* Himmel startet oben in --tint (nahtlos zur Notch-Leiste), das Licht blendet darunter weich ein – keine Fläche über dem Himmel */
+body.browser .atmo{background:linear-gradient(var(--tint),transparent 55%)}
+body.browser .glow{-webkit-mask-image:linear-gradient(transparent,#000 90px);mask-image:linear-gradient(transparent,#000 90px)}
 /* Der schwarze Streifen unter der Statusleiste ist nur für die Homescreen-App; in Safari würde er den Bereich oben schwarz färben */
 body.browser::before{display:none}
