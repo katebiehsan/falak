@@ -60,39 +60,28 @@ function renderTimes(){
 
 
 /* ================= Gebetsliste ================= */
-// Ruhige Liste ohne Shuruq: vergangen grau, aktuell weiß, kommend hellgrau.
-const ARC=["fajr","dhuhr","asr","maghrib","isha"];
+// Liste mit Shuruq; Abstufung wie die Woche in Second Brain: jetzt weiß mit Fläche, danach weiß, übernächstes grau, Rest fast schwarz.
+const ARC=["fajr","sunrise","dhuhr","asr","maghrib","isha"];
 // Sterne nur ab Isha (Nacht), im oberen Drittel, sehr dezent, nach unten ausgeblendet; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
   for(let i=0;i<26;i++){const r=rnd(),sz=r<.1?1.5:1;
     o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*92).toFixed(2)}%;width:${sz}px;height:${sz}px;opacity:${(.22+rnd()*.38).toFixed(2)}"></i>`}
   $("nightSky").innerHTML=o})();
+// Himmel je Zeit: Fajr Dämmerung, Shuruq Sonnenaufgang, Dhuhr Mittag, Asr Nachmittag, Maghrib Abendrot, Isha Nacht
+const SKY=["fajr","shuruq","dhuhr","asr","maghrib","isha"];
 function renderArc(day,t,now,live){
   const tod=times(dayStart(0));
-  // Himmel oben: Tag (Fajr–Maghrib), Abend (Maghrib–Isha), Nacht (Isha–Fajr)
-  const ph=now>=tod.isha||now<tod.fajr?"night":now>=tod.maghrib?"dusk":"day";
-  ["day","dusk","night"].forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
+  const ph=now>=tod.isha||now<tod.fajr?"isha":now>=tod.maghrib?"maghrib":now>=tod.asr?"asr":now>=tod.dhuhr?"dhuhr":now>=tod.sunrise?"shuruq":"fajr";
+  SKY.forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
   updTint();
-  // aktuelles und nächstes Gebet ohne Shuruq
-  let cur=null,nxt=null;
-  if(live){
-    for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){cur=ARC[i];break}}
-    if(cur){const i=ARC.indexOf(cur);nxt=i<ARC.length-1?{k:ARC[i+1],t:t[ARC[i+1]]}:{k:null,t:times(dayStart(1)).fajr}}
-    else nxt={k:"fajr",t:t.fajr};
-  }
-  // Weiß ist immer das Gebet, dessen Zeit gerade läuft: vor Fajr noch Isha der Nacht; nach Shuruq ist Fajr vorbei
-  let curRow=cur;
-  if(live&&!cur)curRow="isha";
-  else if(cur==="fajr"&&now>=t.sunrise)curRow=null;
+  // aktuelle Zeit: vor Fajr gilt noch Isha der Nacht; danach Reihenfolge ringsum (nach Isha kommt Fajr)
+  let ci=-1;
+  if(live){for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){ci=i;break}}if(ci<0)ci=ARC.length-1}
   const fri=day.getDay()===5;
-  $("pts").innerHTML=ARC.map(k=>{
+  $("pts").innerHTML=ARC.map((k,i)=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
     let c="prow";
-    if(live){
-      if(k===curRow)c+=" cur";
-      else if(nxt&&k===nxt.k)c+=" upnext";
-      else if(now>=t[k])c+=" past";
-    }
+    if(live){const d=(i-ci+ARC.length)%ARC.length;c+=d===0?" cur":d===1?" n1":d===2?" n2":" dim"}
     if(adjKey===k)c+=" sel";
     return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${m?`<em aria-hidden="true">•</em>`:""}${fT(t[k])}</span></button>`;
   }).join("");
