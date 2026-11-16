@@ -75,13 +75,13 @@ function renderArc(day,t,now,live){
   SKY.forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
   updTint();
   // aktuelle Zeit: vor Fajr gilt noch Isha der Nacht; danach Reihenfolge ringsum (nach Isha kommt Fajr)
-  let ci=-1;
-  if(live){for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){ci=i;break}}if(ci<0)ci=ARC.length-1}
+  let ci=-1,night=false;
+  if(live){for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){ci=i;break}}if(ci<0){ci=ARC.length-1;night=true}}
   const fri=day.getDay()===5;
   $("pts").innerHTML=ARC.map((k,i)=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
     let c="prow";
-    if(live){const d=(i-ci+ARC.length)%ARC.length;c+=d===0?" cur":d===1?" n1":d===2?" n2":" dim"}
+    if(live)c+=i===ci?" cur":(i<ci&&!night)?" past":" up"
     if(adjKey===k)c+=" sel";
     return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${m?`<em aria-hidden="true">•</em>`:""}${fT(t[k])}</span></button>`;
   }).join("");
