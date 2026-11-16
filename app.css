@@ -109,9 +109,11 @@ svg{flex:none}
 .prow .pt-t{line-height:24px}
 .prow .pt-t{font-weight:500;font-variant-numeric:tabular-nums}
 .prow .pt-t em{font-style:normal;font-size:13px;color:var(--fg-3);margin-right:6px;vertical-align:2px}
-.prow.past{color:#6f6f6f}
-.prow.cur{color:var(--fg)}
-.prow.cur .pt-t{font-weight:500}
+.prow.cur{color:var(--fg);background:#1c1c1e}
+.prow.cur::before,.prow:has(+ .cur)::before{opacity:0}
+.prow.n1{color:var(--fg)}
+.prow.n2{color:#6f6f6f}
+.prow.dim{color:#3a3a3f}
 .prow.sel{background:rgba(255,255,255,.05)}
 .prow.sel::before,.prow:has(+ .sel)::before{opacity:0}
 
@@ -123,13 +125,16 @@ body.on-times .atmo{opacity:var(--sf,1)}
    damit sie auch in der Homescreen-App ab oben sichtbar ist */
 .glow{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 /* Zentrum unterhalb der Statusleiste, damit der hellste Teil in der Homescreen-App sichtbar ist */
-.g-day{background:radial-gradient(120% 85% at 60% calc(env(safe-area-inset-top,0px) + 0px),rgba(130,175,230,.38),rgba(130,175,230,.11) 45%,transparent 78%)}
-.g-dusk{background:radial-gradient(85% 75% at 75% calc(env(safe-area-inset-top,0px) + 40px),rgba(240,140,80,.42),rgba(240,140,80,.13) 45%,transparent 78%),radial-gradient(90% 75% at 20% calc(env(safe-area-inset-top,0px) + 30px),rgba(70,90,165,.42),rgba(70,90,165,.13) 45%,transparent 78%)}
-.g-night{background:radial-gradient(120% 85% at 40% calc(env(safe-area-inset-top,0px) + 40px),rgba(35,50,110,.6),rgba(35,50,110,.18) 45%,transparent 78%)}
-body.ph-day .g-day,body.ph-dusk .g-dusk,body.ph-night .g-night{opacity:1}
+.g-fajr{background:radial-gradient(120% 85% at 50% calc(env(safe-area-inset-top,0px) + 0px),rgba(70,65,150,.5),rgba(70,65,150,.14) 45%,transparent 78%),radial-gradient(90% 60% at 30% calc(env(safe-area-inset-top,0px) + 60px),rgba(190,120,150,.22),transparent 70%)}
+.g-shuruq{background:radial-gradient(120% 85% at 60% calc(env(safe-area-inset-top,0px) + 0px),rgba(240,170,110,.30),rgba(240,170,110,.09) 45%,transparent 78%)}
+.g-dhuhr{background:radial-gradient(120% 85% at 60% calc(env(safe-area-inset-top,0px) + 0px),rgba(130,175,230,.38),rgba(130,175,230,.11) 45%,transparent 78%)}
+.g-asr{background:radial-gradient(120% 85% at 65% calc(env(safe-area-inset-top,0px) + 0px),rgba(205,185,135,.30),rgba(150,170,200,.10) 50%,transparent 80%)}
+.g-maghrib{background:radial-gradient(85% 75% at 75% calc(env(safe-area-inset-top,0px) + 40px),rgba(240,140,80,.42),rgba(240,140,80,.13) 45%,transparent 78%),radial-gradient(90% 75% at 20% calc(env(safe-area-inset-top,0px) + 30px),rgba(70,90,165,.42),rgba(70,90,165,.13) 45%,transparent 78%)}
+.g-isha{background:radial-gradient(120% 85% at 40% calc(env(safe-area-inset-top,0px) + 40px),rgba(35,50,110,.6),rgba(35,50,110,.18) 45%,transparent 78%)}
+body.ph-fajr .g-fajr,body.ph-shuruq .g-shuruq,body.ph-dhuhr .g-dhuhr,body.ph-asr .g-asr,body.ph-maghrib .g-maghrib,body.ph-isha .g-isha{opacity:1}
 .nightsky{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease}
 .nightsky i{position:absolute;border-radius:50%;background:#fff}
-body.ph-night .nightsky{opacity:1}
+body.ph-isha .nightsky{opacity:1}
 .view{position:relative;z-index:1}
 
 /* ---------- Gebet anpassen ---------- */
@@ -326,10 +331,8 @@ body.ph-night .nightsky{opacity:1}
 /* Qibla/Quran links, Dhikr rechts */
 .hrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 12px;margin-top:14px}
 .hrow .tools{margin:0}
-/* Drei Zustände nur über Helligkeit: vergangen grau, jetzt weiß, kommend hellgrau */
+/* Abstufung über Helligkeit (cur, n1, n2, dim siehe oben); ohne Zustand (andere Tage) hellgrau */
 .prow{color:var(--fg-2)}
-.prow.past{color:#6f6f6f}
-.prow.cur{color:var(--fg)}
 /* Fußzeile zentriert als Abschluss der Seite: Ort, darunter beide Daten in einer Zeile */
 .dates .dline{text-align:center}
 
@@ -394,9 +397,12 @@ body.ph-night .nightsky{opacity:1}
    Daher bekommt html als Hintergrundfarbe die Himmelsfarbe (--top, gesetzt von updTint); sichtbar bleibt sie nur oben, darunter Schwarz wie bisher.
    Farben = gemessener Durchschnitt der obersten Himmelszeile je Tageszeit; der Himmel läuft oben weich in diese Farbe. */
 body{--tint:#000000}
-body.ph-day{--tint:#212c3a}
-body.ph-dusk{--tint:#37282a}
-body.ph-night{--tint:#0d1228}
+body.ph-fajr{--tint:#17162e}
+body.ph-shuruq{--tint:#2a2119}
+body.ph-dhuhr{--tint:#212c3a}
+body.ph-asr{--tint:#2a2924}
+body.ph-maghrib{--tint:#37282a}
+body.ph-isha{--tint:#0d1228}
 html.browser{background-color:var(--top,#000000);background-image:linear-gradient(var(--top,#000000),#000000 72px)}
 body.browser{background:transparent}
 /* Himmel startet oben in --tint (nahtlos zur Notch-Leiste), das Licht blendet darunter weich ein – keine Fläche über dem Himmel */
