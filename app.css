@@ -111,9 +111,9 @@ svg{flex:none}
 .prow .pt-t em{font-style:normal;font-size:13px;color:var(--fg-3);margin-right:6px;vertical-align:2px}
 .prow.cur{color:var(--fg);background:#1c1c1e}
 .prow.cur::before,.prow:has(+ .cur)::before{opacity:0}
-.prow.n1{color:var(--fg)}
-.prow.n2{color:#5c5c5c}
-.prow.dim{color:#373737}
+.prow.n1{color:#5c5c5c}
+.prow.n2{color:#282828}
+.prow.dim{color:#282828}
 .prow.sel{background:rgba(255,255,255,.05)}
 .prow.sel::before,.prow:has(+ .sel)::before{opacity:0}
 
