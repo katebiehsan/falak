@@ -109,8 +109,7 @@ svg{flex:none}
 .prow .pt-t{line-height:24px}
 .prow .pt-t{font-weight:500;font-variant-numeric:tabular-nums}
 .prow .pt-t em{font-style:normal;font-size:13px;color:var(--fg-3);margin-right:6px;vertical-align:2px}
-.prow.cur{color:var(--fg);background:#1c1c1e}
-.prow.cur::before,.prow:has(+ .cur)::before{opacity:0}
+.prow.cur{color:var(--fg)}
 .prow.n1{color:#5c5c5c}
 .prow.n2{color:#282828}
 .prow.dim{color:#282828}
