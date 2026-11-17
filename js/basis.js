@@ -94,11 +94,24 @@ function closeSheet(instant){if(!openSheetEl)return;const was=openSheetEl;openSh
 $("scrim").addEventListener("click",()=>closeSheet());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 document.querySelectorAll(".sheet").forEach(s=>{
-  let y0=null,t0=0,dy=0;
+  // Sheet am Griff (oder an freier Fläche) nach unten ziehen. Die Seite dahinter bleibt stehen (touch-action in app.css),
+  // die Liste im Sheet scrollt selbst, solange sie nicht ganz oben ist.
+  let y0=null,t0=0,dy=0,list=null,drag=false;
+  const reset=()=>{s.classList.remove("drag");s.style.transition="";s.style.transform="";y0=null;drag=false};
   s.addEventListener("touchstart",e=>{
-    const list=e.target.closest(".sheetlist");if(list&&list.scrollTop>0)return;
-    y0=e.touches[0].clientY;t0=Date.now();dy=0;s.style.transition="none"},{passive:true});
-  s.addEventListener("touchmove",e=>{if(y0==null)return;dy=e.touches[0].clientY-y0;if(dy>0)s.style.transform=`translateY(${dy}px)`},{passive:true});
-  s.addEventListener("touchend",()=>{if(y0==null)return;s.style.transition="";s.style.transform="";
-    if(dy>100||dy/(Date.now()-t0)>0.5)closeSheet();y0=null});
+    if(e.touches.length!==1){y0=null;return}
+    list=e.target.closest(".sheetlist");y0=e.touches[0].clientY;t0=Date.now();dy=0;drag=false},{passive:true});
+  s.addEventListener("touchmove",e=>{
+    if(y0==null)return;
+    dy=e.touches[0].clientY-y0;
+    if(!drag){
+      if(Math.abs(dy)<6)return;                          // erst ab 6 px, damit ein Tippen ein Tippen bleibt
+      if(list&&(list.scrollTop>0||dy<0)){y0=null;return} // die Liste scrollt selbst
+      drag=true;s.classList.add("drag");s.style.transition="none"}
+    s.style.transform=`translateY(${Math.max(0,dy)}px)`},{passive:true});
+  s.addEventListener("touchend",()=>{if(y0==null)return;
+    if(!drag){y0=null;return}
+    const close=dy>100||dy/Math.max(1,Date.now()-t0)>0.5;
+    reset();if(close)closeSheet()});
+  s.addEventListener("touchcancel",()=>{if(y0!=null)reset()});   // iOS bricht Gesten ab: zurückschnappen statt hängen bleiben
 });
