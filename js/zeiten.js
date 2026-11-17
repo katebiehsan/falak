@@ -48,7 +48,7 @@ function renderTimes(){
     $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
   }else{
     if(qActive)stopQibla();
-    $("heroLabel").hidden=false;$("heroLabel").innerHTML=`${dayOffset>0?"Vorschau":"Rückblick"} · <button class="hl-today" id="heroToday">Heute ›</button>`;
+    $("heroLabel").hidden=false;setHTML($("heroLabel"),`${dayOffset>0?"Vorschau":"Rückblick"} · <button class="hl-today" id="heroToday">Heute ›</button>`);
     $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
     $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
   }
@@ -78,13 +78,13 @@ function renderArc(day,t,now,live){
   let ci=-1,night=false;
   if(live){for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){ci=i;break}}if(ci<0){ci=ARC.length-1;night=true}}
   const fri=day.getDay()===5;
-  $("pts").innerHTML=ARC.map((k,i)=>{
+  setHTML($("pts"),ARC.map((k,i)=>{
     const m=adj[k]||0,n=k==="dhuhr"&&fri?"Jumu'a":LABEL[k];
     let c="prow";
     if(live)c+=i===ci?" cur":(i<ci&&!night)?" past":" up"
     if(adjKey===k)c+=" sel";
     return `<button class="${c}" data-k="${k}" aria-label="${n} ${fT(t[k])}${m?`, angepasst um ${m>0?"plus":"minus"} ${Math.abs(m)} Minuten`:""}. Antippen zum Anpassen"><span class="pn">${n}</span><span class="pt-t">${m?`<em aria-hidden="true">•</em>`:""}${fT(t[k])}</span></button>`;
-  }).join("");
+  }).join(""));
 }
 $("pts").addEventListener("click",e=>{const b=e.target.closest("[data-k]");if(!b)return;adjKey=b.dataset.k;renderAdj();renderTimes();openSheet("adjSheet")});
 
@@ -171,12 +171,12 @@ function renderDays(){
   if(dayOffset===0&&(now||tom)){
     const e=now||tom,h=hParts(today);
     let txt=now?(e.k==="bid"?`Weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:e.eve?`${e.title} ab heute Abend`:e.title):`Morgen: ${e.title}`;
-    chip.innerHTML=`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`;chip.hidden=false;
+    setHTML(chip,`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`);chip.hidden=false;
   }else chip.hidden=true;
   const fut=list.filter(e=>e.start>today);
   const bid=fut.find(e=>e.k==="bid"),big=fut.filter(e=>e.k!=="bid").slice(0,bid?2:3);
   const up=(bid?[bid,...big]:big).sort((x,y)=>x.start-y.start);
-  $("upcoming").innerHTML=up.length?up.map(evRow).join(""):`<p class="empty">Keine Termine gefunden.</p>`;
+  setHTML($("upcoming"),up.length?up.map(evRow).join(""):`<p class="empty">Keine Termine gefunden.</p>`);
 }
 function openDays(){
   renderShift();$("daysList").innerHTML=events().map(evRow).join("");openSheet("daysSheet");
@@ -268,8 +268,10 @@ $("gpsBtn").addEventListener("click",()=>{
   s.textContent="Standort wird ermittelt …";
   navigator.geolocation.getCurrentPosition(async p=>{
     const lat=+p.coords.latitude.toFixed(4),lon=+p.coords.longitude.toFixed(4);let name="Aktueller Standort";
-    try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&accept-language=de&lat=${lat}&lon=${lon}`);
-      const j=await r.json();const a=j.address||{};name=a.city||a.town||a.village||a.municipality||a.suburb||name}catch(e){}
+    // Ortsname ist nur Beschriftung: nach 6 Sekunden ohne Antwort bleibt es bei „Aktueller Standort“
+    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),6000);
+    try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&accept-language=de&lat=${lat}&lon=${lon}`,{signal:ac.signal});
+      const j=await r.json();const a=j.address||{};name=a.city||a.town||a.village||a.municipality||a.suburb||name}catch(e){}finally{clearTimeout(to)}
     setLoc({name,lat,lon});
   },err=>{
     s.classList.add("err");

@@ -153,7 +153,7 @@
 <!-- ============ SHEETS ============ -->
 <div class="scrim" id="scrim"></div>
 
-<section class="sheet" id="locSheet" aria-label="Ort ändern">
+<section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="locSheet" aria-label="Ort ändern">
   <div class="grab"></div>
   <h3>Ort</h3>
   <button class="primary" id="gpsBtn"><svg class="ic16"><use href="#i-loc"/></svg>Aktuellen Standort verwenden</button>
@@ -161,7 +161,7 @@
   <div class="sheetlist" id="cities"></div>
 </section>
 
-<section class="sheet" id="adjSheet" aria-label="Gebetszeit anpassen">
+<section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="adjSheet" aria-label="Gebetszeit anpassen">
   <div class="grab"></div>
   <div class="adj-head">
     <h3 id="adjTitle">Gebetszeit</h3>
@@ -182,7 +182,7 @@
   <p class="hint-s" id="adjHint"></p>
 </section>
 
-<section class="sheet" id="daysSheet" aria-label="Islamische Tage">
+<section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="daysSheet" aria-label="Islamische Tage">
   <div class="grab"></div>
   <h3>Islamische Tage</h3>
   <div class="sheetlist"><div class="list" id="daysList"></div></div>
@@ -200,7 +200,7 @@
   <p class="hint-s">Mit Erinnerung am Vorabend. Berechnet nach Umm al-Qura. Feiert deine Moschee einen Tag später, stell „+1 Tag“ ein.</p>
 </section>
 
-<section class="sheet" id="viewSheet" aria-label="Anzeige">
+<section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="viewSheet" aria-label="Anzeige">
   <div class="grab"></div>
   <h3>Anzeige</h3>
   <div class="toggles">
@@ -218,7 +218,7 @@
   </div>
 </section>
 
-<section class="sheet" id="verseSheet" aria-label="Vers markieren">
+<section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="verseSheet" aria-label="Vers markieren">
   <div class="grab"></div>
   <h3 id="vsTitle">Markieren</h3>
   <div class="swatches" id="swatches">

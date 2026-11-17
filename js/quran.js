@@ -140,14 +140,14 @@ document.querySelectorAll("[data-size]").forEach(b=>b.addEventListener("click",(
 
 // Markierungen
 function updateMarksCount(){const n=Object.keys(marks).length;$("marksCount").textContent=n||""}
-$("marksBtn").addEventListener("click",()=>{
-  showPane("q-marks");window.scrollTo(0,0);
+function renderMarks(){
   const keys=Object.keys(marks).sort((x,y)=>{const[a,b]=x.split(":").map(Number),[c,d]=y.split(":").map(Number);return a-c||b-d});
   $("marksSub").textContent=keys.length?`${keys.length} Verse`:"";
   $("marksList").innerHTML=keys.length?keys.map(k=>{const s=+k.split(":")[0],nm=surahList&&surahList[s-1]?esc(surahList[s-1].en):`Sure ${s}`;
     return `<button class="mark" data-k="${k}"><span class="h"><i style="background:var(--sw-${marks[k].c})"></i>${nm} · ${k}</span><p>${(marks[k].t||"").replace(/[&<>]/g,"")}</p></button>`}).join("")
     :`<p class="empty">Noch nichts markiert. Tipp im Quran beim Vers auf den Marker, um ihn farbig zu markieren.</p>`;
-});
+}
+$("marksBtn").addEventListener("click",()=>{showPane("q-marks");window.scrollTo(0,0);renderMarks()});
 $("marksList").addEventListener("click",e=>{const b=e.target.closest(".mark");if(!b)return;const[s,a]=b.dataset.k.split(":").map(Number);openSurah(s,a)});
 $("marksBack").addEventListener("click",()=>{showPane("q-index");window.scrollTo(0,0)});
 
@@ -164,10 +164,13 @@ $("backupBtn").addEventListener("click",async()=>{
 $("restoreIn").addEventListener("change",async e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
   try{const j=JSON.parse(await f.text());if(j.app!=="falak"&&j.app!=="miqat")throw 0;
-    marks=Object.assign({},marks,j.marks||{});store.set("marks",marks);
-    if(j.bookmark){bookmark=j.bookmark;store.set("bookmark",bookmark)}
-    if(j.resume){resume=j.resume;store.set("resume",resume)}
-    updateMarksCount();toast(`${Object.keys(j.marks||{}).length} Markierungen geladen`);
+    // Datei prüfen: nur gültige Verse („Sure:Vers“), bekannte Farben, Zahlen als Zahlen (die Werte landen später im HTML)
+    const okM={};Object.entries(j.marks||{}).forEach(([k,m])=>{if(/^\d{1,3}:\d{1,3}$/.test(k)&&m&&["yellow","green","blue","pink"].includes(m.c))okM[k]={c:m.c,t:String(m.t||"").slice(0,160)}});
+    const okP=p=>p&&Number.isInteger(+p.s)&&Number.isInteger(+p.a)&&+p.s>=1&&+p.s<=114&&+p.a>=1?{s:+p.s,a:+p.a}:null;
+    marks=Object.assign({},marks,okM);store.set("marks",marks);
+    if(okP(j.bookmark)){bookmark=okP(j.bookmark);store.set("bookmark",bookmark)}
+    if(okP(j.resume)){resume=okP(j.resume);store.set("resume",resume)}
+    updateMarksCount();renderMarks();toast(`${Object.keys(okM).length} Markierungen geladen`);
   }catch(err){toast("Diese Datei ist keine Falak-Sicherung")}
   e.target.value="";
 });

@@ -6,6 +6,8 @@ const $=id=>document.getElementById(id);
 const R=Math.PI/180;
 // Texte aus fremden Quellen (Quran-API) nie ungeprüft ins HTML
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+// innerHTML nur setzen, wenn sich etwas geändert hat: der 15-Sekunden-Takt baut sonst die Listen neu auf und verschluckt ein gerade laufendes Tippen
+const setHTML=(el,h)=>{if(el._h!==h){el.innerHTML=h;el._h=h}};
 
 /* ================= Speicher ================= */
 // Aufräumen: Miqat-Einträge (vor dem Umbenennen) übernehmen, falls noch nicht geschehen, und dann löschen.
@@ -87,17 +89,23 @@ $("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="
 window.addEventListener("popstate",e=>setView(e.state&&TABS.includes(e.state.v)?e.state.v:"times"));
 
 /* ================= Sheets ================= */
-let openSheetEl=null;
-function openSheet(id){closeSheet(true);openSheetEl=$(id);$("scrim").classList.add("open");openSheetEl.classList.add("open")}
-function closeSheet(instant){if(!openSheetEl)return;const was=openSheetEl;openSheetEl.classList.remove("open");$("scrim").classList.remove("open");openSheetEl=null;
-  if(was.id==="adjSheet"){adjKey=null;renderTimes()}}
+let openSheetEl=null,sheetReturn=null;
+// Offenes Sheet verhält sich wie ein Dialog: Hintergrund ist für Tastatur und VoiceOver gesperrt (inert), Fokus geht ins Sheet und danach zurück
+const setBg=on=>document.querySelectorAll("main.view").forEach(m=>{m.inert=on});
+function openSheet(id){const from=document.activeElement;closeSheet(true);sheetReturn=from;openSheetEl=$(id);setBg(true);$("scrim").classList.add("open");openSheetEl.classList.add("open");
+  try{openSheetEl.focus({preventScroll:true})}catch(e){}}
+function closeSheet(instant){if(!openSheetEl)return;const was=openSheetEl,ret=sheetReturn;openSheetEl.classList.remove("open");$("scrim").classList.remove("open");openSheetEl=null;sheetReturn=null;setBg(false);
+  let back=ret;
+  // Das Anpassen-Sheet baut die Gebetsliste neu auf: Fokus geht auf die Zeile mit demselben Gebet zurück
+  if(was.id==="adjSheet"){const k=adjKey;adjKey=null;renderTimes();back=document.querySelector(`.prow[data-k="${k}"]`)||ret}
+  if(back&&back.isConnected&&back!==document.body){try{back.focus({preventScroll:true})}catch(e){}}}
 $("scrim").addEventListener("click",()=>closeSheet());
 document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSheet()});
 document.querySelectorAll(".sheet").forEach(s=>{
   // Sheet am Griff (oder an freier Fläche) nach unten ziehen. Die Seite dahinter bleibt stehen (touch-action in app.css),
   // die Liste im Sheet scrollt selbst, solange sie nicht ganz oben ist.
-  let y0=null,t0=0,dy=0,list=null,drag=false;
-  const reset=()=>{s.classList.remove("drag");s.style.transition="";s.style.transform="";y0=null;drag=false};
+  let y0=null,t0=0,dy=0,list=null,drag=false;const scrim=$("scrim");
+  const reset=()=>{s.classList.remove("drag");s.style.transition="";s.style.transform="";scrim.style.transition="";scrim.style.opacity="";y0=null;drag=false};
   s.addEventListener("touchstart",e=>{
     if(e.touches.length!==1){y0=null;return}
     list=e.target.closest(".sheetlist");y0=e.touches[0].clientY;t0=Date.now();dy=0;drag=false},{passive:true});
@@ -107,8 +115,9 @@ document.querySelectorAll(".sheet").forEach(s=>{
     if(!drag){
       if(Math.abs(dy)<6)return;                          // erst ab 6 px, damit ein Tippen ein Tippen bleibt
       if(list&&(list.scrollTop>0||dy<0)){y0=null;return} // die Liste scrollt selbst
-      drag=true;s.classList.add("drag");s.style.transition="none"}
-    s.style.transform=`translateY(${Math.max(0,dy)}px)`},{passive:true});
+      drag=true;s.classList.add("drag");s.style.transition="none";scrim.style.transition="none"}
+    s.style.transform=`translateY(${Math.max(0,dy)}px)`;
+    scrim.style.opacity=(1-Math.min(1,Math.max(0,dy)/Math.max(1,s.offsetHeight))).toFixed(3)},{passive:true});
   s.addEventListener("touchend",()=>{if(y0==null)return;
     if(!drag){y0=null;return}
     const close=dy>100||dy/Math.max(1,Date.now()-t0)>0.5;
