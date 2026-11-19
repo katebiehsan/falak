@@ -28,6 +28,10 @@ Klassische Skripte ohne Build-Schritt. Sie teilen sich einen Gültigkeitsbereich
 | `js/hadith.js` | Hadith des Tages |
 | `js/start.js` | Start, muss zuletzt geladen werden |
 
+## Sheets: Glas oder flach
+
+Sheets (Ort, Anpassen, Islamische Tage, Anzeige, Vers markieren) sind standardmäßig Glas mit Abdunklung dahinter. Die flache Variante (Apple-Grau `#1c1c1e`, ohne Unschärfe) schaltet man mit einer Klasse am `<html>`-Element in `index.html` ein: `<html lang="de" class="sheets-flat">`. Bei „Transparenz reduzieren“ und „Kontrast erhöhen“ im iPhone greift automatisch die flache Fläche.
+
 Neue Dateien auch in `sw.js` (Liste `SHELL`) eintragen und dort die Cache-Version `V` erhöhen.
 
 ## Quellen und Lizenzen

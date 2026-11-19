@@ -3,7 +3,9 @@
 @font-face{font-family:"Amiri Quran";font-style:normal;font-weight:400;font-display:swap;src:url(fonts/amiri-quran-arabic.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1}
 /* Falak – OLED-Schwarz, SF Pro (wie Karteikarten und Kalorientracker), ruhige Grautöne. Ein Akzent: Grün für „jetzt“. Flache Bedienelemente ohne Glas. */
 :root{
-  --bg:#000;--raise:#0b0b0d;--raise-2:#151518;
+  --bg:#000;--raise:#0b0b0d;
+  /* Apple (dunkel): Flächen, gedrückte Flächen und Rahmen für Sheets, runde Knöpfe, Hinweise */
+  --surface:#1c1c1e;--raised:#2c2c2e;--edge:#38383a;
   --fg:#f5f5f7;--fg-2:#a1a1a8;--fg-3:#7a7a80;--fg-4:#3a3a3f;
   --line:rgba(255,255,255,.07);
   --accent:#4CC38A;--accent-soft:rgba(76,195,138,.10);
@@ -20,23 +22,31 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;background:var(--bg);overscroll-behavior:none}
 /* kein Federn der ganzen Seite, damit auch kein Neuladen per Herunterziehen */
-body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px);--tint:#000000}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.3;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px);--tint:#000000}
 /* Oben steht der Himmel bis unter die Statusleiste; erst beim Scrollen wird der Streifen schwarz */
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg);transition:opacity 160ms ease}
 body:not(.scrolled)::before{opacity:0}
 [hidden]{display:none!important}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;transition:transform 160ms var(--ease-out),background-color 160ms ease,color 160ms ease,opacity 160ms ease}
 button:active{transform:scale(.97)}
+/* Kein Doppeltipp-Zoom und kein 300-ms-Warten auf Tippen */
+button,a{touch-action:manipulation}
+/* Unsichtbare Trefferfläche: sichtbar klein, Ziel mindestens 44 px */
+.round,.icon-btn,.mini-step button,.seg button,.verse .acts button,.tools .qtext{position:relative}
+.round::after,.icon-btn::after{content:"";position:absolute;inset:-2px}
+.verse .acts button::after{content:"";position:absolute;inset:-4px}
+.mini-step button::after,.seg button::after{content:"";position:absolute;inset:-4px 0}
+.tools .qtext::after{content:"";position:absolute;inset:-5px 0}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 svg{flex:none}
 .ic16{width:16px;height:16px}
 .ic18{width:18px;height:18px}
 /* ---------- Runde Knöpfe: flach, mit Haarlinie ---------- */
 .top .round{margin-right:2px}
-.round{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--fg);background:var(--raise-2);border:1px solid #2e2e32}
+.round{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--fg);background:var(--surface);border:1px solid var(--edge)}
 .round-spacer{width:40px;height:40px;flex:none}
 .icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--fg-3)}
-.icon-btn:active{background:var(--raise-2)}
+.icon-btn:active{background:var(--raised)}
 /* ---------- Layout ---------- */
 .view{max-width:520px;margin:0 auto;padding:10px max(20px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:24px;position:relative;z-index:1}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
@@ -212,7 +222,7 @@ body.ph-isha .nightsky{opacity:1}
 .verse .num{font-size:13px;font-weight:500;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .verse .acts{display:flex;gap:0;position:absolute;right:-8px;top:50%;transform:translateY(-50%);margin:0}
 .verse .acts button{width:36px;height:36px;display:grid;place-items:center;border-radius:12px;color:var(--fg-3);opacity:0;pointer-events:none;transition:opacity 160ms ease}
-.verse .acts button:active{background:var(--raise-2)}
+.verse .acts button:active{background:var(--raised)}
 .verse .acts svg{width:19px;height:19px}
 .verse .acts button.on{color:var(--fg)}
 /* Aktionen erst nach Antippen; markierte, gemerkte und per Tastatur/VoiceOver fokussierte Verse zeigen sie */
@@ -235,10 +245,12 @@ body.ph-isha .nightsky{opacity:1}
 .mark p{margin:0;font-size:15px;color:var(--fg-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* ---------- Sheets ---------- */
 /* geschlossen per visibility ausgeblendet: Safari 26 würde sonst die Farbe dieser fixierten Fläche für den Bereich oben übernehmen */
-.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;visibility:hidden;transition:opacity 200ms ease,visibility 0s linear 200ms;touch-action:none}
+.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;visibility:hidden;transition:opacity 200ms ease,visibility 0s linear 200ms;touch-action:none}
 .scrim.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity 200ms ease,visibility 0s}
+/* Sheets sind Glas (Claude-App-Werte) mit Abdunklung dahinter. Flache Option: <html class="sheets-flat"> setzen (index.html), dann Apples #1c1c1e ohne Unschärfe. */
 /* Ziehen: Seite dahinter bleibt stehen (kein Scrollen, keine Safari-Leiste), nur die Liste im Sheet scrollt (touch-action) */
-.sheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;max-height:82vh;max-height:82dvh;display:flex;flex-direction:column;gap:14px;background:var(--raise);border:1px solid #2e2e32;border-radius:30px;box-shadow:0 20px 60px rgba(0,0,0,.6);padding:8px 20px 20px;transform:translateY(calc(100% + 40px));visibility:hidden;transition:transform 240ms var(--ease-out),visibility 0s linear 240ms;touch-action:none}
+.sheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;max-height:82vh;max-height:82dvh;display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-radius:30px;box-shadow:inset 0 .5px 0 rgba(255,255,255,.15),0 8px 32px rgba(0,0,0,.4);padding:8px 20px 20px;transform:translateY(calc(100% + 40px));visibility:hidden;transition:transform 240ms var(--ease-out),visibility 0s linear 240ms;touch-action:none}
+.sheets-flat .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--edge);box-shadow:none}
 .sheet.open{transform:none;visibility:visible;transition:transform 340ms var(--ease-drawer),visibility 0s}
 .sheetlist{touch-action:pan-y;overflow-y:auto;min-height:0;flex:1;margin:0 -8px;padding:0 8px;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
 .sheet.drag{will-change:transform}
@@ -283,10 +295,16 @@ body.ph-isha .nightsky{opacity:1}
 .swatches [data-c="blue"]{background:var(--sw-blue)}
 .swatches [data-c="pink"]{background:var(--sw-pink)}
 .swatches .none{background:rgba(255,255,255,.1)}
-.swatches button.on{box-shadow:0 0 0 3px var(--raise),0 0 0 5px var(--fg)}
+.swatches button.on{outline:2px solid var(--fg);outline-offset:3px}
 /* ---------- Toast ---------- */
-.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;background:var(--raise-2);border:1px solid #2e2e32;color:var(--fg);font-size:15px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;visibility:hidden;transition:opacity 150ms ease,transform 150ms var(--ease-out),visibility 0s linear 150ms}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;background:var(--raised);border:1px solid var(--edge);color:var(--fg);font-size:15px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;visibility:hidden;transition:opacity 150ms ease,transform 150ms var(--ease-out),visibility 0s linear 150ms}
 .toast.show{opacity:1;visibility:visible;transform:translate(-50%,0) scale(1);transition:opacity 200ms ease,transform 240ms var(--ease-out),visibility 0s}
+@media (prefers-reduced-transparency:reduce){
+  .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--edge)}
+}
+@media (prefers-contrast:more){
+  .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid #6f6f6f;box-shadow:none}
+}
 @media (prefers-reduced-motion:reduce){
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
