@@ -256,7 +256,8 @@ body.ph-isha .nightsky{opacity:1}
 .sheet.drag{will-change:transform}
 .sheet:focus{outline:none}
 /* Griff: auf Glas schimmert der Himmel durch, daher deutlich heller (.4), damit er auf jedem Untergrund gleich wirkt */
-.grab{width:36px;height:5px;border-radius:9px;background:rgba(255,255,255,.4);margin:0 auto}
+/* flex:none, sonst staucht ein langes Sheet (Islamische Tage, Ort) den Griff auf wenige Pixel */
+.grab{flex:none;width:36px;height:5px;border-radius:9px;background:rgba(255,255,255,.4);margin:0 auto}
 .sheets-flat .grab{background:rgba(255,255,255,.22)}
 .sheet h3{margin:0;font-family:var(--font-display);font-size:22px;font-weight:500;letter-spacing:-.02em}
 .sheet .list{background:rgba(255,255,255,.04)}
