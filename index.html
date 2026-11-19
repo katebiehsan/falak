@@ -18,29 +18,17 @@
 </head>
 <body>
 
-<!-- Icon-Bibliothek: je Symbol eine Kontur- und eine gefüllte Variante -->
+<!-- Icon-Bibliothek: Kontur- und gefüllte Variante, wo beides gebraucht wird (Lesezeichen) -->
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
-  <defs>
-    <mask id="mk-clock"><rect width="24" height="24" fill="#fff"/><path d="M12 7.2V12l3.1 2" fill="none" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></mask>
-    <mask id="mk-kaaba"><rect width="24" height="24" fill="#fff"/><path d="M3.8 7.2 12 11l8.2-3.8M12 11v10.2M3.8 10.4 12 14.2l8.2-3.8" fill="none" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/></mask>
-  </defs>
-  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M12 7.2V12l3.1 2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-clock-f" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.4" fill="currentColor" mask="url(#mk-clock)"/></symbol>
-  <symbol id="i-kaaba" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 3.2 20.2 7v10L12 20.8 3.8 17V7z"/><path d="M3.8 7 12 10.8 20.2 7M12 10.8v10M3.8 10.3 12 14.1l8.2-3.8"/></g></symbol>
-  <symbol id="i-kaaba-f" viewBox="0 0 24 24"><path d="M12 2.4 21 6.6v10.8L12 21.6 3 17.4V6.6z" fill="currentColor" stroke="currentColor" stroke-width="1" stroke-linejoin="round" mask="url(#mk-kaaba)"/></symbol>
-  <symbol id="i-book" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><path d="M12 6.6C10 5.1 7 4.6 3.4 5.1v13.4c3.6-.5 6.6 0 8.6 1.5 2-1.5 5-2 8.6-1.5V5.1C17 4.6 14 5.1 12 6.6z"/><path d="M12 6.6V20"/></g></symbol>
-  <symbol id="i-book-f" viewBox="0 0 24 24"><g fill="currentColor"><path d="M11.1 6.1C9.1 4.7 6.2 4.2 2.7 4.6v14.6c3.5-.5 6.3 0 8.4 1.4z"/><path d="M12.9 6.1c2-1.4 4.9-1.9 8.4-1.5v14.6c-3.5-.5-6.3 0-8.4 1.4z"/></g></symbol>
   <symbol id="i-loc" viewBox="0 0 24 24"><path d="M20.3 3.7c.4-.2.8.2.6.6l-7 16c-.3.6-1.1.5-1.3-.1l-1.7-6.4a.8.8 0 0 0-.6-.6L3.9 11.5c-.6-.2-.7-1-.1-1.3z" fill="currentColor"/></symbol>
   <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></g></symbol>
   <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
-  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="m9.5 6 6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></g></symbol>
   <symbol id="i-bm" viewBox="0 0 24 24"><path d="M7.2 3.8h9.6c.6 0 1 .4 1 1v15.4L12 16.4l-5.8 3.8V4.8c0-.6.4-1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
   <symbol id="i-bm-f" viewBox="0 0 24 24"><path d="M7.2 3.8h9.6c.6 0 1 .4 1 1v15.4L12 16.4l-5.8 3.8V4.8c0-.6.4-1 1-1z" fill="currentColor" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
   <symbol id="i-hl" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14.8 4.6 4.6 4.6-8.6 8.6H6.2v-4.6z"/><path d="m12.4 7 4.6 4.6"/><path d="M4 21h8"/></g></symbol>
   <symbol id="i-copy" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"><rect x="8.5" y="8.5" width="11.5" height="11.5" rx="2.6"/><path d="M15.5 8.5V6.6A2.6 2.6 0 0 0 12.9 4H6.6A2.6 2.6 0 0 0 4 6.6v6.3a2.6 2.6 0 0 0 2.6 2.6h1.9"/></g></symbol>
   <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3.8" y="5" width="16.4" height="15.2" rx="3"/><path d="M3.8 9.8h16.4M8.2 3v3.6M15.8 3v3.6"/></g></symbol>
-  <symbol id="i-rehal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7.5 12 11l9-3.5"/><path d="M5.5 20 18.5 12.5M18.5 20 5.5 12.5"/></g></symbol>
 <symbol id="i-tasbih" viewBox="0 0 24 24"><g fill="currentColor"><circle cx="12" cy="3.5" r="1.9"/><circle cx="15.86" cy="4.9" r="1.9"/><circle cx="17.91" cy="8.46" r="1.9"/><circle cx="17.2" cy="12.5" r="1.9"/><circle cx="6.8" cy="12.5" r="1.9"/><circle cx="6.09" cy="8.46" r="1.9"/><circle cx="8.14" cy="4.9" r="1.9"/><circle cx="12" cy="21.2" r="1.6"/></g><path d="M9.6 15.2 12 17.2l2.4-2M12 17.2v2.6" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-moon" viewBox="0 0 24 24"><path d="M15.6 3.6a8.6 8.6 0 1 0 4.8 13.5A7 7 0 0 1 15.6 3.6z" fill="currentColor"/></symbol>
 </svg>
@@ -88,7 +76,7 @@
 <!-- ============ DHIKR ============ -->
 <main class="view" id="v-dhikr" hidden>
   <header class="top">
-    <span class="top-l"><button class="glass round" id="dhikrBack" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button><h2 class="title">Dhikr</h2></span>
+    <span class="top-l"><button class="round" id="dhikrBack" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button><h2 class="title">Dhikr</h2></span>
     <button class="icon-btn" id="dhikrReset" aria-label="Von vorn"><svg class="ic18" viewBox="0 0 24 24"><path d="M4.5 12a7.5 7.5 0 1 0 2.2-5.3M4.5 4v4h4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </header>
   <div class="dz-bars" id="dzBars"><i></i><i></i><i></i><i></i></div>
@@ -106,7 +94,7 @@
 <main class="view" id="v-quran" hidden>
   <div id="q-index">
     <header class="top">
-      <span class="top-l"><button class="glass round" id="homeBtn" aria-label="Zurück zu den Gebetszeiten"><svg class="ic18"><use href="#i-chev-l"/></svg></button><h2 class="title">Quran</h2></span>
+      <span class="top-l"><button class="round" id="homeBtn" aria-label="Zurück zu den Gebetszeiten"><svg class="ic18"><use href="#i-chev-l"/></svg></button><h2 class="title">Quran</h2></span>
       <span class="top-r">
       <button class="icon-btn" id="searchBtn" aria-label="Sure suchen" aria-expanded="false"><svg class="ic18"><use href="#i-search"/></svg></button>
       <button class="icon-btn marks-btn" id="marksBtn" aria-label="Markierungen"><svg class="ic18"><use href="#i-bm"/></svg><span id="marksCount"></span></button>
@@ -123,16 +111,16 @@
 
   <div id="q-reader" hidden>
     <header class="readerbar">
-      <button class="glass round" id="backBtn" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
+      <button class="round" id="backBtn" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
       <div class="rtitle"><b id="rName"></b><span id="rSub"></span></div>
-      <button class="glass round" id="viewBtn" aria-label="Anzeige"><svg class="ic18"><use href="#i-sliders"/></svg></button>
+      <button class="round" id="viewBtn" aria-label="Anzeige"><svg class="ic18"><use href="#i-sliders"/></svg></button>
     </header>
     <div id="verses"></div>
   </div>
 
   <div id="q-marks" hidden>
     <header class="readerbar">
-      <button class="glass round" id="marksBack" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
+      <button class="round" id="marksBack" aria-label="Zurück"><svg class="ic18"><use href="#i-chev-l"/></svg></button>
       <div class="rtitle"><b>Markierungen</b><span id="marksSub"></span></div>
       <span class="round-spacer"></span>
     </header>
