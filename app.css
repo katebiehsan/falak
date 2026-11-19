@@ -150,19 +150,19 @@ body.ph-isha .nightsky{opacity:1}
 .hadith .more{align-self:flex-start;color:var(--fg)}
 .locline{font-size:13px;font-weight:500;color:var(--fg-2);padding:6px 10px;margin:-6px 0 -4px;border-radius:10px;display:inline-flex;align-items:center;gap:6px}
 .locline:active{transform:none;opacity:.4;transition-duration:0ms}
-/* Fußzeile: Ort und Qibla auf einer Zeile. Tippen auf Qibla startet den Kompass: Ort und Punkt blenden aus,
-   Pfeil und Text wachsen, der Text führt („23° nach rechts drehen“), ausgerichtet wird alles grün. In Ruhe zeigt der Pfeil die Richtung von Norden aus. */
+/* Fußzeile zeigt nur den Ort. „Qibla“ steht im Orts-Fenster; nach dem Start verwandelt sich die Zeile: der Ort blendet aus,
+   kleiner Pfeil und Text erscheinen, der Text führt („23° nach rechts drehen“), ausgerichtet wird beides grün. Tippen beendet. */
 .frow{display:flex;align-items:center;justify-content:center}
-.fdot{color:var(--fg-4);margin:0 2px}
-.locline,.fdot{max-width:160px;overflow:hidden;white-space:nowrap;transition:max-width 220ms var(--ease-out),opacity 160ms ease,padding 220ms var(--ease-out),margin 220ms var(--ease-out)}
-.qline{position:relative;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--fg-2);padding:6px 10px;margin:-6px 0 -4px;border-radius:10px;white-space:nowrap;transition:color 160ms ease,font-size 220ms var(--ease-out),gap 220ms var(--ease-out),opacity 160ms ease}
-.qline::after{content:"";position:absolute;inset:-8px -4px}
+.locline{max-width:160px;overflow:hidden;white-space:nowrap;transition:max-width 220ms var(--ease-out),opacity 160ms ease,padding 220ms var(--ease-out)}
+.qline{display:inline-flex;align-items:center;gap:8px;max-width:0;opacity:0;overflow:hidden;padding:10px 0;margin:-10px 0 -8px;border-radius:10px;white-space:nowrap;pointer-events:none;font-size:15px;font-weight:500;color:var(--fg);transition:max-width 220ms var(--ease-out),opacity 160ms ease,padding 220ms var(--ease-out),color 160ms ease}
+.qline.on,.qline.flash{max-width:340px;opacity:1;padding:10px;pointer-events:auto}
+.qline.flash .qarrow{display:none}
 .qline:active{transform:none;opacity:.4;transition-duration:0ms}
-.qarrow{flex:none;width:14px;height:14px;overflow:visible;transition:transform 120ms linear,width 220ms var(--ease-out),height 220ms var(--ease-out)}
-.frow.qon .locline,.frow.qon .fdot{max-width:0;opacity:0;padding-left:0;padding-right:0;margin-left:0;margin-right:0;pointer-events:none}
-.qline.on{font-size:17px;gap:12px;color:var(--fg)}
-.qline.on .qarrow{width:30px;height:30px}
 .qline.ok{color:var(--accent)}
+.qarrow{flex:none;width:16px;height:16px;transition:transform 120ms linear}
+.frow.qon .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
+.qwh{display:inline-flex;align-items:center;gap:10px}
+.qsa{width:14px;height:14px;color:var(--fg-2);flex:none}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .dates .dline{text-align:center}
 .primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;background:var(--fg);color:#000;font-weight:500;font-size:17px;width:100%}
@@ -313,7 +313,7 @@ body.ph-isha .nightsky{opacity:1}
   .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid #6f6f6f;box-shadow:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .locline,.fdot,.qline,.qarrow{transition:none}
+  .locline,.qline,.qarrow{transition:none}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active{transform:none}
