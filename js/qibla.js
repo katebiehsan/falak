@@ -2,8 +2,8 @@
 "use strict";
 
 /* ================= Qibla ================= */
-// „Qibla“ in der Kapsel startet den Kompass: Der Pfeil zeigt zur Kaaba, der Text sagt, wohin drehen;
-// ausgerichtet wird er grün. Nochmal tippen beendet.
+// „Qibla 131°“ in der Fußzeile startet den Kompass: Der Pfeil zeigt zur Kaaba, der Text sagt, wohin drehen;
+// ausgerichtet wird er grün. Nochmal tippen beendet. In Ruhe zeigt der Pfeil die Richtung von Norden aus.
 let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
 // Kompass liefert magnetisch Nord (Apple-Doku zu webkitCompassHeading); die Kaaba-Richtung ist geografisch.
@@ -11,7 +11,10 @@ function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest
 function updateQiblaTarget(){
   qTarget=adhan.Qibla(new adhan.Coordinates(loc.lat,loc.lon));
   try{qDecl=typeof magvar==="function"?+magvar(loc.lat,loc.lon)||0:0}catch(e){qDecl=0}
+  if(!qActive)qRest();
 }
+// Ruhezustand der Zeile: fester Pfeil und Gradzahl
+function qRest(){$("qRot").style.transform=`rotate(${qTarget.toFixed(1)}deg)`;$("qLbl").textContent=`Qibla ${Math.round(qTarget)}°`}
 function onOrient(e){
   if(!qActive)return;
   let h=null;
@@ -38,14 +41,14 @@ function drawHeading(){
   if(ok&&!wasAligned&&navigator.vibrate)navigator.vibrate(18);
   wasAligned=ok;
 }
-// Kurze Rückmeldung direkt in der Kapsel statt einer Meldung am Bildschirmrand; nach 4 s steht wieder „Qibla“
+// Kurze Rückmeldung direkt in der Zeile statt einer Meldung am Bildschirmrand; nach 4 s steht wieder „Qibla 131°“
 let qFlashT=0;
-function qFlash(t){$("qLbl").textContent=t;clearTimeout(qFlashT);qFlashT=setTimeout(()=>{if(!qActive)$("qLbl").textContent="Qibla"},4000)}
+function qFlash(t){$("qLbl").textContent=t;clearTimeout(qFlashT);qFlashT=setTimeout(()=>{if(!qActive)qRest()},4000)}
 function stopQibla(){
   if(!qActive)return;
   qActive=false;shown=null;sx=sy=null;wasAligned=false;tilted=false;
-  const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");b.closest(".hrow").classList.remove("qon");
-  $("qRot").style.transform="";$("qLbl").textContent="Qibla";
+  const b=$("qBtn");b.classList.remove("on","ok");b.setAttribute("aria-pressed","false");$("frow").classList.remove("qon");
+  qRest();
 }
 async function startQibla(){
   try{
@@ -62,7 +65,7 @@ async function startQibla(){
   if(dayOffset!==0){dayOffset=0}
   updateQiblaTarget();
   qActive=true;lastEvt=0;
-  const b=$("qBtn");b.classList.add("on");b.setAttribute("aria-pressed","true");b.closest(".hrow").classList.add("qon");
+  const b=$("qBtn");b.classList.add("on");b.setAttribute("aria-pressed","true");$("frow").classList.add("qon");
   renderTimes();
   $("qLbl").textContent=`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`;
   setTimeout(()=>{if(qActive&&!lastEvt){stopQibla();qFlash(`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`)}},2500);

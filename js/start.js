@@ -6,6 +6,7 @@ const onScroll=()=>{document.body.classList.toggle("scrolled",window.scrollY>4);
 window.addEventListener("scroll",onScroll,{passive:true});onScroll();
 document.body.classList.add("on-times");
 if(history.state&&history.state.v)history.replaceState(null,"");
+updateQiblaTarget();
 renderTimes();
 loadHadith();
 setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);
