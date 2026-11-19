@@ -22,7 +22,7 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;background:var(--bg);overscroll-behavior:none} /* kein Federn der ganzen Seite, damit auch kein Neuladen per Herunterziehen */
-body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.45;letter-spacing:-.006em;
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--font);font-size:17px;line-height:1.45;
   -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;padding-top:env(safe-area-inset-top,0px)}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
 /* Oben steht der Himmel bis unter die Statusleiste; erst beim Scrollen wird der Streifen schwarz */
@@ -32,7 +32,7 @@ body:not(.scrolled)::before{opacity:0}
 button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;
   transition:transform 160ms var(--ease-out),background-color 160ms ease,color 160ms ease,opacity 160ms ease}
 button:active{transform:scale(.97)}
-:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:10px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 svg{flex:none}
 .ic16{width:16px;height:16px} .ic18{width:18px;height:18px}
 
@@ -49,9 +49,9 @@ svg{flex:none}
 /* ---------- Layout ---------- */
 .view{max-width:520px;margin:0 auto;
   padding:10px max(20px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));
-  display:flex;flex-direction:column;gap:22px}
+  display:flex;flex-direction:column;gap:24px}
 .top{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:40px}
-.title{margin:0;font-family:var(--font-display);font-size:32px;font-weight:500;letter-spacing:-.035em}
+.title{margin:0;font-family:var(--font-display);font-size:32px;font-weight:500;letter-spacing:-.025em}
 .label{font-size:13px;font-weight:500;color:var(--fg-3);letter-spacing:.01em}
 .link{font-size:15px;font-weight:500;color:var(--fg-2);padding:6px 0}
 .list{display:flex;flex-direction:column;background:var(--raise);border-radius:18px;padding:4px}
@@ -86,7 +86,7 @@ svg{flex:none}
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:500}
 /* Besonderer Tag: reine Textzeile unter der Kapsel, kein Chip */
-.today{margin-top:12px;align-self:flex-start;display:inline-flex;align-items:center;gap:7px;min-height:28px;padding:0 2px;
+.today{margin-top:12px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:28px;padding:0 2px;
   color:var(--fg-3);font-size:15px;font-weight:500;text-align:left;transition:color 160ms ease}
 .today:active{transform:none;color:var(--fg-2)}
 .today svg{width:12px;height:12px;flex:none;color:var(--fg-3)}
@@ -143,8 +143,8 @@ body.ph-isha .nightsky{opacity:1}
 .rowline{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;padding:6px 8px 6px 14px;font-size:17px}
 .rows .toggle.rowline{padding:6px 10px 6px 14px}
 .rowline:not(:last-child)::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;background:var(--line)}
-.mini-step{display:inline-flex;align-items:center;height:36px;border-radius:10px;background:rgba(255,255,255,.06)}
-.mini-step button{width:40px;height:36px;border-radius:10px;font-size:22px;font-weight:500}
+.mini-step{display:inline-flex;align-items:center;height:36px;border-radius:8px;background:rgba(255,255,255,.06)}
+.mini-step button{width:40px;height:36px;border-radius:8px;font-size:22px;font-weight:500}
 .mini-step button:active{background:rgba(255,255,255,.08)}
 .mini-step button:disabled{opacity:.3;pointer-events:none}
 .mini-step span{min-width:64px;text-align:center;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
@@ -160,18 +160,18 @@ body.ph-isha .nightsky{opacity:1}
 .hadith{background:none;border-radius:0;padding:0}
 .hadith .block-h{padding:0}
 .hadith .har{font-family:var(--font-ar);font-size:17px;line-height:2;direction:rtl;text-align:right}
-.hadith .hen{font-size:15px;line-height:1.6;color:var(--fg-2);margin:0}
+.hadith .hen{font-size:15px;line-height:1.6;color:var(--fg-2);margin:0;text-wrap:pretty}
 .hadith.clamp .har{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .hadith .more{align-self:flex-start;color:var(--fg)}
 
 .locline{font-size:13px;font-weight:500;color:var(--fg-2);padding:6px 10px;margin:-6px 0 -4px;border-radius:10px}
-.locline{display:inline-flex;align-items:center;gap:5px}
+.locline{display:inline-flex;align-items:center;gap:6px}
 .locic{width:11px;height:11px;flex:none}
 .locline:active{transform:none;opacity:.4;transition-duration:0ms}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 
-.primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:999px;
+.primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;
   background:var(--fg);color:#000;font-weight:500;font-size:17px;width:100%}
 
 /* ---------- Quran ---------- */
@@ -184,6 +184,7 @@ body.ph-isha .nightsky{opacity:1}
 .search-x{font-size:15px;font-weight:500;color:var(--fg-2);padding:8px 0 8px 8px}
 .search input{flex:1;min-width:0;border:0;background:none;outline:none;font:inherit;font-size:17px;color:var(--fg)}
 .search input::-webkit-search-cancel-button{display:none}
+.search input::placeholder{color:var(--fg-3);opacity:1}
 .resumes{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
 .resume{display:flex;flex-direction:column;align-items:flex-start;gap:2px;padding:6px 0;text-align:left;width:100%;background:none;border-radius:10px}
 .resume:active{opacity:.6;transform:none}
@@ -201,22 +202,22 @@ body.ph-isha .nightsky{opacity:1}
 .surah .rt{display:flex;flex-direction:column;align-items:flex-end;gap:2px}
 .surah .ar{font-family:var(--font-quran);font-size:17px;line-height:1.35;padding-top:4px}
 .surah .rt small{font-size:13px;color:var(--fg-3)}
-.empty{margin:0;padding:22px;text-align:center;color:var(--fg-3);font-size:15px}
+.empty{margin:0;padding:24px;text-align:center;color:var(--fg-3);font-size:15px}
 
 .readerbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 6px);z-index:4;display:flex;align-items:center;gap:10px}
 .rtitle{flex:1;min-width:0;text-align:center;display:flex;flex-direction:column;align-items:center}
 .rtitle b,.rtitle span{padding:0 12px;border-radius:999px}
 .rtitle b{font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .rtitle span{font-size:13px;color:var(--fg-3)}
-.chapter{display:flex;flex-direction:column;align-items:center;gap:4px;padding:18px 0 8px;text-align:center}
+.chapter{display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 0 8px;text-align:center}
 .chapter .car{font-family:var(--font-quran);font-size:32px;line-height:1.7}
 .chapter b{font-size:22px;font-weight:500;letter-spacing:-.015em}
 .chapter span{font-size:13px;color:var(--fg-3)}
 .bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * .95);line-height:2.1;text-align:center;color:var(--fg-2);padding:6px 0 14px;direction:rtl}
 #verses{display:flex;flex-direction:column}
 #verses.no-ar .ar,#verses.no-tr .tr,#verses.no-de .de,#verses.no-en .en{display:none}
-.verse{position:relative;display:flex;flex-direction:column;gap:12px;padding:14px 12px 22px;margin:0 -12px;border-radius:18px;transition:background-color 220ms ease;scroll-margin-top:84px}
-.verse:not(:last-child)::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:1px;background:var(--line)}
+.verse{position:relative;display:flex;flex-direction:column;gap:12px;padding:14px 12px 24px;margin:0 -12px;border-radius:18px;transition:background-color 220ms ease;scroll-margin-top:84px}
+.verse:not(:last-child)::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:1px;background:var(--line);transition:opacity 160ms ease}
 .verse[class*="hl-"]::after{display:none}
 /* Markierte Verse: Abstand, damit Flächen sich nicht berühren */
 .verse[class*="hl-"]{margin-block:4px}
@@ -264,14 +265,14 @@ body.ph-isha .nightsky{opacity:1}
 .sheet h3{margin:0;font-family:var(--font-display);font-size:22px;font-weight:500;letter-spacing:-.02em}
 .sheet .list{background:rgba(255,255,255,.04)}
 .status{margin:-4px 0 0;font-size:13px;color:var(--fg-3);line-height:1.45}
-.status.err{color:#ff6b5b}
+.status.err{color:#ff9ea1}
 .sheetlist{overflow-y:auto;min-height:0;flex:1;margin:0 -8px;padding:0 8px;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
-.city{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;padding:13px 4px;font-size:17px;text-align:left;border-radius:0}
+.city{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 4px;font-size:17px;text-align:left;border-radius:0}
 .city:not(:last-child)::after{content:"";position:absolute;left:4px;right:4px;bottom:0;height:1px;background:var(--line)}
 .city:active{transform:none}
 .city small{color:var(--fg-3);font-size:13px;font-variant-numeric:tabular-nums}
 .city.sel{color:var(--accent);font-weight:500}
-.hint-s{margin:0;font-size:13px;color:var(--fg-3);line-height:1.45}
+.hint-s{margin:0;font-size:13px;color:var(--fg-3);line-height:1.45;text-wrap:pretty}
 .rows{display:flex;flex-direction:column;background:rgba(255,255,255,.05);border-radius:16px;padding:2px}
 .rowbtn{position:relative;display:flex;align-items:center;justify-content:space-between;width:100%;padding:12px 14px;font-size:17px;text-align:left;border-radius:14px;cursor:pointer}
 .rowbtn:not(:last-child)::after{content:"";position:absolute;left:14px;right:14px;bottom:0;height:1px;background:var(--line)}
@@ -281,8 +282,8 @@ body.ph-isha .nightsky{opacity:1}
 .item:active>*,.rowbtn:active>*,.surah:active>*,.mark:active>*,.city:active>*{opacity:.4;transition-duration:0ms}
 .toggle:active i{transform:scale(.96)}
 .toggle i{transition:background-color 200ms ease,transform 160ms var(--ease-out)}
-.seg{display:flex;gap:3px;padding:3px;border-radius:12px;background:rgba(255,255,255,.06)}
-.seg button{flex:1;height:36px;min-width:52px;border-radius:10px;font-weight:500;font-size:15px;color:var(--fg-2)}
+.seg{display:flex;gap:4px;padding:4px;border-radius:12px;background:rgba(255,255,255,.06)}
+.seg button{flex:1;height:36px;min-width:52px;border-radius:8px;font-weight:500;font-size:15px;color:var(--fg-2)}
 .seg button.on{background:rgba(255,255,255,.14);color:var(--fg)}
 .toggles{display:flex;flex-direction:column}
 .toggle{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;font-size:17px;cursor:pointer}
@@ -299,12 +300,12 @@ body.ph-isha .nightsky{opacity:1}
 .swatches [data-c="yellow"]{background:var(--sw-yellow)} .swatches [data-c="green"]{background:var(--sw-green)}
 .swatches [data-c="blue"]{background:var(--sw-blue)} .swatches [data-c="pink"]{background:var(--sw-pink)}
 .swatches .none{background:rgba(255,255,255,.1)}
-.swatches button.on{box-shadow:0 0 0 3px rgba(22,22,25,1),0 0 0 5px var(--fg)}
+.swatches button.on{box-shadow:0 0 0 3px var(--raise),0 0 0 5px var(--fg)}
 
 /* ---------- Toast ---------- */
 .toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:30;transform:translate(-50%,8px) scale(.98);opacity:0;pointer-events:none;
   background:var(--raise-2);border:1px solid #2e2e32;
-  color:var(--fg);font-size:15px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;
+  color:var(--fg);font-size:15px;font-weight:500;padding:10px 16px;border-radius:999px;white-space:nowrap;max-width:calc(100vw - 32px);overflow:hidden;text-overflow:ellipsis;
   visibility:hidden;transition:opacity 150ms ease,transform 150ms var(--ease-out),visibility 0s linear 150ms}
 .toast.show{opacity:1;visibility:visible;transform:translate(-50%,0) scale(1);transition:opacity 200ms ease,transform 240ms var(--ease-out),visibility 0s}
 
@@ -312,6 +313,9 @@ body.ph-isha .nightsky{opacity:1}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active{transform:none}
+  .toast,.toast.show{transform:translate(-50%,0);transition:opacity 150ms ease,visibility 0s linear 150ms}
+  .toast.show{transition:opacity 200ms ease,visibility 0s}
+  .search{animation:none}
 }
 
 /* ---------- Quran-Übersicht, ruhig (Okt. 2026) ---------- */
@@ -323,7 +327,7 @@ body.ph-isha .nightsky{opacity:1}
 .resumes{padding-bottom:14px;border-bottom:1px solid var(--line)}
 .resume b{font-size:17px;font-weight:500}
 .resume b span{font-size:15px;font-weight:400;color:var(--fg-3)}
-.surah{padding:13px 14px}
+.surah{padding:12px 14px}
 .surah .no{width:24px;height:24px;margin:8px;border-radius:6px;border-color:#2a2a2e}
 .surah .no span{font-size:13px;font-weight:500;color:var(--fg-3)}
 .surah .nm b{font-size:17px;font-weight:500}
@@ -359,7 +363,7 @@ body.ph-isha .nightsky{opacity:1}
 .verse .acts button{opacity:0;pointer-events:none;transition:opacity 160ms ease}
 .verse .acts button.on,.verse.open .acts button{opacity:1;pointer-events:auto}
 .verse.open{background:rgba(255,255,255,.03)}
-.verse.open::after,.verse:has(+ .open)::after{opacity:0}
+.verse.open::after,.verse:has(+ .open)::after{opacity:0;transition-duration:0ms}
 .chapter .trn{font-size:13px;color:var(--fg-3)}
 .top-l #homeBtn{margin-right:2px}
 /* Tastatur und VoiceOver: Vers-Aktionen beim Fokus sichtbar */
@@ -380,13 +384,15 @@ body.ph-isha .nightsky{opacity:1}
 /* Ganze Fläche zählt; kein Doppeltipp-Zoom und keine Textauswahl beim schnellen Tippen */
 .dz{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58vh;padding:20px 8px;border-radius:24px;text-align:center;
   touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.dz:active{transform:scale(.99);background:rgba(255,255,255,.03)}
+.dz>*{transition:opacity 160ms ease}
+.dz:active{transform:none}
+.dz:active>:not(.dz-count){opacity:.5;transition-duration:0ms}
 .dz-step{font-size:13px;color:var(--fg-3)}
 .dz-ar{font-family:var(--font-quran);font-size:32px;line-height:1.9;direction:rtl;margin-top:8px}
 .dz-ar.long{font-size:22px}
 .dz-tr{font-size:15px;color:var(--fg-2);font-style:italic;max-width:30ch}
 .dz-de{font-size:15px;color:var(--fg-3);max-width:30ch}
-.dz-count{display:flex;flex-direction:column;align-items:center;margin-top:22px}
+.dz-count{display:flex;flex-direction:column;align-items:center;margin-top:24px}
 .dz-count b{font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;font-variant-numeric:tabular-nums}
 .dz-count small{font-size:13px;color:var(--fg-3);margin-top:6px}
 .dz-hint{margin:0;text-align:center;font-size:13px;color:var(--fg-3)}
