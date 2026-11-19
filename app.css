@@ -64,13 +64,7 @@ svg{flex:none}
 .hero{display:flex;flex-direction:column;gap:4px;padding-top:78px}
 .eyebrow{margin:0;font-size:15px;font-weight:500;color:var(--fg-3)}
 .hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
-/* Qibla: Pfeil dreht sich zur Kaaba, der Text führt; ausgerichtet grün */
 .qtext{align-self:flex-start;margin:12px 0 0 -2px;display:inline-flex;align-items:center;gap:0;height:36px;padding:0 2px;font-size:15px;font-weight:500;color:var(--fg-2);font-variant-numeric:tabular-nums}
-/* Pfeil erst sichtbar, wenn Qibla aktiv ist; in Ruhe stehen „Qibla“ und „Quran“ in der Kapsel */
-.qarrow{flex:none;width:0;height:16px;margin-right:0;opacity:0;scale:.6;transition:transform 120ms linear,width 220ms cubic-bezier(.23,1,.32,1),margin 220ms cubic-bezier(.23,1,.32,1),scale 220ms cubic-bezier(.23,1,.32,1),opacity 160ms ease-out}
-.qtext.on .qarrow{width:16px;margin-right:8px;opacity:1;scale:1}
-.qtext.on{color:var(--fg)}
-.qtext.ok{color:var(--accent)}
 /* Qibla und Quran als eine Kapsel: Haarlinie außen, feiner Trennstrich innen */
 .tools{align-self:flex-start;display:inline-flex;align-items:center;margin:14px 0 0;padding:2px;border:1px solid rgba(255,255,255,.14);border-radius:999px}
 .tools .qtext{position:relative;margin:0;height:34px;padding:0 14px;border-radius:999px;transition:opacity 160ms ease,color 160ms ease}
@@ -79,8 +73,6 @@ svg{flex:none}
 /* Qibla/Quran links, Dhikr rechts */
 .hrow{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 12px;margin-top:14px}
 .hrow .tools{margin:0}
-/* Während Qibla läuft, ist der Hinweis länger: Dhikr tritt so lange zurück */
-.hrow.qon #dhikrBtn,.hrow.qon #quranBtn{display:none}
 .top-l{display:flex;align-items:center;gap:10px;min-width:0}
 .next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:500}
@@ -157,8 +149,20 @@ body.ph-isha .nightsky{opacity:1}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .hadith .more{align-self:flex-start;color:var(--fg)}
 .locline{font-size:13px;font-weight:500;color:var(--fg-2);padding:6px 10px;margin:-6px 0 -4px;border-radius:10px;display:inline-flex;align-items:center;gap:6px}
-.locic{width:11px;height:11px;flex:none}
 .locline:active{transform:none;opacity:.4;transition-duration:0ms}
+/* Fußzeile: Ort und Qibla auf einer Zeile. Tippen auf Qibla startet den Kompass: Ort und Punkt blenden aus,
+   Pfeil und Text wachsen, der Text führt („23° nach rechts drehen“), ausgerichtet wird alles grün. In Ruhe zeigt der Pfeil die Richtung von Norden aus. */
+.frow{display:flex;align-items:center;justify-content:center}
+.fdot{color:var(--fg-4);margin:0 2px}
+.locline,.fdot{max-width:160px;overflow:hidden;white-space:nowrap;transition:max-width 220ms var(--ease-out),opacity 160ms ease,padding 220ms var(--ease-out),margin 220ms var(--ease-out)}
+.qline{position:relative;display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:500;color:var(--fg-2);padding:6px 10px;margin:-6px 0 -4px;border-radius:10px;white-space:nowrap;transition:color 160ms ease,font-size 220ms var(--ease-out),gap 220ms var(--ease-out),opacity 160ms ease}
+.qline::after{content:"";position:absolute;inset:-8px -4px}
+.qline:active{transform:none;opacity:.4;transition-duration:0ms}
+.qarrow{flex:none;width:14px;height:14px;overflow:visible;transition:transform 120ms linear,width 220ms var(--ease-out),height 220ms var(--ease-out)}
+.frow.qon .locline,.frow.qon .fdot{max-width:0;opacity:0;padding-left:0;padding-right:0;margin-left:0;margin-right:0;pointer-events:none}
+.qline.on{font-size:17px;gap:12px;color:var(--fg)}
+.qline.on .qarrow{width:30px;height:30px}
+.qline.ok{color:var(--accent)}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .dates .dline{text-align:center}
 .primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;background:var(--fg);color:#000;font-weight:500;font-size:17px;width:100%}
@@ -309,6 +313,7 @@ body.ph-isha .nightsky{opacity:1}
   .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid #6f6f6f;box-shadow:none}
 }
 @media (prefers-reduced-motion:reduce){
+  .locline,.fdot,.qline,.qarrow{transition:none}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active{transform:none}
