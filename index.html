@@ -24,6 +24,7 @@
   <symbol id="i-sliders" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><path d="M4 7h9M17 7h3M4 17h3M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="9" cy="17" r="2.2"/></g></symbol>
   <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="m14.5 6-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
   <symbol id="i-search" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.3"/><path d="m15.6 15.6 4.4 4.4"/></g></symbol>
+  <symbol id="i-nav" viewBox="0 0 24 24"><path d="M12 4.2 19 19l-7-5.8L5 19z" fill="currentColor" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/></symbol>
   <symbol id="i-bm" viewBox="0 0 24 24"><path d="M7.2 3.8h9.6c.6 0 1 .4 1 1v15.4L12 16.4l-5.8 3.8V4.8c0-.6.4-1 1-1z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
   <symbol id="i-bm-f" viewBox="0 0 24 24"><path d="M7.2 3.8h9.6c.6 0 1 .4 1 1v15.4L12 16.4l-5.8 3.8V4.8c0-.6.4-1 1-1z" fill="currentColor" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></symbol>
   <symbol id="i-hl" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="m14.8 4.6 4.6 4.6-8.6 8.6H6.2v-4.6z"/><path d="m12.4 7 4.6 4.6"/><path d="M4 21h8"/></g></symbol>
@@ -69,8 +70,7 @@
   <footer class="dates">
     <div class="frow" id="frow">
       <button class="locline" id="locBtn" aria-label="Ort ändern"><span id="locName">Bremen</span></button>
-      <span class="fdot" aria-hidden="true">·</span>
-      <button class="qline" id="qBtn" aria-pressed="false" aria-label="Qibla-Kompass"><svg class="qarrow" id="qRot" viewBox="0 0 24 24" aria-hidden="true"><defs><filter id="qglow" x="-60%" y="-60%" width="220%" height="220%"><feGaussianBlur stdDeviation="1.6"/></filter></defs><g filter="url(#qglow)" opacity=".8"><path d="M12 4.2 19 19l-7-5.8L5 19z" fill="currentColor" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round"/></g><path d="M12 4.2 19 19l-7-5.8L5 19z" fill="currentColor" stroke="currentColor" stroke-width="3.2" stroke-linejoin="round" opacity=".6"/></svg><span id="qLbl">Qibla</span></button>
+      <button class="qline" id="qBtn" aria-pressed="false" aria-label="Qibla-Kompass beenden"><svg class="qarrow" id="qRot" aria-hidden="true"><use href="#i-nav"/></svg><span id="qLbl">Qibla</span></button>
     </div>
     <span class="dline"><span id="gregDate"></span> · <span id="hijriDate"></span></span>
   </footer>
@@ -149,6 +149,7 @@
   <h3>Ort</h3>
   <button class="primary" id="gpsBtn"><svg class="ic16"><use href="#i-loc"/></svg>Aktuellen Standort verwenden</button>
   <p class="status" id="gpsStatus"></p>
+  <button class="city qrow" id="qSheetBtn"><span class="qwh"><svg class="qsa" id="qSheetArrow" aria-hidden="true"><use href="#i-nav"/></svg>Qibla</span><small id="qDeg"></small></button>
   <div class="sheetlist" id="cities"></div>
 </section>
 
