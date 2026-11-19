@@ -89,11 +89,12 @@ async function openSurah(n,ayah){
 }
 function watchReading(n){
   if(io)io.disconnect();let t;
-  io=new IntersectionObserver(()=>{
-    const vis=[...document.querySelectorAll("#verses .verse")].filter(v=>{const r=v.getBoundingClientRect();return r.bottom>80&&r.top<window.innerHeight});
-    if(!vis.length)return;clearTimeout(t);
-    t=setTimeout(()=>{resume={s:n,a:+vis[0].dataset.a};store.set("resume",resume)},600);
-  },{threshold:[0,1]});
+  const vis=new Set(); // Verse im sichtbaren Bereich (unter der Kopfzeile), nach Meldungen des Beobachters gepflegt
+  io=new IntersectionObserver(es=>{
+    es.forEach(e=>e.isIntersecting?vis.add(e.target):vis.delete(e.target));
+    if(!vis.size)return;clearTimeout(t);
+    t=setTimeout(()=>{let a=Infinity;vis.forEach(v=>{a=Math.min(a,+v.dataset.a)});resume={s:n,a};store.set("resume",resume)},600);
+  },{rootMargin:"-80px 0px 0px 0px"});
   document.querySelectorAll("#verses .verse").forEach(v=>io.observe(v));
 }
 $("backBtn").addEventListener("click",()=>{if(io)io.disconnect();showPane("q-index");renderIndex();window.scrollTo(0,0)});
