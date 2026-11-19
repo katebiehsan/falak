@@ -10,7 +10,6 @@ function hParts(date){
   const p={};HF.formatToParts(d).forEach(x=>{if(x.type==="day"||x.type==="month"||x.type==="year")p[x.type]=parseInt(x.value,10)});
   return p.day?{d:p.day,m:p.month,y:p.year}:null;
 }
-function hijriText(date){const h=hParts(date);return h?`${h.d}. ${HMONTH[h.m-1]} ${h.y}`:""}
 // Kurzform passend zum gekürzten deutschen Datum in der Fußzeile („Okt.“ ↔ „Jum. I“)
 const HMONTH_S=["Muh.","Saf.","Rab. I","Rab. II","Jum. I","Jum. II","Raj.","Sha.","Ram.","Shaw.","Dhul-Q.","Dhul-H."];
 function hijriShort(date){const h=hParts(date);return h?`${h.d}. ${HMONTH_S[h.m-1]} ${h.y}`:""}
@@ -61,7 +60,7 @@ function renderTimes(){
 
 /* ================= Gebetsliste ================= */
 // Liste mit Shuruq; Abstufung wie die Woche in Second Brain: jetzt weiß mit Fläche, danach weiß, übernächstes grau, Rest fast schwarz.
-const ARC=["fajr","sunrise","dhuhr","asr","maghrib","isha"];
+const ARC=PRAYERS.map(p=>p[0]);
 // Sterne nur ab Isha (Nacht), im oberen Drittel, sehr dezent, nach unten ausgeblendet; fest verteilt, damit nichts springt
 (()=>{let x=11,o="";const rnd=()=>(x=(x*16807)%2147483647)/2147483647;
   for(let i=0;i<26;i++){const r=rnd(),sz=r<.1?1.5:1;
@@ -199,7 +198,7 @@ $("todayChip").addEventListener("click",openDays);
 const icsEsc=t=>String(t).replace(/\\/g,"\\\\").replace(/([,;])/g,"\\$1");
 $("icsBtn").addEventListener("click",()=>{
   const pad=n=>String(n).padStart(2,"0"),ymd=d=>`${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
-  const stamp=new Date().toISOString().replace(/[-:]/g,"").replace(/\.\d+Z$/,"Z");
+  const stamp=icsUTC(new Date());
   const lines=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Falak//Islamische Tage//DE","CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:Islamische Tage"];
   events().forEach(e=>{const end=new Date(e.end);end.setDate(end.getDate()+1);
     lines.push("BEGIN:VEVENT",`UID:${e.k}-${e.h.y}-${e.h.m}@falak`,`DTSTAMP:${stamp}`,`DTSTART;VALUE=DATE:${ymd(e.start)}`,`DTEND;VALUE=DATE:${ymd(end)}`,

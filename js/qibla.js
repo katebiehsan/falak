@@ -4,7 +4,6 @@
 /* ================= Qibla ================= */
 // „Qibla“ in der Kapsel startet den Kompass: Der Pfeil zeigt zur Kaaba, der Text sagt, wohin drehen;
 // ausgerichtet wird er grün. Nochmal tippen beendet.
-const MECCA={lat:21.4225,lon:39.8262};
 let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
 // Kompass liefert magnetisch Nord (Apple-Doku zu webkitCompassHeading); die Kaaba-Richtung ist geografisch.

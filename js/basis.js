@@ -22,8 +22,8 @@ const store={
 let loc=store.get("loc",{name:"Bremen",lat:53.07,lon:8.85});
 let prefs=Object.assign({ar:true,tr:false,de:true,en:false,size:24},store.get("prefs",{}));
 if("v2" in prefs){delete prefs.v2;store.set("prefs",prefs)}
-// Feste Berechnung wie Athan Utility. Nur das Hijri-Datum lässt sich um bis zu zwei Tage verschieben (Mondsichtung der eigenen Moschee).
-const settings={method:"MuslimWorldLeague",asr:"standard",hijri:Math.max(-2,Math.min(2,+store.get("hijri",0)||0))};
+// Berechnung fest wie Athan Utility (Muslimische Weltliga, Asr Standard, Siebtel der Nacht; siehe params() in zeiten.js). Nur das Hijri-Datum lässt sich um bis zu zwei Tage verschieben (Mondsichtung der eigenen Moschee).
+const settings={hijri:Math.max(-2,Math.min(2,+store.get("hijri",0)||0))};
 let adj=store.get("adj",{})||{};
 let marks=store.get("marks",{});          // "2:255" -> {c:"yellow", t:"Snippet"}
 let resume=store.get("resume",null);       // zuletzt gelesen {s,a}
