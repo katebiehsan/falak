@@ -1,5 +1,5 @@
 // Falak – Offline-Unterstützung
-const V="falak-v69";
+const V="falak-v70";
 const SHELL=["./","index.html","app.css","js/basis.js","js/zeiten.js","js/qibla.js","js/quran.js","js/dhikr.js","js/hadith.js","js/start.js","adhan.min.js","magvar.min.js","manifest.webmanifest","icon-180.png","icon-192.png","icon-512.png","favicon-32.png","favicon-64.png","fonts/amiri-arabic.woff2","fonts/amiri-quran-arabic.woff2"];
 // Beim Installieren am HTTP-Cache vorbei laden (cache:"reload"), sonst kann GitHub Pages bis zu 10 Min. alte Dateien liefern
 self.addEventListener("install",e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL.map(p=>new Request(p,{cache:"reload"})))).then(()=>self.skipWaiting()))});
@@ -20,7 +20,7 @@ self.addEventListener("fetch",e=>{
     }));
     return;
   }
-  // Seite selbst: erst Netz (am HTTP-Cache vorbei, damit Updates sofort ankommen), aber höchstens 2 Sekunden warten.
+  // Seite selbst: erst Netz (am HTTP-Cache vorbei, damit Updates sofort ankommen), aber höchstens 1,2 Sekunden warten.
   // Bei schlechtem Empfang startet Falak dann aus dem Cache; die Netz-Antwort aktualisiert den Cache trotzdem für den nächsten Start.
   // Skripte, Styles, Schriften, Icons: sofort aus dem Cache (jede neue Version bringt per Cache-Version ihren eigenen Satz mit)
   if(u.origin===location.origin&&e.request.mode!=="navigate"){
@@ -36,7 +36,7 @@ self.addEventListener("fetch",e=>{
       const net=fetch(e.request,{cache:"no-cache"}).then(r=>{if(r.ok){const cl=r.clone();caches.open(V).then(c=>c.put(e.request,cl))}return r});
       e.waitUntil(net.catch(()=>{}));
       const cached=caches.match(e.request,{ignoreSearch:true});
-      const slow=new Promise(res=>setTimeout(()=>res("slow"),2000));
+      const slow=new Promise(res=>setTimeout(()=>res("slow"),1200));
       try{
         const first=await Promise.race([net,slow]);
         if(first!=="slow")return first;

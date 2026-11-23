@@ -2,7 +2,9 @@
 "use strict";
 
 /* ================= Start ================= */
-const onScroll=()=>{document.body.classList.toggle("scrolled",window.scrollY>4);updTint()};
+// Der Seitenkopf-Zustand („scrolled“) und damit die Notch-Farbe ändern sich nur an der 4-px-Schwelle: dazwischen kein Stil-Abgleich pro Scroll-Ereignis
+let scrolledNow=null;
+const onScroll=()=>{const s=window.scrollY>4;if(s===scrolledNow)return;scrolledNow=s;document.body.classList.toggle("scrolled",s);updTint()};
 window.addEventListener("scroll",onScroll,{passive:true});onScroll();
 document.body.classList.add("on-times");
 if(history.state&&history.state.v)history.replaceState(null,"");

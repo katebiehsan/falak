@@ -97,7 +97,7 @@ svg{flex:none}
    Er startet oben in --tint (nahtlos zur Notch-Leiste), das Licht blendet darunter weich ein. Gilt für Safari und Homescreen-App gleich:
    in der App liegt der Himmel unter der Statusleiste, daher dort volle --tint und Verlauf/Licht erst ab der Statusleiste. */
 .atmo{position:absolute;top:0;left:0;right:0;height:calc(48vh + env(safe-area-inset-top,0px));z-index:0;pointer-events:none;overflow:hidden;opacity:0;transition:opacity 600ms ease;-webkit-mask-image:linear-gradient(#000 45%,transparent);mask-image:linear-gradient(#000 45%,transparent);background:linear-gradient(var(--tint) env(safe-area-inset-top,0px),transparent calc(env(safe-area-inset-top,0px) + 26.4vh))}
-body.on-times .atmo{opacity:var(--sf,1)}
+body.on-times .atmo{opacity:var(--sf,1);will-change:transform,opacity}
 /* Lichtfläche bleibt komplett im sichtbaren Bereich (kein Weichzeichner, keine Ränder über den Bildschirm hinaus),
    damit sie auch in der Homescreen-App ab oben sichtbar ist */
 .glow{position:absolute;inset:0;opacity:0;transition:opacity 1200ms ease;-webkit-mask-image:linear-gradient(transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 90px));mask-image:linear-gradient(transparent env(safe-area-inset-top,0px),#000 calc(env(safe-area-inset-top,0px) + 90px))}

@@ -24,11 +24,19 @@ function params(){
   p.highLatitudeRule=adhan.HighLatitudeRule.SeventhOfTheNight;return p;
 }
 function dayStart(o){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()+o);return d}
+// Berechnung je Tag nur einmal (ein Durchlauf von renderTimes fragt heute mehrfach ab); bei Ort- oder Minuten-Änderung wird der Zwischenspeicher geleert.
+// Die Rückgabe wird nur gelesen, nie verändert.
+let tCache=new Map();
 function times(day){
+  const key=+day,hit=tCache.get(key);if(hit)return hit;
   const pt=new adhan.PrayerTimes(new adhan.Coordinates(loc.lat,loc.lon),day,params()),o={};
-  PRAYERS.forEach(([k])=>{o[k]=new Date(pt[k].getTime()+(adj[k]||0)*6e4)});return o;
+  PRAYERS.forEach(([k])=>{o[k]=new Date(pt[k].getTime()+(adj[k]||0)*6e4)});
+  if(tCache.size>12)tCache.clear();tCache.set(key,o);return o;
 }
-const fT=d=>d.toLocaleTimeString("de-DE",{hour:"2-digit",minute:"2-digit"});
+// Intl-Formatierer einmal anlegen: toLocale…String baut bei jedem Aufruf einen neuen und ist auf dem iPhone spürbar langsam
+const DTF=o=>new Intl.DateTimeFormat("de-DE",o);
+const F_TIME=DTF({hour:"2-digit",minute:"2-digit"});
+const fT=d=>F_TIME.format(d);
 function fLeft(ms){const m=Math.max(0,Math.ceil(ms/6e4)),h=Math.floor(m/60),r=m%60;return h?`${h} Std. ${r} Min.`:`${r} Min.`}
 function state(now){
   const t=times(dayStart(0));let cur=null,next=null;
@@ -39,21 +47,20 @@ function state(now){
 }
 function renderTimes(){
   const now=new Date(),day=dayStart(dayOffset),t=times(day),live=dayOffset===0,{cur,next}=state(now);
-  $("locName").textContent=loc.name;
+  setText($("locName"),loc.name);
   if(live){
     $("heroLabel").hidden=true;
-    $("curName").textContent=LABEL[cur.k];
-
-    $("nextLine").innerHTML=`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`;
+    setText($("curName"),LABEL[cur.k]);
+    setHTML($("nextLine"),`${LABEL[next.k]} in <b>${fLeft(next.t-now)}</b>`);
   }else{
     if(qActive)stopQibla();
     $("heroLabel").hidden=false;setHTML($("heroLabel"),`${dayOffset>0?"Vorschau":"Rückblick"} · <button class="hl-today" id="heroToday">Heute ›</button>`);
-    $("curName").textContent=day.toLocaleDateString("de-DE",{weekday:"long"});
-    $("nextLine").textContent=day.toLocaleDateString("de-DE",{day:"numeric",month:"long",year:"numeric"});
+    setText($("curName"),F_WDL.format(day));
+    setHTML($("nextLine"),F_DLONG.format(day));
   }
   renderArc(day,t,now,live);
-  $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
-  $("hijriDate").textContent=hijriShort(day);
+  setText($("gregDate"),F_GREG.format(day));
+  setText($("hijriDate"),hijriShort(day));
   renderDays();renderQuranRow();placeNeedle();
 }
 
@@ -67,12 +74,11 @@ const ARC=PRAYERS.map(p=>p[0]);
     o+=`<i style="left:${(rnd()*100).toFixed(2)}%;top:${(rnd()*92).toFixed(2)}%;width:${sz}px;height:${sz}px;opacity:${(.22+rnd()*.38).toFixed(2)}"></i>`}
   $("nightSky").innerHTML=o})();
 // Himmel je Zeit: Fajr Dämmerung, Shuruq Sonnenaufgang, Dhuhr Mittag, Asr Nachmittag, Maghrib Abendrot, Isha Nacht
-const SKY=["fajr","shuruq","dhuhr","asr","maghrib","isha"];
+const SKY=["fajr","shuruq","dhuhr","asr","maghrib","isha"];let curPh="";
 function renderArc(day,t,now,live){
   const tod=times(dayStart(0));
   const ph=now>=tod.isha||now<tod.fajr?"isha":now>=tod.maghrib?"maghrib":now>=tod.asr?"asr":now>=tod.dhuhr?"dhuhr":now>=tod.sunrise?"shuruq":"fajr";
-  SKY.forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));
-  updTint();
+  if(ph!==curPh){curPh=ph;SKY.forEach(p=>document.body.classList.toggle("ph-"+p,p===ph));updTint()}
   // aktuelle Zeit: vor Fajr gilt noch Isha der Nacht; danach Reihenfolge ringsum (nach Isha kommt Fajr)
   let ci=-1,night=false;
   if(live){for(let i=ARC.length-1;i>=0;i--){if(now>=t[ARC[i]]){ci=i;break}}if(ci<0){ci=ARC.length-1;night=true}}
@@ -128,8 +134,13 @@ function events(){
   const key=`${dayStart(0).toDateString()}|${settings.hijri}`;
   if(evCache&&evCache.key===key)return evCache.list;
   const list=[];const open={};
+  // Hijri-Datum nicht für jeden der 389 Tage per Intl erfragen: ab dem Starttag zählt der Tag hoch, nachgefragt wird nur, wenn der Monat enden könnte (Tag 30 oder 1; je Monat einmal)
+  let h=null;
   for(let i=-3;i<=385;i++){
-    const d=dayStart(i),h=hParts(d);if(!h)break;
+    const d=dayStart(i);
+    if(i===-3)h=hParts(d);
+    else if(h){const n=h.d+1;h=n===30?hParts(d):n>30?{d:1,m:h.m%12+1,y:h.m===12?h.y+1:h.y}:{d:n,m:h.m,y:h.y}}
+    if(!h)break;
     const found=dayRules(h);const ks=new Set(found.map(f=>f.k));
     found.forEach(f=>{
       if(open[f.k]){open[f.k].end=d}
@@ -142,11 +153,13 @@ function events(){
   const res=list.filter(e=>e.end>=today&&e.start<=lim);
   evCache={key,list:res};return res;
 }
-const fD=d=>d.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short"});
+const F_WDS=DTF({weekday:"short",day:"numeric",month:"short"}),F_DM=DTF({day:"numeric",month:"short"});
+const F_WDL=DTF({weekday:"long"}),F_DLONG=DTF({day:"numeric",month:"long",year:"numeric"}),F_GREG=DTF({weekday:"short",day:"numeric",month:"short",year:"numeric"});
+const fD=d=>F_WDS.format(d);
 function fRange(e){
   if(+e.start===+e.end)return fD(e.start);
   const same=e.start.getMonth()===e.end.getMonth();
-  return same?`${e.start.getDate()}.–${e.end.toLocaleDateString("de-DE",{day:"numeric",month:"short"})}`:`${e.start.toLocaleDateString("de-DE",{day:"numeric",month:"short"})} – ${e.end.toLocaleDateString("de-DE",{day:"numeric",month:"short"})}`;
+  return same?`${e.start.getDate()}.–${F_DM.format(e.end)}`:`${F_DM.format(e.start)} – ${F_DM.format(e.end)}`;
 }
 function fWhen(e){
   const today=dayStart(0);
@@ -222,7 +235,7 @@ function renderAdj(){
   $("adjMinus").disabled=m<=-30;$("adjPlus").disabled=m>=30;
   $("adjHint").textContent=`Legt ${$("adjTitle").textContent} für 30 Tage mit Erinnerung im Kalender an. Nach einer Anpassung erneut übernehmen.`;
 }
-function setAdj(k,m){m=Math.max(-30,Math.min(30,m));if(m)adj[k]=m;else delete adj[k];store.set("adj",adj);renderAdj();renderTimes()}
+function setAdj(k,m){m=Math.max(-30,Math.min(30,m));if(m)adj[k]=m;else delete adj[k];store.set("adj",adj);tCache.clear();renderAdj();renderTimes()}
 $("adjMinus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)-1));
 $("adjPlus").addEventListener("click",()=>setAdj(adjKey,(adj[adjKey]||0)+1));
 // Erinnerung über den iPhone-Kalender: Eine Web-App wird im Hintergrund angehalten und kann nicht zuverlässig benachrichtigen.
@@ -275,7 +288,7 @@ $("locQ").addEventListener("input",()=>{
   },450);
 });
 $("cities").addEventListener("click",e=>{const b=e.target.closest(".city");if(!b)return;const r=sRes[+b.dataset.i];if(r)setLoc({name:r.name,lat:r.lat,lon:r.lon})});
-function setLoc(l){loc=l;store.set("loc",l);moveNew=null;$("frow").classList.remove("moved");closeSheet();renderTimes();updateQiblaTarget();toast(`Ort: ${l.name}`)}
+function setLoc(l){loc=l;store.set("loc",l);tCache.clear();moveNew=null;$("frow").classList.remove("moved");closeSheet();renderTimes();updateQiblaTarget();toast(`Ort: ${l.name}`)}
 /* Standort: Ein Tipp auf den Ortsnamen fragt das GPS einmal ab. Der letzte Ort bleibt gespeichert und ändert sich nur, wenn du ihn aktualisierst.
    Ist der Standortzugriff schon erlaubt, schaut Falak beim Öffnen leise nach und fragt nur, ob du den Ort aktualisieren willst. */
 let gpsBusy=false;
