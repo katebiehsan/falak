@@ -161,8 +161,13 @@ body.ph-isha .nightsky{opacity:1}
 .qline.ok{color:var(--accent)}
 .qarrow{flex:none;width:16px;height:16px;transition:transform 120ms linear}
 .frow.qon .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
-.qwh{display:inline-flex;align-items:center;gap:10px}
-.qsa{width:14px;height:14px;color:var(--fg-2);flex:none}
+.shead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.qpill{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.22);font-size:15px;font-weight:500;color:var(--fg)}
+.qpill::after{content:"";position:absolute;inset:-5px -4px}
+.qpill{position:relative}
+.qpill:active{transform:none;opacity:.4;transition-duration:0ms}
+.sheets-flat .qpill{border-color:var(--edge)}
+.qsa{width:14px;height:14px;color:var(--fg);flex:none}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .dates .dline{text-align:center}
 .primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;background:var(--fg);color:#000;font-weight:500;font-size:17px;width:100%}

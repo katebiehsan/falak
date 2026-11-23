@@ -2,7 +2,7 @@
 "use strict";
 
 /* ================= Qibla ================= */
-// „Qibla“ im Orts-Fenster startet den Kompass: In der Fußzeile zeigt der Pfeil zur Kaaba, der Text sagt, wohin drehen;
+// Die Pille „Qibla“ im Orts-Fenster startet den Kompass: In der Fußzeile zeigt der Pfeil zur Kaaba, der Text sagt, wohin drehen;
 // ausgerichtet wird er grün. Zeile antippen beendet. In Ruhe zeigt der Pfeil im Orts-Fenster die Richtung von Norden aus.
 let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
@@ -13,9 +13,9 @@ function updateQiblaTarget(){
   try{qDecl=typeof magvar==="function"?+magvar(loc.lat,loc.lon)||0:0}catch(e){qDecl=0}
   if(!qActive)qRest();
 }
-// Ruhezustand: fester Pfeil und Gradzahl im Orts-Fenster
+// Ruhezustand: fester Pfeil in der Pille im Orts-Fenster
 function qRest(){const r=`rotate(${qTarget.toFixed(1)}deg)`;$("qRot").style.transform=r;$("qSheetArrow").style.transform=r;
-  $("qLbl").textContent=`Qibla ${Math.round(qTarget)}°`;$("qDeg").textContent=`${Math.round(qTarget)}° ${compassName(qTarget)}`}
+  $("qLbl").textContent=`Qibla ${Math.round(qTarget)}°`}
 function onOrient(e){
   if(!qActive)return;
   let h=null;
