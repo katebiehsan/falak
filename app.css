@@ -138,12 +138,14 @@ body.ph-isha .nightsky{opacity:1}
 .hadith.clamp .har{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .hadith .more{align-self:flex-start;color:var(--fg)}
-/* Nadel oben rechts im Kopf: in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
+/* Nadel direkt hinter dem Gebetsnamen (Position per Skript, wandert mit der Namenslänge): in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
    („23° nach rechts drehen“), die Nadel zeigt zur Kaaba und wird beim Ausrichten grün. Nadel oder Text antippen beendet. */
 .hero{position:relative}
-.qgo{position:absolute;z-index:1;top:66px;right:-14px;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-3);transition:color 160ms ease}
-.qgo:active{transform:none;opacity:.4;transition-duration:0ms}
-.qarrow{width:16px;height:16px;transition:transform 120ms linear}
+.qgo{position:absolute;z-index:1;left:0;top:0;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-3);opacity:0}
+.qgo[hidden]{display:none}
+.qgo.placed{opacity:1;transition:left 220ms var(--ease-out),color 160ms ease,opacity 160ms ease}
+.qgo.placed:active{transform:none;opacity:.4;transition-duration:0ms}
+.qarrow{width:20px;height:20px;transition:transform 120ms linear}
 .hero.qon .qgo{color:var(--fg)}
 .hero.qok .qgo{color:var(--accent)}
 /* Hinweis, dass die Nadel antippbar ist: Sie pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
