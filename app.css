@@ -65,7 +65,7 @@ svg{flex:none}
 .hero{display:flex;flex-direction:column;gap:4px;padding-top:78px}
 .eyebrow{margin:0;font-size:15px;font-weight:500;color:var(--fg-3)}
 .hero h1,.qbig{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
-.top-l{display:flex;align-items:center;gap:10px;min-width:0}
+.top-l{display:flex;align-items:baseline;gap:10px;min-width:0}
 .next{margin:0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:500}
 /* Besonderer Tag: reine Textzeile unter der Kapsel, kein Chip */
