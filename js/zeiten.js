@@ -183,7 +183,7 @@ function renderDays(){
   if(dayOffset===0&&(now||tom)){
     const e=now||tom;
     let txt=now?(e.k==="bid"?"Weißer Tag":e.eve?`${e.title} ab heute Abend`:e.title):`Morgen: ${e.title}`;
-    setHTML(chip,`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`);chip.hidden=false;
+    setHTML(chip,`<svg><use href="#sf-moon-fill"/></svg><span>${txt}</span>`);chip.hidden=false;
   }else chip.hidden=true;
   const fut=list.filter(e=>e.start>today);
   const bid=fut.find(e=>e.k==="bid"),big=fut.filter(e=>e.k!=="bid").slice(0,bid?2:3);
