@@ -57,10 +57,10 @@ async function loadSurah(n){
   return cache[n]={n,name:ar.englishName,meaning:ar.englishNameTranslation,arName:ar.name,rev:ar.revelationType,verses};
 }
 const ICON={
-  hl:'<svg><use href="#i-hl"/></svg>',
-  bm:'<svg><use href="#i-bm-o"/></svg>',
-  bmOn:'<svg><use href="#i-bm-f"/></svg>',
-  cp:'<svg><use href="#i-copy"/></svg>'
+  hl:'<svg><use href="#sf-highlighter"/></svg>',
+  bm:'<svg><use href="#sf-bookmark"/></svg>',
+  bmOn:'<svg><use href="#sf-bookmark-fill"/></svg>',
+  cp:'<svg><use href="#sf-document-on-document"/></svg>'
 };
 function verseHTML(n,v){
   const k=`${n}:${v.a}`,m=marks[k],isBm=bookmark&&bookmark.s===n&&bookmark.a===v.a;
