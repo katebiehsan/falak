@@ -137,7 +137,7 @@ body.ph-isha .nightsky{opacity:1}
 .hadith .hen{font-size:15px;line-height:1.6;color:var(--fg-2);margin:0;text-wrap:pretty}
 .hadith.clamp .har{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
-.hadith .more{align-self:flex-start;color:var(--fg)}
+.hadith .more{align-self:flex-start;color:var(--fg-2)}
 /* Nadel direkt hinter dem Gebetsnamen (Position per Skript, wandert mit der Namenslänge): in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
    („23° nach rechts drehen“), die Nadel zeigt zur Kaaba und wird beim Ausrichten grün. Nadel oder Text antippen beendet. */
 .hero{position:relative}
