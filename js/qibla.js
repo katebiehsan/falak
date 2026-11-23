@@ -74,6 +74,7 @@ async function startQibla(){
   clearTimeout(qStartT);qStartT=setTimeout(()=>{if(qActive&&!lastEvt){stopQibla();qFlash(`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`)}},2500);
 }
 $("qBtn").addEventListener("click",()=>{qActive?stopQibla():startQibla()});
+$("qBig").addEventListener("click",()=>{if(qActive)stopQibla()});
 // Die Nadel startet und beendet den Kompass (iOS verlangt für den Start eine Berührung)
 $("qGo").addEventListener("click",()=>{if(qActive){stopQibla();return}store.set("qUsed",true);$("qGo").classList.remove("hint");startQibla()});
 // Nadel-Hinweis: dreimal beim Öffnen (und nach längerer Pause), bis Qibla einmal benutzt wurde
