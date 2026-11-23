@@ -141,31 +141,33 @@ body.ph-isha .nightsky{opacity:1}
 /* Nadel direkt hinter dem Gebetsnamen (Position per Skript, wandert mit der Namenslänge): in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
    („23° nach rechts drehen“), die Nadel zeigt zur Kaaba und wird beim Ausrichten grün. Nadel oder Text antippen beendet. */
 .hero{position:relative}
-.qgo{position:absolute;z-index:1;left:0;top:0;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-3);opacity:0}
+.qgo{position:absolute;z-index:1;left:0;top:0;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-2);opacity:0}
 .qgo[hidden]{display:none}
 .qgo.placed{opacity:1;transition:left 220ms var(--ease-out),color 160ms ease,opacity 160ms ease}
 .qgo.placed:active{transform:none;opacity:.4;transition-duration:0ms}
 .qarrow{width:20px;height:20px;transition:transform 120ms linear}
 .hero.qon .qgo{color:var(--fg)}
 .hero.qok .qgo{color:var(--accent)}
+@keyframes lock{0%{filter:drop-shadow(0 0 0 rgba(76,195,138,0))}35%{filter:drop-shadow(0 0 7px rgba(76,195,138,.75))}100%{filter:drop-shadow(0 0 0 rgba(76,195,138,0))}}
+@media (prefers-reduced-motion:no-preference){.hero.qok .qgo svg{animation:lock 450ms ease-out}}
 /* Hinweis, dass die Nadel antippbar ist: Sie pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
 @keyframes seek{0%{rotate:0deg}7%{rotate:-12deg}23%{rotate:6.6deg}37%{rotate:-3deg}49%{rotate:1deg}60%,100%{rotate:0deg}}
 @media (prefers-reduced-motion:no-preference){.qgo.hint svg{animation:seek 2.5s ease-in-out 1.2s 3}}
 .nl{display:grid;justify-items:start;margin-top:4px}
-.nl>*{grid-area:1/1;margin:0;transition:opacity 160ms ease}
-.qtext{padding:0;text-align:left;color:var(--fg);opacity:0;pointer-events:none;font-weight:400}
+.nl>*{grid-area:1/1;margin:0;transition:opacity 180ms ease,filter 180ms ease,transform 220ms var(--ease-out)}
+.qtext{padding:0;text-align:left;color:var(--fg);opacity:0;filter:blur(3px);transform:translateY(5px);pointer-events:none;font-weight:400}
 .qtext.ok{color:var(--accent)}
-.hero.qon .qtext{opacity:1;pointer-events:auto}
+.hero.qon .qtext{opacity:1;filter:none;transform:none;pointer-events:auto}
 #nextLine{pointer-events:none}
 /* Im Live-Kompass wird auch der Gebetsname zur Anzeige: groß „60°“, darunter „nach links drehen“; ausgerichtet grün „Qibla“ */
 .hn{display:grid}
-.hn>*{grid-area:1/1;transition:opacity 160ms ease}
-.qbig{opacity:0;pointer-events:none;white-space:nowrap;font-variant-numeric:tabular-nums}
-.hero.qlive .qbig{opacity:1;pointer-events:auto}
+.hn>*{grid-area:1/1;transition:opacity 180ms ease,filter 180ms ease,transform 220ms var(--ease-out)}
+.qbig{opacity:0;filter:blur(6px);transform:translateY(8px);pointer-events:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+.hero.qlive .qbig{opacity:1;filter:none;transform:none;pointer-events:auto}
 .hero.qlive .qbig:active{opacity:.4;transition-duration:0ms}
-.hero.qlive h1{opacity:0;pointer-events:none}
+.hero.qlive h1{opacity:0;filter:blur(6px);transform:translateY(-8px);pointer-events:none}
 .hero.qok .qbig{color:var(--accent)}
-.hero.qon #nextLine{opacity:0}
+.hero.qon #nextLine{opacity:0;filter:blur(3px);transform:translateY(-5px)}
 .hero.qon .qtext:active{opacity:.4;transition-duration:0ms}
 /* Fußzeile: Quran, darunter Ort · Datum; der Ort ist antippbar (GPS). Woanders: „Du bist in Hamburg · Aktualisieren“ ersetzt die Zeile */
 .qrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:16px 0;text-align:left;border-top:1px solid rgba(255,255,255,.11);border-bottom:1px solid rgba(255,255,255,.11)}
@@ -338,7 +340,7 @@ body.ph-isha .nightsky{opacity:1}
   .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid #6f6f6f;box-shadow:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .qarrow,.qgo,.nl>*,.dgrid>*{transition:none}
+  .qarrow,.qgo,.nl>*,.hn>*,.dgrid>*{transition:none}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active{transform:none}
