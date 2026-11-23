@@ -44,7 +44,7 @@ svg{flex:none}
 .top .round{margin-right:2px}
 .round{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--fg);background:var(--surface);border:1px solid var(--edge)}
 .round-spacer{width:40px;height:40px;flex:none}
-.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--fg-3)}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--fg-2)}
 .icon-btn:active{background:var(--raised)}
 /* ---------- Layout ---------- */
 .view{max-width:520px;margin:0 auto;padding:10px max(20px,env(safe-area-inset-right,0px)) calc(40px + env(safe-area-inset-bottom,0px)) max(20px,env(safe-area-inset-left,0px));display:flex;flex-direction:column;gap:24px;position:relative;z-index:1}
@@ -215,8 +215,8 @@ body.ph-isha .nightsky{opacity:1}
 .surah{display:grid;align-items:center;gap:12px;border-radius:14px;text-align:left;width:100%;position:relative;padding:12px 14px;grid-template-columns:44px 1fr auto}
 .surah:not(:last-child)::after{content:"";position:absolute;right:14px;bottom:0;height:1px;background:#141416;left:70px}
 .surah:active{transform:none}
-.surah .no{border:1px solid var(--fg-4);transform:rotate(45deg);display:grid;place-items:center;border-radius:6px;border-color:#2a2a2e;width:30px;height:30px;margin:7px}
-.surah .no span{transform:rotate(-45deg);font-variant-numeric:tabular-nums;font-weight:500;color:var(--fg-3);font-size:13px;letter-spacing:-.04em}
+.surah .no{background:var(--surface);transform:rotate(45deg);display:grid;place-items:center;border-radius:9px;width:30px;height:30px;margin:7px}
+.surah .no span{transform:rotate(-45deg);font-variant-numeric:tabular-nums;font-weight:500;color:var(--fg-2);font-size:13px;letter-spacing:-.04em}
 .surah .nm{min-width:0}
 .surah .nm b{display:block;font-size:17px;font-weight:500}
 .surah .nm span{display:block;font-size:13px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
