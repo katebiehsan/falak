@@ -248,16 +248,26 @@ $("adjCal").addEventListener("click",()=>{
 });
 
 /* ================= Ort ================= */
-const CITIES=[["Bremen",53.07,8.85],["Bremerhaven",53.5396,8.5809],["Oldenburg",53.1435,8.2146],["Hamburg",53.5511,9.9937],
- ["Hannover",52.3759,9.7320],["Osnabrück",52.2799,8.0472],["Berlin",52.52,13.405],["Kiel",54.3233,10.1228],["Lübeck",53.8655,10.6866],
- ["Bielefeld",52.0302,8.5325],["Münster",51.9607,7.6261],["Dortmund",51.5136,7.4653],["Essen",51.4556,7.0116],["Duisburg",51.4344,6.7623],
- ["Düsseldorf",51.2277,6.7735],["Köln",50.9375,6.9603],["Bonn",50.7374,7.0982],["Frankfurt am Main",50.1109,8.6821],["Mannheim",49.4875,8.466],
- ["Stuttgart",48.7758,9.1829],["Nürnberg",49.4521,11.0767],["München",48.1351,11.582],["Leipzig",51.3397,12.3731],["Dresden",51.0504,13.7373]];
-function buildCities(){
-  $("cities").innerHTML=CITIES.map((c,i)=>{const sel=Math.abs(c[1]-loc.lat)<1e-4&&Math.abs(c[2]-loc.lon)<1e-4;
-    return `<button class="city${sel?" sel":""}" data-i="${i}"><span>${c[0]}</span><small>${c[1].toFixed(2)}, ${c[2].toFixed(2)}</small></button>`}).join("");
-}
-$("cities").addEventListener("click",e=>{const b=e.target.closest(".city");if(!b)return;const c=CITIES[+b.dataset.i];setLoc({name:c[0],lat:c[1],lon:c[2]})});
+// Ortssuche (Nominatim): Ausweg, wenn das GPS nicht klappt. Der gewählte Ort bleibt gespeichert wie ein per GPS ermittelter.
+let sTimer=0,sSeq=0,sRes=[];
+function showResults(list,msg){sRes=list;
+  $("cities").innerHTML=msg?`<p class="status">${esc(msg)}</p>`:list.map((r,i)=>`<button class="city" data-i="${i}"><span>${esc(r.name)}</span><small>${esc(r.sub)}</small></button>`).join("")}
+$("locQ").addEventListener("input",()=>{
+  clearTimeout(sTimer);const q=$("locQ").value.trim();sSeq++;
+  if(q.length<2){showResults([]);return}
+  const seq=sSeq;
+  sTimer=setTimeout(async()=>{
+    showResults([],"Suche …");
+    try{
+      const r=await fetch(`https://nominatim.openstreetmap.org/search?format=jsonv2&limit=6&addressdetails=1&accept-language=de&q=${encodeURIComponent(q)}`);
+      const j=await r.json();if(seq!==sSeq)return;
+      const list=j.filter(x=>x.lat&&x.lon).map(x=>{const a=x.address||{};
+        return{name:a.city||a.town||a.village||a.municipality||x.name||String(x.display_name).split(",")[0],sub:[a.state,a.country].filter(Boolean).join(", "),lat:+(+x.lat).toFixed(4),lon:+(+x.lon).toFixed(4)}});
+      showResults(list,list.length?"":"Nichts gefunden.");
+    }catch(e){if(seq===sSeq)showResults([],"Keine Verbindung.")}
+  },450);
+});
+$("cities").addEventListener("click",e=>{const b=e.target.closest(".city");if(!b)return;const r=sRes[+b.dataset.i];if(r)setLoc({name:r.name,lat:r.lat,lon:r.lon})});
 function setLoc(l){loc=l;store.set("loc",l);moveNew=null;$("frow").classList.remove("moved");closeSheet();renderTimes();updateQiblaTarget();toast(`Ort: ${l.name}`)}
 /* Standort: Ein Tipp auf den Ortsnamen fragt das GPS einmal ab. Der letzte Ort bleibt gespeichert und ändert sich nur, wenn du ihn aktualisierst.
    Ist der Standortzugriff schon erlaubt, schaut Falak beim Öffnen leise nach und fragt nur, ob du den Ort aktualisieren willst. */
@@ -293,7 +303,7 @@ $("locBtn").addEventListener("click",async()=>{
   const ok=await gpsUpdate((t,e)=>{if(e)failed=t;else el.textContent=t});
   if(!ok){el.textContent=loc.name;if(failed)locFail(failed)}
 });
-$("lPick").addEventListener("click",()=>{clearTimeout(lErrT);$("frow").classList.remove("lerr");buildCities();const s=$("gpsStatus");s.classList.remove("err");s.textContent="";openSheet("locSheet")});
+$("lPick").addEventListener("click",()=>{clearTimeout(lErrT);$("frow").classList.remove("lerr");$("locQ").value="";showResults([]);const s=$("gpsStatus");s.classList.remove("err");s.textContent="";openSheet("locSheet")});
 $("gpsBtn").addEventListener("click",()=>{const s=$("gpsStatus");s.classList.remove("err");
   gpsUpdate((t,e)=>{s.classList.toggle("err",!!e);s.textContent=t})});
 // Leise nachsehen, ob du woanders bist (nur wenn Safari den Zugriff schon erlaubt hat; es wird nie automatisch geändert)

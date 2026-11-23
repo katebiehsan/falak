@@ -293,6 +293,9 @@ body.ph-isha .nightsky{opacity:1}
 .sheets-flat .grab{background:rgba(255,255,255,.22)}
 .sheet h3{margin:0;font-family:var(--font-display);font-size:22px;font-weight:500;letter-spacing:-.02em}
 .sheet .list{background:rgba(255,255,255,.04)}
+.locq{width:100%;box-sizing:border-box;height:48px;padding:0 14px;border-radius:14px;background:var(--raised);border:1px solid var(--edge);color:var(--fg);font:inherit;font-size:17px;-webkit-appearance:none;appearance:none}
+.locq::placeholder{color:rgba(235,235,245,.3)}
+.locq:focus{outline:none;border-color:var(--fg-3)}
 .status{margin:-4px 0 0;font-size:13px;color:var(--fg-3);line-height:1.45}
 .status.err{color:#ff9ea1}
 .city{position:relative;display:flex;justify-content:space-between;align-items:center;width:100%;padding:12px 4px;font-size:17px;text-align:left;border-radius:0}
