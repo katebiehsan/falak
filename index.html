@@ -146,10 +146,9 @@
 
 <section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="locSheet" aria-label="Ort ändern">
   <div class="grab"></div>
-  <h3>Ort</h3>
+  <div class="shead"><h3>Ort</h3><button class="qpill" id="qSheetBtn" aria-label="Qibla-Kompass starten"><svg class="qsa" id="qSheetArrow" aria-hidden="true"><use href="#i-nav"/></svg>Qibla</button></div>
   <button class="primary" id="gpsBtn"><svg class="ic16"><use href="#i-loc"/></svg>Aktuellen Standort verwenden</button>
   <p class="status" id="gpsStatus"></p>
-  <button class="city qrow" id="qSheetBtn"><span class="qwh"><svg class="qsa" id="qSheetArrow" aria-hidden="true"><use href="#i-nav"/></svg>Qibla</span><small id="qDeg"></small></button>
   <div class="sheetlist" id="cities"></div>
 </section>
 
