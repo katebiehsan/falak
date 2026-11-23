@@ -8,13 +8,16 @@ const R=Math.PI/180;
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 // innerHTML nur setzen, wenn sich etwas geändert hat: der 15-Sekunden-Takt baut sonst die Listen neu auf und verschluckt ein gerade laufendes Tippen
 const setHTML=(el,h)=>{if(el._h!==h){el.innerHTML=h;el._h=h}};
+// Text nur setzen, wenn er sich ändert (liest den echten Inhalt, damit direkte Änderungen an anderer Stelle nicht übersehen werden)
+const setText=(el,t)=>{if(el.textContent!==t)el.textContent=t};
 
 /* ================= Speicher ================= */
 // Aufräumen: Miqat-Einträge (vor dem Umbenennen) übernehmen, falls noch nicht geschehen, und dann löschen.
 // Dazu die Reste der früheren Mitteilungs-Erinnerung, die durch den Kalender ersetzt ist.
-try{const old=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("miqat."))old.push(k)}
+// Läuft nur einmal pro Gerät (Merker „falak.mig“): sonst würde jeder Start den ganzen Speicher durchlaufen.
+try{if(localStorage.getItem("falak.mig")!=="1"){const old=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("miqat."))old.push(k)}
   old.forEach(k=>{const n="falak."+k.slice(6);if(localStorage.getItem(n)==null)localStorage.setItem(n,localStorage.getItem(k));localStorage.removeItem(k)});
-  ["falak.remind","falak.fired"].forEach(k=>localStorage.removeItem(k))}catch(e){}
+  ["falak.remind","falak.fired"].forEach(k=>localStorage.removeItem(k));localStorage.setItem("falak.mig","1")}}catch(e){}
 const store={
   get(k,d){try{const v=localStorage.getItem("falak."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem("falak."+k,JSON.stringify(v))}catch(e){}}
@@ -81,8 +84,10 @@ function setView(v){
 $("quranBtn").addEventListener("click",()=>{history.pushState({v:"quran"},"");setView("quran")});
 $("homeBtn").addEventListener("click",()=>{if(history.state&&history.state.v==="quran")history.back();else setView("times")});
 // Beim Scrollen tritt der Himmel zurück: Licht und Sterne verblassen, leichte Parallaxe
-(()=>{const a=$("atmo");let tick=false;
+(()=>{const a=$("atmo");let tick=false,lastY=-1;
   const upd=()=>{tick=false;if(view!=="times")return;const y=Math.max(0,window.scrollY);
+    // Ab 220 px ist die Parallaxe unsichtbar (Licht ganz weg): weiteres Scrollen braucht keine Schreibzugriffe mehr
+    if(y===lastY||(y>=220&&lastY>=220))return;lastY=y;
     a.style.transition="none";a.style.setProperty("--sf",Math.max(0,1-y/220).toFixed(3));a.style.transform=y?`translateY(${(-y*.25).toFixed(1)}px)`:""};
   window.addEventListener("scroll",()=>{if(!tick){tick=true;requestAnimationFrame(upd)}},{passive:true});
 })();

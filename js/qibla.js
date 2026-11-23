@@ -4,7 +4,7 @@
 /* ================= Qibla ================= */
 // Die Nadel oben rechts startet den Kompass: Die Zeile „Asr in 1 Std.“ wird zum Hinweistext („23° nach rechts drehen“), die Nadel
 // zeigt zur Kaaba; ausgerichtet wird beides grün. Nadel oder Text antippen beendet. In Ruhe zeigt die Nadel die Richtung von Norden aus.
-let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null;
+let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null,lastRot="";
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
 // Kompass liefert magnetisch Nord (Apple-Doku zu webkitCompassHeading); die Kaaba-Richtung ist geografisch.
 // Missweisung nach dem Weltmagnetfeldmodell WMM 2025 (Bremen 2026: rund 4° Ost) wird deshalb aufaddiert.
@@ -14,8 +14,8 @@ function updateQiblaTarget(){
   if(!qActive)qRest();
 }
 // Ruhezustand: feste Nadel oben rechts
-function qRest(){$("qGoArrow").style.transform=`rotate(${qTarget.toFixed(1)}deg)`;
-  $("qLbl").textContent=`Qibla ${Math.round(qTarget)}°`}
+function qRest(){lastRot=`rotate(${qTarget.toFixed(1)}deg)`;$("qGoArrow").style.transform=lastRot;
+  setText($("qLbl"),`Qibla ${Math.round(qTarget)}°`)}
 function onOrient(e){
   if(!qActive)return;
   let h=null;
@@ -35,10 +35,10 @@ function drawHeading(){
   raf=0;if(!qActive)return;
   const h=(Math.atan2(sy,sx)/R+360)%360;
   if(shown==null)shown=h;else{let d=((h-shown+540)%360)-180;shown+=d}
-  $("qGoArrow").style.transform=`rotate(${(qTarget-shown).toFixed(1)}deg)`;
+  const rot=`rotate(${(qTarget-shown).toFixed(1)}deg)`;if(rot!==lastRot){lastRot=rot;$("qGoArrow").style.transform=rot}
   const diff=((qTarget-h+540)%360)-180,ad=Math.abs(diff),ok=!tilted&&ad<=3;
   $("qBtn").classList.toggle("ok",ok);$("hero").classList.toggle("qok",ok);
-  $("qLbl").textContent=tilted?"Handy flach halten":ok?"Richtung stimmt":`nach ${diff>0?"rechts":"links"} drehen`;
+  setText($("qLbl"),tilted?"Handy flach halten":ok?"Richtung stimmt":`nach ${diff>0?"rechts":"links"} drehen`);
   {const bt=tilted?"Flach":ok?"Qibla":`${Math.round(ad)}°`;if($("qBig").textContent!==bt){$("qBig").textContent=bt;placeNeedle()}}
   if(ok&&!wasAligned&&navigator.vibrate)navigator.vibrate(18);
   wasAligned=ok;
@@ -83,15 +83,18 @@ document.addEventListener("visibilitychange",()=>{if(document.hidden)stopQibla()
 
 // Nadel hinter den Gebetsnamen setzen: waagrecht 14 px hinter dem sichtbaren Titel, senkrecht auf halber Höhe der Großbuchstaben.
 // Auf Vorschau- und Rückblick-Tagen (Wochentag als Titel) entfällt sie.
+const needleC=document.createElement("canvas").getContext("2d"),needleM=new Map();
 function placeNeedle(){
   const g=$("qGo"),h=$("hero");
   g.hidden=dayOffset!==0;if(g.hidden)return;
   const t=h.classList.contains("qlive")?$("qBig"):$("curName"),box=$("curName").getBoundingClientRect(),hr=h.getBoundingClientRect();
   const rg=document.createRange();rg.selectNodeContents(t);const tr=rg.getBoundingClientRect();
   if(!tr.width||!box.height)return;
-  const cs=getComputedStyle($("curName")),c=document.createElement("canvas").getContext("2d");
-  c.font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
-  const m=c.measureText("H"),base=box.top+(box.height-(m.fontBoundingBoxAscent+m.fontBoundingBoxDescent))/2+m.fontBoundingBoxAscent,mid=base-m.actualBoundingBoxAscent/2;
+  const cs=getComputedStyle($("curName")),font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  // Schriftmaße der Hauptzeile nur neu messen, wenn sich die Schrift ändert (Canvas einmal anlegen)
+  let m=needleM.get(font);
+  if(!m){needleC.font=font;const q=needleC.measureText("H");m={fa:q.fontBoundingBoxAscent,fd:q.fontBoundingBoxDescent,aa:q.actualBoundingBoxAscent};needleM.set(font,m)}
+  const base=box.top+(box.height-(m.fa+m.fd))/2+m.fa,mid=base-m.aa/2;
   g.style.left=(tr.right-hr.left+14+10-22).toFixed(1)+"px";g.style.top=(mid-hr.top-22).toFixed(1)+"px";
   if(!g.classList.contains("placed"))requestAnimationFrame(()=>g.classList.add("placed"));
 }

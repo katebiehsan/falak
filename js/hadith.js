@@ -17,9 +17,10 @@ async function hjson(path){
   return null;
 }
 async function getHadith(col,num){
-  const en=await hjson(`eng-${col.k}/${num}.json`),e=en&&en.hadiths&&en.hadiths[0];
+  // Englisch und Arabisch gleichzeitig laden (statt nacheinander): spart eine Netzwartezeit
+  const [en,ar]=await Promise.all([hjson(`eng-${col.k}/${num}.json`),hjson(`ara-${col.k}/${num}.json`)]),e=en&&en.hadiths&&en.hadiths[0];
   if(!e||!usable(e.text))return null;
-  const ar=await hjson(`ara-${col.k}/${num}.json`),a=ar&&ar.hadiths&&ar.hadiths[0];
+  const a=ar&&ar.hadiths&&ar.hadiths[0];
   return{src:`${col.name} ${e.hadithnumber}`,en:e.text.trim(),ar:a&&a.text?a.text.trim():""};
 }
 async function loadHadith(){

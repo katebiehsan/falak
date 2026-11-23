@@ -35,6 +35,15 @@ Sheets (Ort, Anpassen, Islamische Tage, Anzeige, Vers markieren) sind standardm�
 
 Neue Dateien auch in `sw.js` (Liste `SHELL`) eintragen und dort die Cache-Version `V` erhöhen.
 
+## Geschwindigkeit: was man beibehalten sollte
+
+- `times()` rechnet jeden Tag nur einmal (Zwischenspeicher `tCache`); `setAdj` und `setLoc` leeren ihn. Wer Ort oder Minuten-Anpassung anders ändert, muss `tCache.clear()` aufrufen.
+- Der 15-Sekunden-Takt schreibt nur bei Änderung ins DOM: `setHTML` und `setText` (basis.js). Direktes `textContent=`/`innerHTML=` auf Elementen, die `renderTimes` pflegt, vermeiden.
+- Datums- und Zeitformate laufen über einmal angelegte `Intl.DateTimeFormat` (`F_TIME`, `F_WDS` … in zeiten.js), nicht über `toLocale…String`.
+- `events()` fragt das Hijri-Datum nur einmal je Monat bei Intl nach und zählt sonst hoch.
+- Lange Suren erscheinen mit den ersten 30 Versen und werden danach blockweise ergänzt (`fillVerses` in quran.js). Kein `content-visibility` auf Versen: Safari hat kein Scroll-Anchoring, die Seite würde beim Hochscrollen springen.
+- Skripte laden mit `defer` (Reihenfolge bleibt), die Hadith-Schrift ist vorgeladen.
+
 ## Quellen und Lizenzen
 
 - Falak selbst: MIT-Lizenz (`LICENSE`)

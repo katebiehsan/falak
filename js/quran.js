@@ -4,7 +4,7 @@
 /* ================= Quran ================= */
 const API="https://api.alquran.cloud/v1";
 const EDS="quran-uthmani,de.bubenheim,en.sahih,en.transliteration";
-let qrInit=false,surahList=(store.get("surahs",null)||null),cache={},curSurah=null,activeKey=null,io=null;
+let qrInit=false,surahList=(store.get("surahs",null)||null),cache={},curSurah=null,activeKey=null,io=null,ioVis=null;
 function applyPrefs(){
   const v=$("verses");["ar","tr","de","en"].forEach(k=>{v.classList.toggle("no-"+k,!prefs[k]);$("t-"+k).checked=prefs[k]});
   document.documentElement.style.setProperty("--ar-size",prefs.size+"px");
@@ -20,17 +20,20 @@ const norm=s=>(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").repl
 const arName=s=>s.replace(/^سُورَةُ\s*/,"");
 const AR_DIGITS="٠١٢٣٤٥٦٧٨٩";const arNum=n=>String(n).replace(/\d/g,d=>AR_DIGITS[d]);
 const place=r=>r==="Medinan"?"Medina":"Mekka";
+// Suchschlüssel („englischer Name|deutscher Name“, normalisiert) einmal pro Sure berechnen statt bei jedem Tastendruck für alle 114
+let surahKeys=null;
 function renderIndex(){
   if(!surahList)return;
   const q=norm($("search").value||"");
-  const list=surahList.filter(s=>!q||String(s.n)===q||norm(s.en).includes(q)||norm(SURAH_DE[s.n-1]).includes(q));
-  $("surahs").innerHTML=list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${esc(s.en)}</b><span>${esc(SURAH_DE[s.n-1]||s.m)}</span></span><span class="rt"><span class="ar">${esc(arName(s.ar))}</span></span></button>`).join("")
-    :`<p class="empty">Keine Sure gefunden.</p>`;
+  if(!surahKeys||surahKeys.length!==surahList.length)surahKeys=surahList.map(s=>norm(s.en)+"|"+norm(SURAH_DE[s.n-1]));
+  const list=surahList.filter((s,i)=>!q||String(s.n)===q||surahKeys[i].includes(q));
+  setHTML($("surahs"),list.length?list.map(s=>`<button class="surah" data-n="${s.n}"><span class="no"><span>${s.n}</span></span><span class="nm"><b>${esc(s.en)}</b><span>${esc(SURAH_DE[s.n-1]||s.m)}</span></span><span class="rt"><span class="ar">${esc(arName(s.ar))}</span></span></button>`).join("")
+    :`<p class="empty">Keine Sure gefunden.</p>`);
   const box=$("resume");let h="";
   const card=(lbl,p,kind)=>surahList[p.s-1]?`<button class="resume" data-kind="${kind}"><small>${lbl}</small><b>${esc(surahList[p.s-1].en)} <span>· Vers ${p.a}</span></b></button>`:"";
   if(resume)h+=card("Zuletzt gelesen",resume,"resume");
   if(bookmark)h+=card("Lesezeichen",bookmark,"bookmark");
-  box.innerHTML=h;box.hidden=!h;
+  setHTML(box,h);box.hidden=!h;
 }
 $("search").addEventListener("input",renderIndex);
 function setSearch(open){
@@ -71,25 +74,39 @@ function verseHTML(n,v){
     <div class="de" lang="de">${esc(v.de)}</div>
     <div class="en" lang="en">${esc(v.en)}</div></article>`;
 }
+// Lange Suren (Al-Baqara: 286 Verse) erscheinen sofort mit den ersten Versen; der Rest wird direkt darunter nachgereicht (je Bild ein Block).
+// Nachgereicht wird nur unterhalb des Sichtbaren, darüber verschiebt sich nichts. Beim Sprung zu einem Vers sind alle Verse bis kurz dahinter sofort da.
+const FIRST_VERSES=30,CHUNK_VERSES=40;let renderTok=0;
+function fillVerses(s,from,tok){
+  if(tok!==renderTok||curSurah!==s)return;
+  const to=Math.min(s.verses.length,from+CHUNK_VERSES);
+  $("verses").insertAdjacentHTML("beforeend",s.verses.slice(from,to).map(v=>verseHTML(s.n,v)).join(""));
+  if(io)for(let i=from;i<to;i++){const el=$("v"+s.verses[i].a);if(el)io.observe(el)}
+  if(to<s.verses.length)requestAnimationFrame(()=>fillVerses(s,to,tok));
+}
 async function openSurah(n,ayah){
+  const tok=++renderTok;
   showPane("q-reader");window.scrollTo(0,0);
   const meta=surahList&&surahList[n-1];
   $("rName").textContent=meta?meta.en:`Sure ${n}`;$("rSub").textContent=meta?`Sure ${n}`:"";
   $("verses").innerHTML=`<p class="loading">Wird geladen …</p>`;
   let s;
   try{s=await loadSurah(n)}catch(e){$("verses").innerHTML=`<p class="loading">Keine Verbindung. Einmal geöffnete Suren sind danach auch offline verfügbar.</p>`;return}
+  if(tok!==renderTok)return;   // inzwischen wurde eine andere Sure oder die Liste geöffnet
   curSurah=s;
   $("rName").textContent=s.name;$("rSub").textContent=`Sure ${n}`;
   let h=`<header class="chapter"><div class="car" lang="ar">${esc(arName(s.arName))}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span><small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small></header>`;
   if(n!==1&&n!==9)h+=`<div class="bismillah" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>`;
-  h+=s.verses.map(v=>verseHTML(n,v)).join("");
+  const first=Math.min(s.verses.length,ayah&&ayah>1?ayah+25:FIRST_VERSES);
+  h+=s.verses.slice(0,first).map(v=>verseHTML(n,v)).join("");
   $("verses").innerHTML=h;applyPrefs();
   if(ayah&&ayah>1){const el=$("v"+ayah);if(el){el.scrollIntoView({block:"start"});el.classList.add("flash")}}
   watchReading(n);
+  if(first<s.verses.length)requestAnimationFrame(()=>fillVerses(s,first,tok));
 }
 function watchReading(n){
   if(io)io.disconnect();let t;
-  const vis=new Set(); // Verse im sichtbaren Bereich (unter der Kopfzeile), nach Meldungen des Beobachters gepflegt
+  const vis=ioVis=new Set(); // Verse im sichtbaren Bereich (unter der Kopfzeile), nach Meldungen des Beobachters gepflegt
   io=new IntersectionObserver(es=>{
     es.forEach(e=>e.isIntersecting?vis.add(e.target):vis.delete(e.target));
     if(!vis.size)return;clearTimeout(t);
@@ -97,7 +114,9 @@ function watchReading(n){
   },{rootMargin:"-80px 0px 0px 0px"});
   document.querySelectorAll("#verses .verse").forEach(v=>io.observe(v));
 }
-$("backBtn").addEventListener("click",()=>{if(io)io.disconnect();showPane("q-index");renderIndex();window.scrollTo(0,0)});
+// Nach dem Austausch eines einzelnen Verses (Markierung, Lesezeichen) nur diesen neu beobachten; der Rest bleibt unverändert beim Beobachter
+function reobserve(oldEl,id){const el=$(id);if(!io||!el)return;if(oldEl){io.unobserve(oldEl);if(ioVis)ioVis.delete(oldEl)}io.observe(el)}
+$("backBtn").addEventListener("click",()=>{renderTok++;if(io)io.disconnect();showPane("q-index");renderIndex();window.scrollTo(0,0)});
 
 // Aktionen pro Vers
 $("verses").addEventListener("click",async e=>{
@@ -115,9 +134,8 @@ $("verses").addEventListener("click",async e=>{
     const old=bookmark;
     if(old&&old.s===n&&old.a===a){bookmark=null;toast("Lesezeichen entfernt")}else{bookmark={s:n,a};toast("Lesezeichen gesetzt")}
     store.set("bookmark",bookmark);
-    if(old&&old.s===n&&$("v"+old.a))$("v"+old.a).outerHTML=verseHTML(n,curSurah.verses[old.a-1]);
-    if(bookmark)$("v"+a).outerHTML=verseHTML(n,v);
-    watchReading(n);
+    if(old&&old.s===n&&$("v"+old.a)){const oe=$("v"+old.a);oe.outerHTML=verseHTML(n,curSurah.verses[old.a-1]);reobserve(oe,"v"+old.a)}
+    if(bookmark){const oe=$("v"+a);oe.outerHTML=verseHTML(n,v);reobserve(oe,"v"+a)}
   }else if(b.dataset.act==="cp"){
     const txt=[prefs.ar?v.ar:"",prefs.tr?v.tr:"",prefs.de?v.de:"",prefs.en?v.en:"",`(${curSurah.name} ${k})`].filter(Boolean).join("\n\n");
     try{await navigator.clipboard.writeText(txt);toast("Kopiert")}catch(err){toast("Kopieren nicht möglich")}
@@ -128,7 +146,7 @@ $("swatches").addEventListener("click",e=>{
   const c=b.dataset.c,a=+activeKey.split(":")[1],verse=curSurah.verses[a-1];
   if(c){marks[activeKey]={c,t:verse.de.slice(0,160)};toast("Markiert")}else{delete marks[activeKey];toast("Markierung entfernt")}
   store.set("marks",marks);updateMarksCount();
-  const el=$("v"+a);if(el)el.outerHTML=verseHTML(curSurah.n,verse);watchReading(curSurah.n);
+  const el=$("v"+a);if(el){el.outerHTML=verseHTML(curSurah.n,verse);reobserve(el,"v"+a)}
   closeSheet();
 });
 
