@@ -160,9 +160,10 @@ body.ph-isha .nightsky{opacity:1}
 /* Im Live-Kompass wird auch der Gebetsname zur Anzeige: groß „60°“, darunter „nach links drehen“; ausgerichtet grün „Qibla“ */
 .hn{display:grid}
 .hn>*{grid-area:1/1;transition:opacity 160ms ease}
-.qbig{opacity:0;pointer-events:none;white-space:nowrap}
-.hero.qlive .qbig{opacity:1}
-.hero.qlive h1{opacity:0}
+.qbig{opacity:0;pointer-events:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+.hero.qlive .qbig{opacity:1;pointer-events:auto}
+.hero.qlive .qbig:active{opacity:.4;transition-duration:0ms}
+.hero.qlive h1{opacity:0;pointer-events:none}
 .hero.qok .qbig{color:var(--accent)}
 .hero.qon #nextLine{opacity:0}
 .hero.qon .qtext:active{opacity:.4;transition-duration:0ms}
