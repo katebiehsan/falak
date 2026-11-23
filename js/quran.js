@@ -101,7 +101,7 @@ window.addEventListener("scroll",()=>{
 async function openSurah(n,ayah){
   const tok=++renderTok;
   showPane("q-reader");window.scrollTo(0,0);
-  $("q-reader").classList.remove("rd-sc","rd-hide");lastY=0;$("credit").innerHTML="";
+  $("q-reader").classList.remove("rd-sc","rd-hide");lastY=0;
   const meta=surahList&&surahList[n-1];
   $("rName").textContent=meta?meta.en:`Sure ${n}`;$("rSub").textContent=meta?`Sure ${n}`:"";
   $("verses").innerHTML=`<p class="loading">Wird geladen …</p>`;
@@ -110,12 +110,11 @@ async function openSurah(n,ayah){
   if(tok!==renderTok)return;   // inzwischen wurde eine andere Sure oder die Liste geöffnet
   curSurah=s;
   $("rName").textContent=s.name;$("rSub").textContent=`Sure ${n}`;
-  let h=`<header class="chapter"><span class="eb">Sure ${n}</span><div class="car" lang="ar">${esc(arName(s.arName))}</div><b>${esc(s.name)}</b><hr><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span></header>`;
+  let h=`<header class="chapter"><div class="car" lang="ar">${esc(arName(s.arName))}</div><b>${esc(s.name)}</b><hr><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span></header>`;
   if(n!==1&&n!==9)h+=`<div class="bismillah" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>`;
   const first=Math.min(s.verses.length,ayah&&ayah>1?ayah+25:FIRST_VERSES);
   h+=s.verses.slice(0,first).map(v=>verseHTML(n,v)).join("");
   $("verses").innerHTML=h;applyPrefs();
-  $("credit").innerHTML=`<small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small>`;
   if(!(ayah&&ayah>1))introAnim();
   if(ayah&&ayah>1){const el=$("v"+ayah);if(el){el.scrollIntoView({block:"start"});el.classList.add("flash")}}
   watchReading(n);
