@@ -55,7 +55,7 @@ async function loadSurah(n){
 }
 const ICON={
   hl:'<svg><use href="#i-hl"/></svg>',
-  bm:'<svg><use href="#i-bm"/></svg>',
+  bm:'<svg><use href="#i-bm-o"/></svg>',
   bmOn:'<svg><use href="#i-bm-f"/></svg>',
   cp:'<svg><use href="#i-copy"/></svg>'
 };
