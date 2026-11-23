@@ -84,9 +84,24 @@ function fillVerses(s,from,tok){
   if(io)for(let i=from;i<to;i++){const el=$("v"+s.verses[i].a);if(el)io.observe(el)}
   if(to<s.verses.length)requestAnimationFrame(()=>fillVerses(s,to,tok));
 }
+// Beim Öffnen einer Sure blenden Kopf, Basmala und die ersten Verse leicht gestaffelt ein (nur Deckkraft und 8 px Hub; einmal, nie beim Scrollen)
+function introAnim(){
+  if(reduceMotion.matches)return;
+  const els=[...document.querySelectorAll("#verses .chapter>*, #verses .bismillah, #verses .verse:nth-of-type(-n+2)")];
+  els.forEach((el,i)=>el.animate([{opacity:0,transform:"translateY(8px)"},{opacity:1,transform:"none"}],{duration:300,delay:i*40,easing:EASE,fill:"backwards"}));
+}
+// Kopfzeile in der Sure: nach dem Scrollen Titel und Abdunklung einblenden; abwärts wegfahren, aufwärts zurück
+let lastY=0;
+window.addEventListener("scroll",()=>{
+  const r=$("q-reader");if(r.hidden)return;
+  const y=window.scrollY,dy=y-lastY;lastY=y;
+  r.classList.toggle("rd-sc",y>120);
+  if(y<=120||dy<-6)r.classList.remove("rd-hide");else if(dy>6)r.classList.add("rd-hide");
+},{passive:true});
 async function openSurah(n,ayah){
   const tok=++renderTok;
   showPane("q-reader");window.scrollTo(0,0);
+  $("q-reader").classList.remove("rd-sc","rd-hide");lastY=0;$("credit").innerHTML="";
   const meta=surahList&&surahList[n-1];
   $("rName").textContent=meta?meta.en:`Sure ${n}`;$("rSub").textContent=meta?`Sure ${n}`:"";
   $("verses").innerHTML=`<p class="loading">Wird geladen …</p>`;
@@ -95,11 +110,13 @@ async function openSurah(n,ayah){
   if(tok!==renderTok)return;   // inzwischen wurde eine andere Sure oder die Liste geöffnet
   curSurah=s;
   $("rName").textContent=s.name;$("rSub").textContent=`Sure ${n}`;
-  let h=`<header class="chapter"><div class="car" lang="ar">${esc(arName(s.arName))}</div><b>${esc(s.name)}</b><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span><small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small></header>`;
+  let h=`<header class="chapter"><span class="eb">Sure ${n}</span><div class="car" lang="ar">${esc(arName(s.arName))}</div><b>${esc(s.name)}</b><hr><span>${esc(SURAH_DE[n-1]||s.meaning)} · ${place(s.rev)} · ${s.verses.length} Verse</span></header>`;
   if(n!==1&&n!==9)h+=`<div class="bismillah" lang="ar">بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ</div>`;
   const first=Math.min(s.verses.length,ayah&&ayah>1?ayah+25:FIRST_VERSES);
   h+=s.verses.slice(0,first).map(v=>verseHTML(n,v)).join("");
   $("verses").innerHTML=h;applyPrefs();
+  $("credit").innerHTML=`<small class="trn de">Deutsch: Bubenheim &amp; Elyas</small><small class="trn en">Englisch: Saheeh International</small>`;
+  if(!(ayah&&ayah>1))introAnim();
   if(ayah&&ayah>1){const el=$("v"+ayah);if(el){el.scrollIntoView({block:"start"});el.classList.add("flash")}}
   watchReading(n);
   if(first<s.verses.length)requestAnimationFrame(()=>fillVerses(s,first,tok));

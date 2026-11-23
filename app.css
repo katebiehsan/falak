@@ -230,20 +230,31 @@ body.ph-isha .nightsky{opacity:1}
 .surah .rt small{font-size:13px;color:var(--fg-3)}
 .empty{margin:0;padding:24px;text-align:center;color:var(--fg-3);font-size:15px}
 .readerbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:4;display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(max-content,1fr);align-items:center;gap:10px}
-/* Leichte Abdunklung hinter der Kopfzeile: voll dunkel von ganz oben bis zum Zeilenende, danach weich nach unten auslaufend (ca. 50 px), damit beim Scrollen kein Text mehr über oder neben der Zeile durchscheint */
-.readerbar::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;top:calc(-14px - env(safe-area-inset-top,0px));bottom:-48px;background:linear-gradient(var(--bg) calc(100% - 56px),transparent)}
+/* Abdunklung hinter der Kopfzeile nur in Markierungen: voll dunkel bis zum Zeilenende, danach weich auslaufend */
+#q-marks .readerbar::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;top:calc(-14px - env(safe-area-inset-top,0px));bottom:-48px;background:linear-gradient(var(--bg) calc(100% - 56px),transparent)}
+/* Sure lesen: Kopfzeile beim Öffnen ohne Abdunklung und ohne Titel; beides blendet erst nach dem Scrollen ein; beim Abwärtsscrollen fährt die Zeile weg, beim Aufwärtsscrollen zurück */
+#q-reader .readerbar{transition:transform 250ms var(--ease-out),opacity 250ms var(--ease-out)}
+#q-reader .readerbar::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;top:calc(-14px - env(safe-area-inset-top,0px));bottom:-16px;background:linear-gradient(var(--bg) calc(100% - 16px),transparent);opacity:0;transition:opacity 160ms ease}
+#q-reader.rd-sc .readerbar::before{opacity:1}
+#q-reader .rtitle{opacity:0;transition:opacity 160ms ease}
+#q-reader.rd-sc .rtitle{opacity:1}
+#q-reader.rd-hide .readerbar{transform:translateY(-120%);opacity:0;pointer-events:none}
 .readerbar>:first-child{justify-self:start}
 .readerbar>:last-child{justify-self:end}
 .rtitle{min-width:0;max-width:170px;text-align:center;display:flex;flex-direction:column;align-items:center}
 .rtitle b,.rtitle span{padding:0 12px;border-radius:999px}
 .rtitle b{font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .rtitle span{font-size:13px;color:var(--fg-3)}
-.chapter{display:flex;flex-direction:column;align-items:center;gap:4px;padding:20px 0 8px;text-align:center}
-.chapter .car{font-family:var(--font-quran);font-size:32px;line-height:1.7}
-.chapter b{font-size:22px;font-weight:500;letter-spacing:-.015em}
+.chapter{display:flex;flex-direction:column;align-items:center;gap:10px;padding:56px 0 8px;text-align:center}
+.chapter .eb{font-size:13px;color:var(--fg-3);letter-spacing:.02em}
+.chapter .car{font-family:var(--font-quran);font-size:64px;line-height:1.45}
+.chapter b{font-size:15px;font-weight:500;color:var(--fg-2)}
+.chapter hr{width:32px;border:0;height:1px;background:var(--fg-4);margin:10px 0 2px}
 .chapter span{font-size:13px;color:var(--fg-3)}
-.chapter .trn{font-size:13px;color:var(--fg-3)}
-.bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * .95);line-height:2.1;text-align:center;color:var(--fg-2);padding:6px 0 14px;direction:rtl}
+.credit{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 0}
+.credit .trn{font-size:13px;color:var(--fg-3)}
+#verses.no-de ~ .credit .de,#verses.no-en ~ .credit .en{display:none}
+.bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * 1.15);line-height:2.1;text-align:center;color:var(--fg-2);padding:36px 0 36px;direction:rtl}
 #verses{display:flex;flex-direction:column}
 #verses.no-ar .ar,#verses.no-tr .tr,#verses.no-de .de,#verses.no-en .en{display:none}
 .verse{position:relative;display:flex;flex-direction:column;gap:12px;padding:14px 12px 24px;margin:0 -12px;border-radius:18px;transition:background-color 220ms ease;scroll-margin-top:84px}
