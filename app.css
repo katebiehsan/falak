@@ -64,7 +64,7 @@ svg{flex:none}
 .eyebrow{margin:0;font-size:15px;font-weight:500;color:var(--fg-3)}
 .hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
 .top-l{display:flex;align-items:center;gap:10px;min-width:0}
-.next{margin:4px 0 0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
+.next{margin:0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:500}
 /* Besonderer Tag: reine Textzeile unter der Kapsel, kein Chip */
 .today{margin-top:12px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:28px;padding:0 2px;color:var(--fg-3);font-size:15px;font-weight:500;text-align:left;transition:color 160ms ease}
@@ -138,37 +138,41 @@ body.ph-isha .nightsky{opacity:1}
 .hadith.clamp .har{display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 .hadith.clamp .hen{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .hadith .more{align-self:flex-start;color:var(--fg)}
-.locline{font-size:15px;font-weight:500;color:var(--fg-3);padding:6px 4px 6px 0;margin:-6px 0;border-radius:10px;display:inline-flex;align-items:center;gap:6px}
-.locline:active{transform:none;opacity:.4;transition-duration:0ms}
-/* Fußzeile zeigt nur den Ort. „Qibla“ steht im Orts-Fenster; nach dem Start verwandelt sich die Zeile: der Ort blendet aus,
-   kleiner Pfeil und Text erscheinen, der Text führt („23° nach rechts drehen“), ausgerichtet wird beides grün. Tippen beendet. */
-.frow{display:flex;align-items:center;justify-content:flex-start;min-height:28px}
-.locline{max-width:160px;overflow:hidden;white-space:nowrap;transition:max-width 220ms var(--ease-out),opacity 160ms ease,padding 220ms var(--ease-out)}
-.qline{display:inline-flex;align-items:center;gap:8px;max-width:0;opacity:0;overflow:hidden;padding:10px 0;margin:-10px 0 -8px;border-radius:10px;white-space:nowrap;pointer-events:none;font-size:15px;font-weight:500;color:var(--fg);transition:max-width 220ms var(--ease-out),opacity 160ms ease,padding 220ms var(--ease-out),color 160ms ease}
-.qline.on,.qline.flash{max-width:340px;opacity:1;padding:10px 10px 10px 0;pointer-events:auto}
-.qline.flash .qarrow{display:none}
-.qline:active{transform:none;opacity:.4;transition-duration:0ms}
-.qline.ok{color:var(--accent)}
-.qarrow{flex:none;width:16px;height:16px;transition:transform 120ms linear}
-.frow.qon .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
-.qgo{position:relative;display:inline-grid;place-items:center;flex:none;width:28px;height:28px;max-width:28px;overflow:hidden;color:var(--fg-3);transition:max-width 220ms var(--ease-out),opacity 160ms ease}
-.qgo::after{content:"";position:absolute;inset:-8px}
+/* Nadel oben rechts im Kopf: in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
+   („23° nach rechts drehen“), die Nadel zeigt zur Kaaba und wird beim Ausrichten grün. Nadel oder Text antippen beendet. */
+.hero{position:relative}
+.qgo{position:absolute;top:66px;right:-14px;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-3);transition:color 160ms ease}
 .qgo:active{transform:none;opacity:.4;transition-duration:0ms}
-/* Hinweis, dass der Pfeil antippbar ist: Die Nadel pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
+.qarrow{width:16px;height:16px;transition:transform 120ms linear}
+.hero.qon .qgo{color:var(--fg)}
+.hero.qok .qgo{color:var(--accent)}
+/* Hinweis, dass die Nadel antippbar ist: Sie pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
 @keyframes seek{0%{rotate:0deg}7%{rotate:-12deg}23%{rotate:6.6deg}37%{rotate:-3deg}49%{rotate:1deg}60%,100%{rotate:0deg}}
 @media (prefers-reduced-motion:no-preference){.qgo.hint svg{animation:seek 2.5s ease-in-out 1.2s 3}}
+.nl{display:grid;justify-items:start;margin-top:4px}
+.nl>*{grid-area:1/1;margin:0;transition:opacity 160ms ease}
+.qtext{padding:0;text-align:left;color:var(--fg);opacity:0;pointer-events:none;font-weight:400}
+.qtext.ok{color:var(--accent)}
+.hero.qon .qtext{opacity:1;pointer-events:auto}
+#nextLine{pointer-events:none}
+.hero.qon #nextLine{opacity:0}
+.hero.qon .qtext:active{opacity:.4;transition-duration:0ms}
+/* Fußzeile: Quran, darunter Ort · Datum; der Ort ist antippbar (GPS). Woanders: „Du bist in Hamburg · Aktualisieren“ ersetzt die Zeile */
 .qlink{font-size:13px;font-weight:500;color:var(--fg-2);padding:8px 8px;margin:-8px 0 -6px;border-radius:10px}
 .qlink:active{transform:none;opacity:.4;transition-duration:0ms}
-.frow.qon .qgo,.frow.moved .qgo{max-width:0;opacity:0;pointer-events:none}
-.frow.moved .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
-/* Nachfrage, wenn du woanders bist: „Du bist in Hamburg · Aktualisieren“ mit ✕ */
-.mline{display:inline-flex;align-items:center;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;pointer-events:none;transition:max-width 220ms var(--ease-out),opacity 160ms ease}
-.frow.moved .mline{max-width:360px;opacity:1;pointer-events:auto}
-.mgo{position:relative;padding:8px 6px 8px 0;font-size:15px;font-weight:500;color:var(--accent)}
-.mgo::after{content:"";position:absolute;inset:-6px 0}
-.mx{position:relative;display:grid;place-items:center;width:28px;height:28px;color:var(--fg-3)}
-.mx::after{content:"";position:absolute;inset:-8px}
-.mx svg{width:12px;height:12px}
+.dgrid{display:grid;justify-items:center;align-items:center;min-height:18px}
+.dgrid>*{grid-area:1/1;transition:opacity 160ms ease}
+.locline{position:relative;font:inherit;color:var(--fg-2);font-weight:500;padding:0}
+.locline::after{content:"";position:absolute;inset:-12px -8px}
+.locline:active{transform:none;opacity:.4;transition-duration:0ms}
+.mline{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;opacity:0;pointer-events:none}
+.dates.moved .dline{opacity:0;pointer-events:none}
+.dates.moved .mline{opacity:1;pointer-events:auto}
+.mgo{position:relative;padding:0 8px 0 0;font:inherit;font-weight:500;color:var(--accent)}
+.mgo::after{content:"";position:absolute;inset:-12px 0}
+.mx{position:relative;display:grid;place-items:center;width:20px;height:18px;color:var(--fg-3)}
+.mx::after{content:"";position:absolute;inset:-12px -8px}
+.mx svg{width:11px;height:11px}
 .mgo:active,.mx:active{transform:none;opacity:.4;transition-duration:0ms}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .dates .dline{text-align:center}
@@ -320,7 +324,7 @@ body.ph-isha .nightsky{opacity:1}
   .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid #6f6f6f;box-shadow:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .locline,.qline,.qarrow,.qgo,.mline{transition:none}
+  .qarrow,.qgo,.nl>*,.dgrid>*{transition:none}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active{transform:none}
