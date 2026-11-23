@@ -17,6 +17,8 @@
   --font-quran:"Amiri Quran","KFGQPC Uthmanic Script HAFS","Geeza Pro",serif;
   --ease-out:cubic-bezier(.23,1,.32,1);--ease-drawer:cubic-bezier(.32,.72,0,1);
   --ar-size:24px;
+  /* Glas-Rezept (gleich in Second Brain, Falak, Quicknote): dunkles Glas, Kante nur oben, Abdunklung dahinter */
+  --glass:rgba(28,28,30,.3);--glass-blur:blur(10px) saturate(200%);--glass-shadow:inset 0 .5px 0 rgba(255,255,255,.15),0 8px 32px rgba(0,0,0,.4);--scrim:rgba(0,0,0,.5);
   color-scheme:dark;
 }
 *{box-sizing:border-box}
@@ -290,11 +292,11 @@ body.ph-isha .nightsky{opacity:1}
 .mark p{margin:0;font-size:15px;color:var(--fg-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 /* ---------- Sheets ---------- */
 /* geschlossen per visibility ausgeblendet: Safari 26 würde sonst die Farbe dieser fixierten Fläche für den Bereich oben übernehmen */
-.scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.5);opacity:0;pointer-events:none;visibility:hidden;transition:opacity 200ms ease,visibility 0s linear 200ms;touch-action:none}
+.scrim{position:fixed;inset:0;z-index:20;background:var(--scrim);opacity:0;pointer-events:none;visibility:hidden;transition:opacity 200ms ease,visibility 0s linear 200ms;touch-action:none}
 .scrim.open{opacity:1;pointer-events:auto;visibility:visible;transition:opacity 200ms ease,visibility 0s}
-/* Sheets sind Glas (Claude-App-Werte) mit Abdunklung dahinter. Flache Option: <html class="sheets-flat"> setzen (index.html), dann Apples #1c1c1e ohne Unschärfe. */
+/* Sheets sind Glas (Rezept aus Second Brain, Tokens --glass in :root) mit Abdunklung dahinter. Flache Option: <html class="sheets-flat"> setzen (index.html), dann Apples #1c1c1e ohne Unschärfe. */
 /* Ziehen: Seite dahinter bleibt stehen (kein Scrollen, keine Safari-Leiste), nur die Liste im Sheet scrollt (touch-action) */
-.sheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;max-height:82vh;max-height:82dvh;display:flex;flex-direction:column;gap:14px;background:rgba(255,255,255,.14);-webkit-backdrop-filter:blur(20px) saturate(180%);backdrop-filter:blur(20px) saturate(180%);border-radius:30px;box-shadow:inset 0 .5px 0 rgba(255,255,255,.15),0 8px 32px rgba(0,0,0,.4);padding:8px 20px 20px;transform:translateY(calc(100% + 40px));visibility:hidden;transition:transform 240ms var(--ease-out),visibility 0s linear 240ms;touch-action:none}
+.sheet{position:fixed;left:8px;right:8px;bottom:calc(8px + env(safe-area-inset-bottom,0px));z-index:21;max-width:520px;margin:0 auto;max-height:82vh;max-height:82dvh;display:flex;flex-direction:column;gap:14px;background:var(--glass);-webkit-backdrop-filter:var(--glass-blur);backdrop-filter:var(--glass-blur);border-radius:30px;box-shadow:var(--glass-shadow);padding:8px 20px 20px;transform:translateY(calc(100% + 40px));visibility:hidden;transition:transform 240ms var(--ease-out),visibility 0s linear 240ms;touch-action:none}
 .sheets-flat .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid var(--edge);box-shadow:none}
 .sheet.open{transform:none;visibility:visible;transition:transform 340ms var(--ease-drawer),visibility 0s}
 .sheetlist{touch-action:pan-y;overflow-y:auto;min-height:0;flex:1;margin:0 -8px;padding:0 8px;overscroll-behavior:contain;display:flex;flex-direction:column;gap:8px}
