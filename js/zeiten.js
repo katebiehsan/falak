@@ -248,6 +248,13 @@ $("adjCal").addEventListener("click",()=>{
 });
 
 /* ================= Ort ================= */
+// Offline-Ausweg: größere Städte, falls keine Verbindung zur Ortssuche besteht
+const CITIES=[["Bremen",53.07,8.85],["Bremerhaven",53.5396,8.5809],["Oldenburg",53.1435,8.2146],["Hamburg",53.5511,9.9937],
+ ["Hannover",52.3759,9.7320],["Osnabrück",52.2799,8.0472],["Berlin",52.52,13.405],["Kiel",54.3233,10.1228],["Lübeck",53.8655,10.6866],
+ ["Bielefeld",52.0302,8.5325],["Münster",51.9607,7.6261],["Dortmund",51.5136,7.4653],["Essen",51.4556,7.0116],["Duisburg",51.4344,6.7623],
+ ["Düsseldorf",51.2277,6.7735],["Köln",50.9375,6.9603],["Bonn",50.7374,7.0982],["Frankfurt am Main",50.1109,8.6821],["Mannheim",49.4875,8.466],
+ ["Stuttgart",48.7758,9.1829],["Nürnberg",49.4521,11.0767],["München",48.1351,11.582],["Leipzig",51.3397,12.3731],["Dresden",51.0504,13.7373]];
+const offlineCities=q=>{const n=s=>s.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");const k=n(q||"");return CITIES.filter(c=>!k||n(c[0]).includes(k)).map(c=>({name:c[0],sub:"ohne Internet",lat:c[1],lon:c[2]}))};
 // Ortssuche (Nominatim): Ausweg, wenn das GPS nicht klappt. Der gewählte Ort bleibt gespeichert wie ein per GPS ermittelter.
 let sTimer=0,sSeq=0,sRes=[];
 function showResults(list,msg){sRes=list;
@@ -264,7 +271,7 @@ $("locQ").addEventListener("input",()=>{
       const list=j.filter(x=>x.lat&&x.lon).map(x=>{const a=x.address||{};
         return{name:a.city||a.town||a.village||a.municipality||x.name||String(x.display_name).split(",")[0],sub:[a.state,a.country].filter(Boolean).join(", "),lat:+(+x.lat).toFixed(4),lon:+(+x.lon).toFixed(4)}});
       showResults(list,list.length?"":"Nichts gefunden.");
-    }catch(e){if(seq===sSeq)showResults([],"Keine Verbindung.")}
+    }catch(e){if(seq!==sSeq)return;const l=offlineCities(q);showResults(l,l.length?"":"Keine Verbindung. Ohne Internet gibt es nur größere Städte, z. B. Hamburg.")}
   },450);
 });
 $("cities").addEventListener("click",e=>{const b=e.target.closest(".city");if(!b)return;const r=sRes[+b.dataset.i];if(r)setLoc({name:r.name,lat:r.lat,lon:r.lon})});
@@ -303,7 +310,7 @@ $("locBtn").addEventListener("click",async()=>{
   const ok=await gpsUpdate((t,e)=>{if(e)failed=t;else el.textContent=t});
   if(!ok){el.textContent=loc.name;if(failed)locFail(failed)}
 });
-$("lPick").addEventListener("click",()=>{clearTimeout(lErrT);$("frow").classList.remove("lerr");$("locQ").value="";showResults([]);const s=$("gpsStatus");s.classList.remove("err");s.textContent="";openSheet("locSheet")});
+$("lPick").addEventListener("click",()=>{clearTimeout(lErrT);$("frow").classList.remove("lerr");$("locQ").value="";showResults(navigator.onLine?[]:offlineCities(""));const s=$("gpsStatus");s.classList.remove("err");s.textContent="";openSheet("locSheet")});
 $("gpsBtn").addEventListener("click",()=>{const s=$("gpsStatus");s.classList.remove("err");
   gpsUpdate((t,e)=>{s.classList.toggle("err",!!e);s.textContent=t})});
 // Leise nachsehen, ob du woanders bist (nur wenn Safari den Zugriff schon erlaubt hat; es wird nie automatisch geändert)
