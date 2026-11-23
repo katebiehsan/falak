@@ -230,8 +230,8 @@ body.ph-isha .nightsky{opacity:1}
 .surah .rt small{font-size:13px;color:var(--fg-3)}
 .empty{margin:0;padding:24px;text-align:center;color:var(--fg-3);font-size:15px}
 .readerbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:4;display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(max-content,1fr);align-items:center;gap:10px}
-/* Dunkle Fläche hinter der Kopfzeile: reicht von ganz oben bis unter die Zeile und läuft nach unten aus, damit beim Scrollen kein Text mehr über oder neben der Zeile durchscheint */
-.readerbar::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;top:calc(-14px - env(safe-area-inset-top,0px));bottom:-26px;background:linear-gradient(var(--bg) calc(100% - 26px),transparent)}
+/* Leichte Abdunklung hinter der Kopfzeile: voll dunkel von ganz oben bis zum Zeilenende, danach weich nach unten auslaufend (ca. 50 px), damit beim Scrollen kein Text mehr über oder neben der Zeile durchscheint */
+.readerbar::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;top:calc(-14px - env(safe-area-inset-top,0px));bottom:-48px;background:linear-gradient(var(--bg) calc(100% - 56px),transparent)}
 .readerbar>:first-child{justify-self:start}
 .readerbar>:last-child{justify-self:end}
 .rtitle{min-width:0;max-width:170px;text-align:center;display:flex;flex-direction:column;align-items:center}
