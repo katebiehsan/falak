@@ -9,6 +9,7 @@ if(history.state&&history.state.v)history.replaceState(null,"");
 updateQiblaTarget();
 renderTimes();
 loadHadith();
+setTimeout(checkMoved,1500);
 setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="times")renderTimes()});
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="times"){renderTimes();checkMoved()}});
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});

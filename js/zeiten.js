@@ -258,22 +258,58 @@ function buildCities(){
     return `<button class="city${sel?" sel":""}" data-i="${i}"><span>${c[0]}</span><small>${c[1].toFixed(2)}, ${c[2].toFixed(2)}</small></button>`}).join("");
 }
 $("cities").addEventListener("click",e=>{const b=e.target.closest(".city");if(!b)return;const c=CITIES[+b.dataset.i];setLoc({name:c[0],lat:c[1],lon:c[2]})});
-function setLoc(l){loc=l;store.set("loc",l);closeSheet();renderTimes();updateQiblaTarget();toast(`Ort: ${l.name}`)}
-$("locBtn").addEventListener("click",()=>{buildCities();const s=$("gpsStatus");s.classList.remove("err");
-  s.textContent="Der Standort wird nur jetzt einmal abgefragt und danach nicht automatisch geändert.";openSheet("locSheet")});
-$("gpsBtn").addEventListener("click",()=>{
-  const s=$("gpsStatus");s.classList.remove("err");
-  if(!navigator.geolocation){s.textContent="Dieses Gerät unterstützt keine Standortabfrage.";s.classList.add("err");return}
-  s.textContent="Standort wird ermittelt …";
-  navigator.geolocation.getCurrentPosition(async p=>{
-    const lat=+p.coords.latitude.toFixed(4),lon=+p.coords.longitude.toFixed(4);let name="Aktueller Standort";
-    // Ortsname ist nur Beschriftung: nach 6 Sekunden ohne Antwort bleibt es bei „Aktueller Standort“
-    const ac=new AbortController(),to=setTimeout(()=>ac.abort(),6000);
-    try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&accept-language=de&lat=${lat}&lon=${lon}`,{signal:ac.signal});
-      const j=await r.json();const a=j.address||{};name=a.city||a.town||a.village||a.municipality||a.suburb||name}catch(e){}finally{clearTimeout(to)}
-    setLoc({name,lat,lon});
-  },err=>{
-    s.classList.add("err");
-    s.textContent=err.code===1?"Standortzugriff abgelehnt. Erlaube ihn in den iPhone-Einstellungen unter Datenschutz › Ortungsdienste › Safari-Websites.":"Standort nicht gefunden. Versuch es draußen noch einmal oder wähle eine Stadt.";
-  },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+function setLoc(l){loc=l;store.set("loc",l);moveNew=null;$("frow").classList.remove("moved");closeSheet();renderTimes();updateQiblaTarget();toast(`Ort: ${l.name}`)}
+/* Standort: Ein Tipp auf den Ortsnamen fragt das GPS einmal ab. Der letzte Ort bleibt gespeichert und ändert sich nur, wenn du ihn aktualisierst.
+   Ist der Standortzugriff schon erlaubt, schaut Falak beim Öffnen leise nach und fragt nur, ob du den Ort aktualisieren willst. */
+let gpsBusy=false;
+const geoNow=o=>new Promise((ok,no)=>navigator.geolocation.getCurrentPosition(ok,no,o));
+// Ortsname ist nur Beschriftung: nach 6 Sekunden ohne Antwort bleibt es bei „Aktueller Standort“
+async function geoName(lat,lon){
+  let name="Aktueller Standort";const ac=new AbortController(),to=setTimeout(()=>ac.abort(),6000);
+  try{const r=await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&zoom=12&accept-language=de&lat=${lat}&lon=${lon}`,{signal:ac.signal});
+    const j=await r.json();const a=j.address||{};name=a.city||a.town||a.village||a.municipality||a.suburb||name}catch(e){}finally{clearTimeout(to)}
+  return name;
+}
+async function gpsUpdate(say){
+  if(gpsBusy)return false;
+  if(!navigator.geolocation){say("Dieses Gerät unterstützt keine Standortabfrage.",true);return false}
+  gpsBusy=true;say("Standort wird ermittelt …");
+  try{
+    const p=await geoNow({enableHighAccuracy:true,timeout:15000,maximumAge:0});
+    const lat=+p.coords.latitude.toFixed(4),lon=+p.coords.longitude.toFixed(4);
+    setLoc({name:await geoName(lat,lon),lat,lon});return true;
+  }catch(err){
+    say(err.code===1?"Standortzugriff abgelehnt. Erlaube ihn in den iPhone-Einstellungen unter Datenschutz › Ortungsdienste › Safari-Websites.":"Standort nicht gefunden. Versuch es draußen noch einmal oder wähle eine Stadt.",true);return false;
+  }finally{gpsBusy=false}
+}
+// Tipp auf den Ortsnamen: sofort aktualisieren; nur wenn das GPS nicht klappt, öffnet sich die Städteliste als Ausweg
+$("locBtn").addEventListener("click",async()=>{
+  if(gpsBusy)return;
+  const el=$("locName");let failed=null;
+  const ok=await gpsUpdate((t,e)=>{if(e)failed=t;else el.textContent=t});
+  if(!ok){el.textContent=loc.name;if(failed){buildCities();const s=$("gpsStatus");s.classList.add("err");s.textContent=failed;openSheet("locSheet")}}
 });
+$("gpsBtn").addEventListener("click",()=>{const s=$("gpsStatus");s.classList.remove("err");
+  gpsUpdate((t,e)=>{s.classList.toggle("err",!!e);s.textContent=t})});
+// Leise nachsehen, ob du woanders bist (nur wenn Safari den Zugriff schon erlaubt hat; es wird nie automatisch geändert)
+const MOVE_KM=30;let moveNew=null,moveChecked=0;
+function kmBetween(a,b,c,d){const R=6371,r=Math.PI/180,x=(c-a)*r,y=(d-b)*r,h=Math.sin(x/2)**2+Math.cos(a*r)*Math.cos(c*r)*Math.sin(y/2)**2;return 2*R*Math.asin(Math.sqrt(h))}
+async function checkMoved(){
+  if(gpsBusy||moveNew||document.hidden||view!=="times"||Date.now()-moveChecked<300000)return;
+  if(!navigator.geolocation||!navigator.permissions)return;
+  try{if((await navigator.permissions.query({name:"geolocation"})).state!=="granted")return}catch(e){return}
+  moveChecked=Date.now();
+  try{
+    const p=await geoNow({enableHighAccuracy:false,timeout:8000,maximumAge:600000});
+    const lat=+p.coords.latitude.toFixed(4),lon=+p.coords.longitude.toFixed(4);
+    if(kmBetween(loc.lat,loc.lon,lat,lon)<MOVE_KM)return;
+    const skip=store.get("locSkip",null);if(skip&&kmBetween(skip.lat,skip.lon,lat,lon)<MOVE_KM)return;
+    const name=await geoName(lat,lon);
+    if(document.hidden||view!=="times"||(typeof qActive!=="undefined"&&qActive))return;
+    moveNew={name,lat,lon};
+    $("mYes").textContent=name==="Aktueller Standort"?"Du bist an einem anderen Ort · Aktualisieren":`Du bist in ${name} · Aktualisieren`;
+    $("frow").classList.add("moved");
+  }catch(e){}
+}
+$("mYes").addEventListener("click",()=>{if(moveNew)setLoc(moveNew)});
+$("mNo").addEventListener("click",()=>{if(moveNew)store.set("locSkip",{lat:moveNew.lat,lon:moveNew.lon});moveNew=null;$("frow").classList.remove("moved")});
