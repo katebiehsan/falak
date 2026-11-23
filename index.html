@@ -39,16 +39,14 @@
 <!-- ============ ZEITEN ============ -->
 <main class="view" id="v-times">
 
-  <section class="hero">
-    <div class="frow" id="frow">
-      <button class="locline" id="locBtn" aria-label="Standort aktualisieren"><span id="locName">Bremen</span></button>
-      <button class="qgo" id="qGo" aria-label="Qibla-Kompass starten"><svg class="qarrow" id="qGoArrow" aria-hidden="true"><use href="#i-nav"/></svg></button>
-      <button class="qline" id="qBtn" aria-pressed="false" aria-label="Qibla-Kompass beenden"><svg class="qarrow" id="qRot" aria-hidden="true"><use href="#i-nav"/></svg><span id="qLbl">Qibla</span></button>
-      <span class="mline" id="mLine"><button class="mgo" id="mYes"></button><button class="mx" id="mNo" aria-label="Später"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></span>
-    </div>
+  <section class="hero" id="hero">
+    <button class="qgo" id="qGo" aria-label="Qibla-Kompass starten" aria-pressed="false"><svg class="qarrow" id="qGoArrow" aria-hidden="true"><use href="#i-nav"/></svg></button>
     <p class="eyebrow" id="heroLabel" hidden></p>
     <h1 id="curName">–</h1>
-    <p class="next" id="nextLine">&nbsp;</p>
+    <div class="nl">
+      <p class="next" id="nextLine">&nbsp;</p>
+      <button class="next qtext" id="qBtn" aria-pressed="false" aria-label="Qibla-Kompass beenden"><span id="qLbl">Qibla</span></button>
+    </div>
     <button class="today" id="todayChip" hidden></button>
   </section>
 
@@ -67,9 +65,12 @@
     <button class="link more" id="hMore" hidden>Ganz lesen</button>
   </section>
 
-  <footer class="dates">
+  <footer class="dates" id="frow">
     <button class="qlink" id="quranBtn">Quran</button>
-    <span class="dline"><span id="gregDate"></span> · <span id="hijriDate"></span></span>
+    <div class="dgrid">
+      <span class="dline"><button class="locline" id="locBtn" aria-label="Standort aktualisieren"><span id="locName">Bremen</span></button> · <span id="gregDate"></span> · <span id="hijriDate"></span></span>
+      <span class="mline" id="mLine"><button class="mgo" id="mYes"></button><button class="mx" id="mNo" aria-label="Später"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></span>
+    </div>
   </footer>
 </main>
 
