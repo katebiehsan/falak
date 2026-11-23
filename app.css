@@ -164,6 +164,9 @@ body.ph-isha .nightsky{opacity:1}
 .qgo{position:relative;display:inline-grid;place-items:center;flex:none;width:28px;height:28px;max-width:28px;overflow:hidden;color:var(--fg-2);transition:max-width 220ms var(--ease-out),opacity 160ms ease}
 .qgo::after{content:"";position:absolute;inset:-8px}
 .qgo:active{transform:none;opacity:.4;transition-duration:0ms}
+/* Hinweis, dass der Pfeil antippbar ist: Die Nadel pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
+@keyframes seek{0%{rotate:0deg}7%{rotate:-12deg}23%{rotate:6.6deg}37%{rotate:-3deg}49%{rotate:1deg}60%,100%{rotate:0deg}}
+@media (prefers-reduced-motion:no-preference){.qgo.hint svg{animation:seek 2.5s ease-in-out 1.2s 3}}
 .frow.qon .qgo,.frow.moved .qgo{max-width:0;opacity:0;pointer-events:none}
 .frow.moved .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
 /* Nachfrage, wenn du woanders bist: „Du bist in Hamburg · Aktualisieren“ mit ✕ */
