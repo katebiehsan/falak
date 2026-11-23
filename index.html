@@ -150,9 +150,10 @@
 <section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="locSheet" aria-label="Ort ändern">
   <div class="grab"></div>
   <h3>Ort</h3>
+  <input class="locq" id="locQ" type="search" placeholder="Ort suchen, z. B. Berlin" autocomplete="off" autocapitalize="words" spellcheck="false" enterkeyhint="search" aria-label="Ort suchen">
+  <div class="sheetlist" id="cities"></div>
   <button class="primary" id="gpsBtn"><svg class="ic16"><use href="#i-loc"/></svg>Aktuellen Standort verwenden</button>
   <p class="status" id="gpsStatus"></p>
-  <div class="sheetlist" id="cities"></div>
 </section>
 
 <section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="adjSheet" aria-label="Gebetszeit anpassen">
