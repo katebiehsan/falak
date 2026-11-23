@@ -15,11 +15,12 @@ function saveDz(){dz.d=dzDay();store.set("dhikr",dz)}
 function renderDz(){
   if(dz.d!==dzDay())dz={d:dzDay(),i:0,c:0};
   const done=dz.i>=DZ.length,d=DZ[Math.min(dz.i,DZ.length-1)];
-  $("dzStep").textContent=done?"Fertig · 100 von 100":`${dz.i+1} von 4 · nach dem Gebet`;
-  $("dzAr").textContent=done?"تَقَبَّلَ ٱللَّٰهُ":d.ar;$("dzTr").textContent=done?"Taqabbal Allah":d.tr;$("dzDe").textContent=done?"Möge Allah es annehmen":d.de;
-  $("dzN").textContent=done?"✓":dz.c;$("dzOf").textContent=done?"":`von ${d.n}`;
+  // Nur ändern, was sich ändert: beim Zählen bleibt der Text stehen, nur die Zahl wechselt (kein Neuzeichnen, kein Flackern)
+  setText($("dzStep"),done?"Fertig · 100 von 100":`${dz.i+1} von 4 · nach dem Gebet`);
+  setText($("dzAr"),done?"تَقَبَّلَ ٱللَّٰهُ":d.ar);setText($("dzTr"),done?"Taqabbal Allah":d.tr);setText($("dzDe"),done?"Möge Allah es annehmen":d.de);
+  setText($("dzN"),String(done?"✓":dz.c));setText($("dzOf"),done?"":`von ${d.n}`);
   $("dzAr").classList.toggle("long",!done&&d.ar.length>40);
-  $("dzHint").textContent=done?"Oben rechts von vorn beginnen":"Irgendwo tippen zum Zählen";
+  setText($("dzHint"),done?"Oben rechts von vorn beginnen":"Irgendwo tippen zum Zählen");
   [...$("dzBars").children].forEach((b,k)=>b.style.setProperty("--p",k<dz.i?1:k===dz.i?dz.c/DZ[k].n:0));
 }
 $("dhikrTap").addEventListener("click",()=>{

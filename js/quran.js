@@ -182,7 +182,7 @@ $("backupBtn").addEventListener("click",async()=>{
 });
 $("restoreIn").addEventListener("change",async e=>{
   const f=e.target.files&&e.target.files[0];if(!f)return;
-  try{const j=JSON.parse(await f.text());if(j.app!=="falak"&&j.app!=="miqat")throw 0;
+  try{const j=JSON.parse(await f.text());if(j.app!=="falak")throw 0;
     // Datei prüfen: nur gültige Verse („Sure:Vers“), bekannte Farben, Zahlen als Zahlen (die Werte landen später im HTML)
     const okM={};Object.entries(j.marks||{}).forEach(([k,m])=>{if(/^\d{1,3}:\d{1,3}$/.test(k)&&m&&["yellow","green","blue","pink"].includes(m.c))okM[k]={c:m.c,t:String(m.t||"").slice(0,160)}});
     const okP=p=>p&&Number.isInteger(+p.s)&&Number.isInteger(+p.a)&&+p.s>=1&&+p.s<=114&&+p.a>=1?{s:+p.s,a:+p.a}:null;
