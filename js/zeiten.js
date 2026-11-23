@@ -54,7 +54,7 @@ function renderTimes(){
   renderArc(day,t,now,live);
   $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
   $("hijriDate").textContent=hijriShort(day);
-  renderDays();
+  renderDays();renderQuranRow();
 }
 
 
@@ -313,3 +313,9 @@ async function checkMoved(){
 }
 $("mYes").addEventListener("click",()=>{if(moveNew)setLoc(moveNew)});
 $("mNo").addEventListener("click",()=>{if(moveNew)store.set("locSkip",{lat:moveNew.lat,lon:moveNew.lon});moveNew=null;$("frow").classList.remove("moved")});
+
+// Zeile „Quran“ unter dem Hadith: zeigt, wo du zuletzt gelesen hast
+function renderQuranRow(){
+  const r=resume&&surahList&&surahList[resume.s-1];
+  $("quranSub").textContent=r?`Weiter bei ${r.en} ${resume.s}:${resume.a}`:"114 Suren";
+}

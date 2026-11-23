@@ -165,8 +165,12 @@ body.ph-isha .nightsky{opacity:1}
 .hero.qon #nextLine{opacity:0}
 .hero.qon .qtext:active{opacity:.4;transition-duration:0ms}
 /* Fußzeile: Quran, darunter Ort · Datum; der Ort ist antippbar (GPS). Woanders: „Du bist in Hamburg · Aktualisieren“ ersetzt die Zeile */
-.qlink{font-size:13px;font-weight:500;color:var(--fg-2);padding:8px 8px;margin:-8px 0 -6px;border-radius:10px}
-.qlink:active{transform:none;opacity:.4;transition-duration:0ms}
+.qrow{display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;padding:16px 0;text-align:left;border-top:1px solid rgba(255,255,255,.11);border-bottom:1px solid rgba(255,255,255,.11)}
+.qrow:active{transform:none;opacity:.4;transition-duration:0ms}
+.qr-t{display:flex;flex-direction:column;gap:2px;min-width:0}
+.qr-t b{font-size:17px;font-weight:500;color:var(--fg)}
+.qr-t small{font-size:15px;color:var(--fg-3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qr-c{flex:none;width:16px;height:16px;color:var(--fg-3)}
 .dgrid{display:grid;justify-items:center;align-items:center;min-height:18px}
 .dgrid>*{grid-area:1/1;transition:opacity 160ms ease}
 .locline{position:relative;font:inherit;color:var(--fg-2);font-weight:500;padding:0}
