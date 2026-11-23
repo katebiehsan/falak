@@ -27,6 +27,8 @@ $("dhikrTap").addEventListener("click",()=>{
   if(dz.i>=DZ.length)return;
   dz.c++;if(dz.c>=DZ[dz.i].n){dz.i++;dz.c=0;if(navigator.vibrate)navigator.vibrate(30);slideIn($("dzAr"),1,8,180)}
   saveDz();renderDz();
+  // Tipp-Feedback: die Zahl „ploppt“ kurz (nur transform, 140 ms); bei „Bewegung reduzieren“ entfällt es
+  const n=$("dzN");if(n.animate&&!reduceMotion.matches)n.animate([{transform:"scale(1.09)"},{transform:"none"}],{duration:140,easing:EASE});
 });
 $("dhikrReset").addEventListener("click",()=>{dz={d:dzDay(),i:0,c:0};saveDz();renderDz()});
 $("dhikrBtn").addEventListener("click",()=>{history.pushState({v:"dhikr"},"");setView("dhikr")});
