@@ -141,15 +141,13 @@ body.ph-isha .nightsky{opacity:1}
 /* Nadel direkt hinter dem Gebetsnamen (Position per Skript, wandert mit der Namenslänge): in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
    („23° nach rechts drehen“), die Nadel zeigt zur Kaaba und wird beim Ausrichten grün. Nadel oder Text antippen beendet. */
 .hero{position:relative}
-.qgo{position:absolute;z-index:1;left:0;top:0;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-2);opacity:0}
+.qgo{position:absolute;z-index:1;left:0;top:0;display:grid;place-items:center;width:44px;height:44px;color:#c7c7cc;opacity:0}
 .qgo[hidden]{display:none}
 .qgo.placed{opacity:1;transition:left 220ms var(--ease-out),color 160ms ease,opacity 160ms ease}
 .qgo.placed:active{transform:none;opacity:.4;transition-duration:0ms}
 .qarrow{width:20px;height:20px;transition:transform 120ms linear}
 .hero.qon .qgo{color:var(--fg)}
 .hero.qok .qgo{color:var(--accent)}
-@keyframes lock{0%{filter:drop-shadow(0 0 0 rgba(76,195,138,0))}35%{filter:drop-shadow(0 0 7px rgba(76,195,138,.75))}100%{filter:drop-shadow(0 0 0 rgba(76,195,138,0))}}
-@media (prefers-reduced-motion:no-preference){.hero.qok .qgo svg{animation:lock 450ms ease-out}}
 /* Hinweis, dass die Nadel antippbar ist: Sie pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
 @keyframes seek{0%{rotate:0deg}7%{rotate:-12deg}23%{rotate:6.6deg}37%{rotate:-3deg}49%{rotate:1deg}60%,100%{rotate:0deg}}
 @media (prefers-reduced-motion:no-preference){.qgo.hint svg{animation:seek 2.5s ease-in-out 1.2s 3}}
