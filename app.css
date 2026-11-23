@@ -62,7 +62,7 @@ svg{flex:none}
 /* ---------- Zeiten ---------- */
 .hero{display:flex;flex-direction:column;gap:4px;padding-top:78px}
 .eyebrow{margin:0;font-size:15px;font-weight:500;color:var(--fg-3)}
-.hero h1{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
+.hero h1,.qbig{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
 .top-l{display:flex;align-items:center;gap:10px;min-width:0}
 .next{margin:0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
 .next b{color:var(--fg);font-weight:500}
@@ -141,7 +141,7 @@ body.ph-isha .nightsky{opacity:1}
 /* Nadel oben rechts im Kopf: in Ruhe die Richtung von Norden aus; antippen verwandelt die Zeile „Asr in 1 Std.“ in den Live-Kompass
    („23° nach rechts drehen“), die Nadel zeigt zur Kaaba und wird beim Ausrichten grün. Nadel oder Text antippen beendet. */
 .hero{position:relative}
-.qgo{position:absolute;top:66px;right:-14px;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-3);transition:color 160ms ease}
+.qgo{position:absolute;z-index:1;top:66px;right:-14px;display:grid;place-items:center;width:44px;height:44px;color:var(--fg-3);transition:color 160ms ease}
 .qgo:active{transform:none;opacity:.4;transition-duration:0ms}
 .qarrow{width:16px;height:16px;transition:transform 120ms linear}
 .hero.qon .qgo{color:var(--fg)}
@@ -155,6 +155,13 @@ body.ph-isha .nightsky{opacity:1}
 .qtext.ok{color:var(--accent)}
 .hero.qon .qtext{opacity:1;pointer-events:auto}
 #nextLine{pointer-events:none}
+/* Im Live-Kompass wird auch der Gebetsname zur Anzeige: groß „60°“, darunter „nach links drehen“; ausgerichtet grün „Qibla“ */
+.hn{display:grid}
+.hn>*{grid-area:1/1;transition:opacity 160ms ease}
+.qbig{opacity:0;pointer-events:none;white-space:nowrap}
+.hero.qlive .qbig{opacity:1}
+.hero.qlive h1{opacity:0}
+.hero.qok .qbig{color:var(--accent)}
 .hero.qon #nextLine{opacity:0}
 .hero.qon .qtext:active{opacity:.4;transition-duration:0ms}
 /* Fußzeile: Quran, darunter Ort · Datum; der Ort ist antippbar (GPS). Woanders: „Du bist in Hamburg · Aktualisieren“ ersetzt die Zeile */
