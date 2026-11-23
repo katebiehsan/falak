@@ -64,14 +64,14 @@ svg{flex:none}
 /* ---------- Zeiten ---------- */
 .hero{display:flex;flex-direction:column;gap:4px;padding-top:78px}
 .eyebrow{margin:0;font-size:15px;font-weight:500;color:var(--fg-3)}
-.hero h1,.qbig{margin:0;font-family:var(--font-display);font-size:64px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
+.hero h1,.qbig{margin:0;font-family:var(--font-display);font-size:56px;line-height:1;font-weight:500;letter-spacing:-.035em;min-width:0}
 .top-l{display:flex;align-items:baseline;gap:10px;min-width:0}
 .next{margin:0;font-size:17px;color:var(--fg-2);font-variant-numeric:tabular-nums}
-.next b{color:var(--fg);font-weight:500}
+.next b{color:#c7c7cc;font-weight:500}
 /* Besonderer Tag: reine Textzeile unter der Kapsel, kein Chip */
-.today{margin-top:12px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:28px;padding:0 2px;color:var(--fg-3);font-size:15px;font-weight:500;text-align:left;transition:color 160ms ease}
-.today:active{transform:none;color:var(--fg-2)}
-.today svg{width:12px;height:12px;flex:none;color:var(--fg-3)}
+.today{margin-top:12px;align-self:flex-start;display:inline-flex;align-items:center;gap:8px;min-height:28px;padding:0 2px;color:#c7c7cc;font-size:15px;font-weight:500;text-align:left;transition:color 160ms ease}
+.today:active{transform:none;opacity:.6}
+.today svg{width:12px;height:12px;flex:none;color:#c7c7cc}
 /* Startseite ohne graue Kästen: „Demnächst“ nur mit Linien */
 .upcoming.list{background:none;padding:0;margin:0 -12px;border-radius:0}
 .upcoming.list .item{padding-left:12px;padding-right:12px}
@@ -147,7 +147,7 @@ body.ph-isha .nightsky{opacity:1}
 .qgo[hidden]{display:none}
 .qgo.placed{opacity:1;transition:left 220ms var(--ease-out),color 160ms ease,opacity 160ms ease}
 .qgo.placed:active{transform:none;opacity:.4;transition-duration:0ms}
-.qarrow{width:20px;height:20px;transition:transform 120ms linear}
+.qarrow{width:17px;height:17px;transition:transform 120ms linear}
 .hero.qon .qgo{color:var(--fg)}
 .hero.qok .qgo{color:var(--accent)}
 /* Hinweis, dass die Nadel antippbar ist: Sie pendelt dreimal leise aus und bleibt dann ruhig; nach dem ersten Qibla-Start entfällt sie */
@@ -246,14 +246,10 @@ body.ph-isha .nightsky{opacity:1}
 .rtitle b{font-size:17px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .rtitle span{font-size:13px;color:var(--fg-3)}
 .chapter{display:flex;flex-direction:column;align-items:center;gap:10px;padding:56px 0 8px;text-align:center}
-.chapter .eb{font-size:13px;color:var(--fg-3);letter-spacing:.02em}
 .chapter .car{font-family:var(--font-quran);font-size:64px;line-height:1.45}
 .chapter b{font-size:15px;font-weight:500;color:var(--fg-2)}
 .chapter hr{width:32px;border:0;height:1px;background:var(--fg-4);margin:10px 0 2px}
 .chapter span{font-size:13px;color:var(--fg-3)}
-.credit{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 0}
-.credit .trn{font-size:13px;color:var(--fg-3)}
-#verses.no-de ~ .credit .de,#verses.no-en ~ .credit .en{display:none}
 .bismillah{font-family:var(--font-quran);font-size:calc(var(--ar-size) * 1.15);line-height:2.1;text-align:center;color:var(--fg-2);padding:36px 0 36px;direction:rtl}
 #verses{display:flex;flex-direction:column}
 #verses.no-ar .ar,#verses.no-tr .tr,#verses.no-de .de,#verses.no-en .en{display:none}
