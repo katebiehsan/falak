@@ -317,5 +317,5 @@ $("mNo").addEventListener("click",()=>{if(moveNew)store.set("locSkip",{lat:moveN
 // Zeile „Quran“ unter dem Hadith: zeigt, wo du zuletzt gelesen hast
 function renderQuranRow(){
   const r=resume&&surahList&&surahList[resume.s-1];
-  $("quranSub").textContent=r?`Weiter bei ${r.en} ${resume.s}:${resume.a}`:"114 Suren";
+  const sub=$("quranSub");sub.textContent=r?`Weiter bei ${r.en} ${resume.s}:${resume.a}`:"";sub.hidden=!r;
 }
