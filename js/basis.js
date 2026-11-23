@@ -12,12 +12,6 @@ const setHTML=(el,h)=>{if(el._h!==h){el.innerHTML=h;el._h=h}};
 const setText=(el,t)=>{if(el.textContent!==t)el.textContent=t};
 
 /* ================= Speicher ================= */
-// Aufräumen: Miqat-Einträge (vor dem Umbenennen) übernehmen, falls noch nicht geschehen, und dann löschen.
-// Dazu die Reste der früheren Mitteilungs-Erinnerung, die durch den Kalender ersetzt ist.
-// Läuft nur einmal pro Gerät (Merker „falak.mig“): sonst würde jeder Start den ganzen Speicher durchlaufen.
-try{if(localStorage.getItem("falak.mig")!=="1"){const old=[];for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith("miqat."))old.push(k)}
-  old.forEach(k=>{const n="falak."+k.slice(6);if(localStorage.getItem(n)==null)localStorage.setItem(n,localStorage.getItem(k));localStorage.removeItem(k)});
-  ["falak.remind","falak.fired"].forEach(k=>localStorage.removeItem(k));localStorage.setItem("falak.mig","1")}}catch(e){}
 const store={
   get(k,d){try{const v=localStorage.getItem("falak."+k);return v==null?d:JSON.parse(v)}catch(e){return d}},
   set(k,v){try{localStorage.setItem("falak."+k,JSON.stringify(v))}catch(e){}}

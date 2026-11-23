@@ -44,7 +44,7 @@ svg{flex:none}
 .back{display:inline-flex;align-items:center;gap:2px;height:40px;margin-left:-8px;padding:0 10px 0 6px;border-radius:12px;font-size:17px;color:var(--fg-2);position:relative}
 .back::after{content:"";position:absolute;inset:-2px -4px}
 .back:active{color:var(--fg);transform:none;transition-duration:0ms}
-.round{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--fg);background:var(--surface);border:1px solid var(--edge)}
+.round{width:40px;height:40px;display:grid;place-items:center;color:var(--fg)}
 .round-spacer{width:40px;height:40px;flex:none}
 .icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:12px;color:var(--fg-2)}
 .icon-btn:active{background:var(--raised)}
@@ -230,6 +230,8 @@ body.ph-isha .nightsky{opacity:1}
 .surah .rt small{font-size:13px;color:var(--fg-3)}
 .empty{margin:0;padding:24px;text-align:center;color:var(--fg-3);font-size:15px}
 .readerbar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px);z-index:4;display:grid;grid-template-columns:minmax(max-content,1fr) auto minmax(max-content,1fr);align-items:center;gap:10px}
+/* Dunkle Fläche hinter der Kopfzeile: reicht von ganz oben bis unter die Zeile und läuft nach unten aus, damit beim Scrollen kein Text mehr über oder neben der Zeile durchscheint */
+.readerbar::before{content:"";position:absolute;z-index:-1;pointer-events:none;left:calc(50% - 50vw);width:100vw;top:calc(-14px - env(safe-area-inset-top,0px));bottom:-26px;background:linear-gradient(var(--bg) calc(100% - 26px),transparent)}
 .readerbar>:first-child{justify-self:start}
 .readerbar>:last-child{justify-self:end}
 .rtitle{min-width:0;max-width:170px;text-align:center;display:flex;flex-direction:column;align-items:center}
@@ -365,9 +367,7 @@ body.ph-isha .nightsky{opacity:1}
 .dz-bars i::after{content:"";position:absolute;inset:0;background:var(--fg);transform-origin:left;transform:scaleX(var(--p,0));transition:transform 160ms var(--ease-out)}
 /* Ganze Fläche zählt; kein Doppeltipp-Zoom und keine Textauswahl beim schnellen Tippen */
 .dz{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;width:100%;min-height:58vh;padding:20px 8px;border-radius:24px;text-align:center;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-.dz>*{transition:opacity 160ms ease}
 .dz:active{transform:none}
-.dz:active>:not(.dz-count){opacity:.5;transition-duration:0ms}
 .dz-step{font-size:13px;color:var(--fg-3)}
 .dz-ar{font-family:var(--font-quran);font-size:32px;line-height:1.9;direction:rtl;margin-top:8px}
 .dz-ar.long{font-size:22px}
