@@ -10,6 +10,9 @@ updateQiblaTarget();
 renderTimes();
 loadHadith();
 setTimeout(checkMoved,1500);
+qHint();
 setInterval(()=>{if(view==="times"&&!document.hidden)renderTimes()},15000);
-document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="times"){renderTimes();checkMoved()}});
+let awayAt=0;
+document.addEventListener("visibilitychange",()=>{if(document.hidden){awayAt=Date.now();return}
+  if(view==="times"){renderTimes();checkMoved();if(Date.now()-awayAt>5*6e4)qHint()}});
 if("serviceWorker" in navigator&&location.protocol==="https:")navigator.serviceWorker.register("sw.js").catch(()=>{});

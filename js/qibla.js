@@ -74,5 +74,7 @@ async function startQibla(){
 }
 $("qBtn").addEventListener("click",()=>{qActive?stopQibla():startQibla()});
 // Pfeil neben dem Ortsnamen startet den Kompass (iOS verlangt dafür eine Berührung)
-$("qGo").addEventListener("click",startQibla);
+$("qGo").addEventListener("click",()=>{store.set("qUsed",true);$("qGo").classList.remove("hint");startQibla()});
+// Nadel-Hinweis: dreimal beim Öffnen (und nach längerer Pause), bis Qibla einmal benutzt wurde
+function qHint(){const g=$("qGo");if(store.get("qUsed",false))return;g.classList.remove("hint");void g.offsetWidth;g.classList.add("hint")}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopQibla()});
