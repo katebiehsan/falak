@@ -168,8 +168,8 @@ function renderDays(){
   const tom=list.find(e=>Math.round((e.start-today)/864e5)===1);
   const chip=$("todayChip");
   if(dayOffset===0&&(now||tom)){
-    const e=now||tom,h=hParts(today);
-    let txt=now?(e.k==="bid"?`Weißer Tag · ${h?h.d+". "+HMONTH[h.m-1]:""}`:e.eve?`${e.title} ab heute Abend`:e.title):`Morgen: ${e.title}`;
+    const e=now||tom;
+    let txt=now?(e.k==="bid"?"Weißer Tag":e.eve?`${e.title} ab heute Abend`:e.title):`Morgen: ${e.title}`;
     setHTML(chip,`<svg viewBox="0 0 24 24"><use href="#i-moon"/></svg><span>${txt}</span>`);chip.hidden=false;
   }else chip.hidden=true;
   const fut=list.filter(e=>e.start>today);
