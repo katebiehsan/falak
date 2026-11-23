@@ -81,7 +81,7 @@ $("qGo").addEventListener("click",()=>{if(qActive){stopQibla();return}store.set(
 function qHint(){const g=$("qGo");if(store.get("qUsed",false))return;g.classList.remove("hint");void g.offsetWidth;g.classList.add("hint")}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopQibla()});
 
-// Nadel hinter den Gebetsnamen setzen: waagrecht 14 px hinter dem sichtbaren Titel, senkrecht auf halber Höhe der Großbuchstaben.
+// Nadel hinter den Gebetsnamen setzen: waagrecht 5 px hinter dem sichtbaren Titel (sichtbarer Abstand der Nadel ca. 10 px), senkrecht auf halber Höhe der Großbuchstaben.
 // Auf Vorschau- und Rückblick-Tagen (Wochentag als Titel) entfällt sie.
 const needleC=document.createElement("canvas").getContext("2d"),needleM=new Map();
 function placeNeedle(){
@@ -95,7 +95,7 @@ function placeNeedle(){
   let m=needleM.get(font);
   if(!m){needleC.font=font;const q=needleC.measureText("H");m={fa:q.fontBoundingBoxAscent,fd:q.fontBoundingBoxDescent,aa:q.actualBoundingBoxAscent};needleM.set(font,m)}
   const base=box.top+(box.height-(m.fa+m.fd))/2+m.fa,mid=base-m.aa/2;
-  g.style.left=(tr.right-hr.left+14+10-22).toFixed(1)+"px";g.style.top=(mid-hr.top-22).toFixed(1)+"px";
+  g.style.left=(tr.right-hr.left+5+10-22).toFixed(1)+"px";g.style.top=(mid-hr.top-22).toFixed(1)+"px";
   if(!g.classList.contains("placed"))requestAnimationFrame(()=>g.classList.add("placed"));
 }
 window.addEventListener("resize",placeNeedle);
