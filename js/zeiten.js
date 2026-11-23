@@ -279,16 +279,21 @@ async function gpsUpdate(say){
     const lat=+p.coords.latitude.toFixed(4),lon=+p.coords.longitude.toFixed(4);
     setLoc({name:await geoName(lat,lon),lat,lon});return true;
   }catch(err){
-    say(err.code===1?"Standortzugriff abgelehnt. Erlaube ihn in den iPhone-Einstellungen unter Datenschutz › Ortungsdienste › Safari-Websites.":"Standort nicht gefunden. Versuch es draußen noch einmal oder wähle eine Stadt.",true);return false;
+    say(err.code===1?"Standort nicht erlaubt. Prüfe in den iPhone-Einstellungen unter Datenschutz › Ortungsdienste den Eintrag „Falak“ bzw. „Safari-Websites“.":"Standort nicht gefunden. Versuch es draußen noch einmal oder wähle eine Stadt.",true);return false;
   }finally{gpsBusy=false}
 }
-// Tipp auf den Ortsnamen: sofort aktualisieren; nur wenn das GPS nicht klappt, öffnet sich die Städteliste als Ausweg
+// Tipp auf den Ortsnamen: sofort aktualisieren. Klappt das GPS nicht, erscheint unten kurz eine Zeile mit dem Grund
+// und „Stadt wählen“ (öffnet die Städteliste); ohne Tipp darauf verschwindet sie wieder.
+let lErrT=0;
+function locFail(t){$("lTxt").textContent=t.split(". ")[0].replace(/\.$/,"")+" · ";$("frow").classList.add("lerr");clearTimeout(lErrT);lErrT=setTimeout(()=>$("frow").classList.remove("lerr"),8000)}
 $("locBtn").addEventListener("click",async()=>{
   if(gpsBusy)return;
   const el=$("locName");let failed=null;
+  $("frow").classList.remove("lerr");
   const ok=await gpsUpdate((t,e)=>{if(e)failed=t;else el.textContent=t});
-  if(!ok){el.textContent=loc.name;if(failed){buildCities();const s=$("gpsStatus");s.classList.add("err");s.textContent=failed;openSheet("locSheet")}}
+  if(!ok){el.textContent=loc.name;if(failed)locFail(failed)}
 });
+$("lPick").addEventListener("click",()=>{clearTimeout(lErrT);$("frow").classList.remove("lerr");buildCities();const s=$("gpsStatus");s.classList.remove("err");s.textContent="";openSheet("locSheet")});
 $("gpsBtn").addEventListener("click",()=>{const s=$("gpsStatus");s.classList.remove("err");
   gpsUpdate((t,e)=>{s.classList.toggle("err",!!e);s.textContent=t})});
 // Leise nachsehen, ob du woanders bist (nur wenn Safari den Zugriff schon erlaubt hat; es wird nie automatisch geändert)

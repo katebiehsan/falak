@@ -179,7 +179,10 @@ body.ph-isha .nightsky{opacity:1}
 .locline{position:relative;font:inherit;color:var(--fg-2);font-weight:500;padding:0}
 .locline::after{content:"";position:absolute;inset:-12px -8px}
 .locline:active{transform:none;opacity:.4;transition-duration:0ms}
-.mline{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;opacity:0;pointer-events:none}
+.mline,.lmsg{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;opacity:0;pointer-events:none}
+#lTxt{color:#ff9ea1;white-space:pre}
+.dates.lerr .dline{opacity:0;pointer-events:none}
+.dates.lerr .lmsg{opacity:1;pointer-events:auto}
 .dates.moved .dline{opacity:0;pointer-events:none}
 .dates.moved .mline{opacity:1;pointer-events:auto}
 .mgo{position:relative;padding:0 8px 0 0;font:inherit;font-weight:500;color:var(--accent)}
