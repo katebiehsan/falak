@@ -54,7 +54,7 @@ function renderTimes(){
   renderArc(day,t,now,live);
   $("gregDate").textContent=day.toLocaleDateString("de-DE",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
   $("hijriDate").textContent=hijriShort(day);
-  renderDays();renderQuranRow();
+  renderDays();renderQuranRow();placeNeedle();
 }
 
 

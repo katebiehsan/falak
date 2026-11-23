@@ -39,7 +39,7 @@ function drawHeading(){
   const diff=((qTarget-h+540)%360)-180,ad=Math.abs(diff),ok=!tilted&&ad<=3;
   $("qBtn").classList.toggle("ok",ok);$("hero").classList.toggle("qok",ok);
   $("qLbl").textContent=tilted?"Handy flach halten":ok?"Richtung stimmt":`nach ${diff>0?"rechts":"links"} drehen`;
-  $("qBig").textContent=tilted?"Flach":ok?"Qibla":`${Math.round(ad)}°`;
+  {const bt=tilted?"Flach":ok?"Qibla":`${Math.round(ad)}°`;if($("qBig").textContent!==bt){$("qBig").textContent=bt;placeNeedle()}}
   if(ok&&!wasAligned&&navigator.vibrate)navigator.vibrate(18);
   wasAligned=ok;
 }
@@ -50,7 +50,7 @@ function qFlash(t){const b=$("qBtn");$("qLbl").textContent=t;b.classList.add("fl
 function stopQibla(){
   if(!qActive)return;
   qActive=false;clearTimeout(qStartT);shown=null;sx=sy=null;wasAligned=false;tilted=false;
-  const b=$("qBtn");b.classList.remove("on","ok","flash");b.setAttribute("aria-pressed","false");$("hero").classList.remove("qon","qok","qlive");$("qGo").setAttribute("aria-pressed","false");$("qGo").setAttribute("aria-label","Qibla-Kompass starten");
+  const b=$("qBtn");b.classList.remove("on","ok","flash");b.setAttribute("aria-pressed","false");$("hero").classList.remove("qon","qok","qlive");placeNeedle();$("qGo").setAttribute("aria-pressed","false");$("qGo").setAttribute("aria-label","Qibla-Kompass starten");
   qRest();
 }
 async function startQibla(){
@@ -68,7 +68,7 @@ async function startQibla(){
   if(dayOffset!==0){dayOffset=0}
   updateQiblaTarget();
   qActive=true;lastEvt=0;
-  const b=$("qBtn");b.classList.remove("flash");b.classList.add("on");b.setAttribute("aria-pressed","true");$("hero").classList.add("qon","qlive");$("qBig").textContent="Qibla";$("qGo").setAttribute("aria-pressed","true");$("qGo").setAttribute("aria-label","Qibla-Kompass beenden");
+  const b=$("qBtn");b.classList.remove("flash");b.classList.add("on");b.setAttribute("aria-pressed","true");$("hero").classList.add("qon","qlive");$("qBig").textContent="Qibla";placeNeedle();$("qGo").setAttribute("aria-pressed","true");$("qGo").setAttribute("aria-label","Qibla-Kompass beenden");
   renderTimes();
   $("qLbl").textContent=`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`;
   clearTimeout(qStartT);qStartT=setTimeout(()=>{if(qActive&&!lastEvt){stopQibla();qFlash(`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`)}},2500);
@@ -79,3 +79,20 @@ $("qGo").addEventListener("click",()=>{if(qActive){stopQibla();return}store.set(
 // Nadel-Hinweis: dreimal beim Öffnen (und nach längerer Pause), bis Qibla einmal benutzt wurde
 function qHint(){const g=$("qGo");if(store.get("qUsed",false))return;g.classList.remove("hint");void g.offsetWidth;g.classList.add("hint")}
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopQibla()});
+
+// Nadel hinter den Gebetsnamen setzen: waagrecht 14 px hinter dem sichtbaren Titel, senkrecht auf halber Höhe der Großbuchstaben.
+// Auf Vorschau- und Rückblick-Tagen (Wochentag als Titel) entfällt sie.
+function placeNeedle(){
+  const g=$("qGo"),h=$("hero");
+  g.hidden=dayOffset!==0;if(g.hidden)return;
+  const t=h.classList.contains("qlive")?$("qBig"):$("curName"),box=$("curName").getBoundingClientRect(),hr=h.getBoundingClientRect();
+  const rg=document.createRange();rg.selectNodeContents(t);const tr=rg.getBoundingClientRect();
+  if(!tr.width||!box.height)return;
+  const cs=getComputedStyle($("curName")),c=document.createElement("canvas").getContext("2d");
+  c.font=`${cs.fontWeight} ${cs.fontSize} ${cs.fontFamily}`;
+  const m=c.measureText("H"),base=box.top+(box.height-(m.fontBoundingBoxAscent+m.fontBoundingBoxDescent))/2+m.fontBoundingBoxAscent,mid=base-m.actualBoundingBoxAscent/2;
+  g.style.left=(tr.right-hr.left+14+10-22).toFixed(1)+"px";g.style.top=(mid-hr.top-22).toFixed(1)+"px";
+  if(!g.classList.contains("placed"))requestAnimationFrame(()=>g.classList.add("placed"));
+}
+window.addEventListener("resize",placeNeedle);
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(placeNeedle);
