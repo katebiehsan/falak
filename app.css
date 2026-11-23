@@ -161,13 +161,20 @@ body.ph-isha .nightsky{opacity:1}
 .qline.ok{color:var(--accent)}
 .qarrow{flex:none;width:16px;height:16px;transition:transform 120ms linear}
 .frow.qon .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
-.shead{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.qpill{display:inline-flex;align-items:center;gap:8px;height:34px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.22);font-size:15px;font-weight:500;color:var(--fg)}
-.qpill::after{content:"";position:absolute;inset:-5px -4px}
-.qpill{position:relative}
-.qpill:active{transform:none;opacity:.4;transition-duration:0ms}
-.sheets-flat .qpill{border-color:var(--edge)}
-.qsa{width:14px;height:14px;color:var(--fg);flex:none}
+.qgo{position:relative;display:inline-grid;place-items:center;flex:none;width:28px;height:28px;max-width:28px;overflow:hidden;color:var(--fg-2);transition:max-width 220ms var(--ease-out),opacity 160ms ease}
+.qgo::after{content:"";position:absolute;inset:-8px}
+.qgo:active{transform:none;opacity:.4;transition-duration:0ms}
+.frow.qon .qgo,.frow.moved .qgo{max-width:0;opacity:0;pointer-events:none}
+.frow.moved .locline{max-width:0;opacity:0;padding-left:0;padding-right:0;pointer-events:none}
+/* Nachfrage, wenn du woanders bist: „Du bist in Hamburg · Aktualisieren“ mit ✕ */
+.mline{display:inline-flex;align-items:center;max-width:0;opacity:0;overflow:hidden;white-space:nowrap;pointer-events:none;transition:max-width 220ms var(--ease-out),opacity 160ms ease}
+.frow.moved .mline{max-width:360px;opacity:1;pointer-events:auto}
+.mgo{position:relative;padding:8px 6px 8px 10px;font-size:13px;font-weight:500;color:var(--accent)}
+.mgo::after{content:"";position:absolute;inset:-6px 0}
+.mx{position:relative;display:grid;place-items:center;width:28px;height:28px;color:var(--fg-3)}
+.mx::after{content:"";position:absolute;inset:-8px}
+.mx svg{width:12px;height:12px}
+.mgo:active,.mx:active{transform:none;opacity:.4;transition-duration:0ms}
 .dates{display:flex;flex-direction:column;align-items:center;gap:2px;padding-top:6px;font-size:13px;color:var(--fg-3);font-variant-numeric:tabular-nums}
 .dates .dline{text-align:center}
 .primary{flex:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 20px;border-radius:14px;background:var(--fg);color:#000;font-weight:500;font-size:17px;width:100%}
@@ -318,7 +325,7 @@ body.ph-isha .nightsky{opacity:1}
   .sheet{background:var(--surface);-webkit-backdrop-filter:none;backdrop-filter:none;border:1px solid #6f6f6f;box-shadow:none}
 }
 @media (prefers-reduced-motion:reduce){
-  .locline,.qline,.qarrow{transition:none}
+  .locline,.qline,.qarrow,.qgo,.mline{transition:none}
   .sheet{transition:opacity 180ms ease,visibility 0s linear 180ms;transform:none;opacity:0}
   .sheet.open{opacity:1;transition:opacity 180ms ease,visibility 0s}
   button:active{transform:none}
@@ -328,8 +335,6 @@ body.ph-isha .nightsky{opacity:1}
 }
 /* ---------- Dhikr ---------- */
 /* Dhikr als drittes Segment der Kapsel, nur Symbol */
-.tools .dz-seg{padding:0 13px}
-.dz-seg svg{width:18px;height:18px;display:block}
 #v-dhikr{min-height:100dvh}
 .dz-bars{display:grid;grid-template-columns:33fr 33fr 33fr 6fr;gap:6px}
 .dz-bars i{height:2px;border-radius:2px;background:rgba(255,255,255,.12);position:relative;overflow:hidden}

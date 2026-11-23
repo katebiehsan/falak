@@ -46,7 +46,6 @@
     <div class="hrow">
     <div class="tools">
     <button class="qtext" id="quranBtn"><span>Quran</span></button>
-    <button class="qtext dz-seg" id="dhikrBtn" aria-label="Dhikr nach dem Gebet"><svg aria-hidden="true"><use href="#i-tasbih"/></svg></button>
     </div>
     </div>
     <button class="today" id="todayChip" hidden></button>
@@ -69,8 +68,10 @@
 
   <footer class="dates">
     <div class="frow" id="frow">
-      <button class="locline" id="locBtn" aria-label="Ort ändern"><span id="locName">Bremen</span></button>
+      <button class="locline" id="locBtn" aria-label="Standort aktualisieren"><span id="locName">Bremen</span></button>
+      <button class="qgo" id="qGo" aria-label="Qibla-Kompass starten"><svg class="qarrow" id="qGoArrow" aria-hidden="true"><use href="#i-nav"/></svg></button>
       <button class="qline" id="qBtn" aria-pressed="false" aria-label="Qibla-Kompass beenden"><svg class="qarrow" id="qRot" aria-hidden="true"><use href="#i-nav"/></svg><span id="qLbl">Qibla</span></button>
+      <span class="mline" id="mLine"><button class="mgo" id="mYes"></button><button class="mx" id="mNo" aria-label="Später"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg></button></span>
     </div>
     <span class="dline"><span id="gregDate"></span> · <span id="hijriDate"></span></span>
   </footer>
@@ -99,6 +100,7 @@
     <header class="top">
       <span class="top-l"><button class="round" id="homeBtn" aria-label="Zurück zu den Gebetszeiten"><svg class="ic18"><use href="#i-chev-l"/></svg></button><h2 class="title">Quran</h2></span>
       <span class="top-r">
+      <button class="icon-btn" id="dhikrBtn" aria-label="Dhikr nach dem Gebet"><svg class="ic18"><use href="#i-tasbih"/></svg></button>
       <button class="icon-btn" id="searchBtn" aria-label="Sure suchen" aria-expanded="false"><svg class="ic18"><use href="#i-search"/></svg></button>
       <button class="icon-btn marks-btn" id="marksBtn" aria-label="Markierungen"><svg class="ic18"><use href="#i-bm"/></svg><span id="marksCount"></span></button>
       </span>
@@ -146,7 +148,7 @@
 
 <section class="sheet" role="dialog" aria-modal="true" tabindex="-1" id="locSheet" aria-label="Ort ändern">
   <div class="grab"></div>
-  <div class="shead"><h3>Ort</h3><button class="qpill" id="qSheetBtn" aria-label="Qibla-Kompass starten"><svg class="qsa" id="qSheetArrow" aria-hidden="true"><use href="#i-nav"/></svg>Qibla</button></div>
+  <h3>Ort</h3>
   <button class="primary" id="gpsBtn"><svg class="ic16"><use href="#i-loc"/></svg>Aktuellen Standort verwenden</button>
   <p class="status" id="gpsStatus"></p>
   <div class="sheetlist" id="cities"></div>

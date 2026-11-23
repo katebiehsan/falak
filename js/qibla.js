@@ -2,8 +2,8 @@
 "use strict";
 
 /* ================= Qibla ================= */
-// Die Pille „Qibla“ im Orts-Fenster startet den Kompass: In der Fußzeile zeigt der Pfeil zur Kaaba, der Text sagt, wohin drehen;
-// ausgerichtet wird er grün. Zeile antippen beendet. In Ruhe zeigt der Pfeil im Orts-Fenster die Richtung von Norden aus.
+// Der Pfeil neben dem Ortsnamen startet den Kompass: In der Fußzeile zeigt der Pfeil zur Kaaba, der Text sagt, wohin drehen;
+// ausgerichtet wird er grün. Zeile antippen beendet. In Ruhe zeigt der Pfeil die Richtung von Norden aus.
 let qTarget=0,qDecl=0,tilted=false,qActive=false,listening=false,lastEvt=0,sx=null,sy=null,raf=0,wasAligned=false,shown=null;
 function compassName(d){return["Nord","Nordost","Ost","Südost","Süd","Südwest","West","Nordwest"][Math.round(d/45)%8]}
 // Kompass liefert magnetisch Nord (Apple-Doku zu webkitCompassHeading); die Kaaba-Richtung ist geografisch.
@@ -13,8 +13,8 @@ function updateQiblaTarget(){
   try{qDecl=typeof magvar==="function"?+magvar(loc.lat,loc.lon)||0:0}catch(e){qDecl=0}
   if(!qActive)qRest();
 }
-// Ruhezustand: fester Pfeil in der Pille im Orts-Fenster
-function qRest(){const r=`rotate(${qTarget.toFixed(1)}deg)`;$("qRot").style.transform=r;$("qSheetArrow").style.transform=r;
+// Ruhezustand: fester Pfeil neben dem Ortsnamen
+function qRest(){const r=`rotate(${qTarget.toFixed(1)}deg)`;$("qRot").style.transform=r;$("qGoArrow").style.transform=r;
   $("qLbl").textContent=`Qibla ${Math.round(qTarget)}°`}
 function onOrient(e){
   if(!qActive)return;
@@ -73,6 +73,6 @@ async function startQibla(){
   setTimeout(()=>{if(qActive&&!lastEvt){stopQibla();qFlash(`Qibla ${Math.round(qTarget)}° · ${compassName(qTarget)}`)}},2500);
 }
 $("qBtn").addEventListener("click",()=>{qActive?stopQibla():startQibla()});
-// Aus dem Orts-Fenster starten: Fenster schließen und im selben Tipp den Kompass anfragen (iOS verlangt eine Berührung)
-$("qSheetBtn").addEventListener("click",()=>{closeSheet();startQibla()});
+// Pfeil neben dem Ortsnamen startet den Kompass (iOS verlangt dafür eine Berührung)
+$("qGo").addEventListener("click",startQibla);
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopQibla()});
