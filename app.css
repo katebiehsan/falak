@@ -136,7 +136,7 @@ body.ph-isha .nightsky{opacity:1}
 /* „Demnächst“: nur Titel und Abstand, das Datum steht in der Liste hinter dem Titel */
 .upcoming .ev>span{display:none}
 /* Kopfzeile antippbar: Unterstreichung nur unter dem Wort, beim Drücken hell */
-.tt{font-size:13px;font-weight:500;color:var(--fg-3);letter-spacing:.01em;padding:14px 0;text-decoration:underline;text-decoration-color:#38383a;text-decoration-thickness:1.5px;text-underline-offset:3px;transition:color 160ms ease}
+.tt{font-size:13px;font-weight:500;color:var(--fg-3);letter-spacing:.01em;padding:14px 0;text-decoration:underline;text-decoration-color:#38383a;text-decoration-thickness:1px;text-underline-offset:3px;transition:color 160ms ease}
 .tt:active{color:var(--fg);transition-duration:0ms}
 .ev{display:flex;flex-direction:column;gap:1px;min-width:0}
 .ev b{font-size:17px;font-weight:500}
