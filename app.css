@@ -128,11 +128,16 @@ body.ph-isha .nightsky{opacity:1}
 .mini-step button:active{background:rgba(255,255,255,.08)}
 .mini-step button:disabled{opacity:.3;pointer-events:none}
 .mini-step span{min-width:64px;text-align:center;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
-.upcoming .item{padding:12px 14px;text-align:left;width:100%;align-items:flex-start}
+.upcoming .item{padding:12px 14px;text-align:left;width:100%;align-items:center}
 .upcoming .item:active{transform:none}
-.upcoming .when{padding-top:2px}
+.upcoming .when{padding-top:0}
 /* „Demnächst“ zeigt nur Titel und Datum; die Notiz erscheint in der Liste „Islamische Tage“ */
 .upcoming .nt{display:none}
+/* „Demnächst“: nur Titel und Abstand, das Datum steht in der Liste hinter dem Titel */
+.upcoming .ev>span{display:none}
+/* Kopfzeile antippbar: Unterstreichung nur unter dem Wort, beim Drücken hell */
+.tt{font-size:13px;font-weight:500;color:var(--fg-3);letter-spacing:.01em;padding:14px 0;text-decoration:underline;text-decoration-color:#38383a;text-decoration-thickness:1.5px;text-underline-offset:3px;transition:color 160ms ease}
+.tt:active{color:var(--fg);transition-duration:0ms}
 .ev{display:flex;flex-direction:column;gap:1px;min-width:0}
 .ev b{font-size:17px;font-weight:500}
 .ev span{font-size:13px;color:var(--fg-3)}
