@@ -187,7 +187,7 @@ function renderDays(){
   }else chip.hidden=true;
   const fut=list.filter(e=>e.start>today);
   const bid=fut.find(e=>e.k==="bid"),big=fut.filter(e=>e.k!=="bid").slice(0,bid?2:3);
-  const up=(bid?[bid,...big]:big).sort((x,y)=>x.start-y.start);
+  const up=(bid?[bid,...big]:big).sort((x,y)=>x.start-y.start).slice(0,1);
   setHTML($("upcoming"),up.length?up.map(evRow).join(""):`<p class="empty">Keine Termine gefunden.</p>`);
 }
 function openDays(){
